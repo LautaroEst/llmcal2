@@ -1,0 +1,2061 @@
++ export CUDA_VISIBLE_DEVICES=0
++ CUDA_VISIBLE_DEVICES=0
++ model=tinyllama
++ DATASETS='sst2 agnews dbpedia 20newsgroups banking77'
++ model2checkpoint=(['tinyllama']='/mnt/extra/lestienne/lit-checkpoints/TinyLlama/TinyLlama-1.1B-intermediate-step-1431k-3T' ['phi3']='/mnt/extra/lestienne/lit-checkpoints/microsoft/Phi-3-mini-4k-instruct' ['llama3']='/mnt/extra/lestienne/lit-checkpoints/meta-llama/Meta-Llama-3-8B')
++ declare -A model2checkpoint
++ dataset2numclasses=(['sst2']='2' ['agnews']='4' ['dbpedia']='14' ['20newsgroups']='20' ['banking77']='77')
++ declare -A dataset2numclasses
++ '[' tinyllama == tinyllama ']'
++ dataset2samples=(['sst2']='8 32 512' ['agnews']='4 16 256' ['dbpedia']='2 8 128' ['20newsgroups']='2 8 128' ['banking77']='1 4 64')
++ declare -A dataset2samples
++ dataset2seed=(['sst2_8']='639 923 932 6391 9322' ['sst2_32']='1564 1738 1783 15641 17832' ['sst2_512']='111 121 767 890 999' ['agnews_4']='295 926 962 2951 9622' ['agnews_16']='738 564 783 5641 7832' ['agnews_256']='493 821 812 4931 8212' ['dbpedia_2']='435 927 972 4351 9722' ['dbpedia_8']='338 364 383 3641 3832' ['dbpedia_128']='129 131 543 878 909' ['20newsgroups_2']='435 927 972 4351 9722' ['20newsgroups_8']='338 364 383 3641 3832' ['20newsgroups_128']='129 131 543 878 909' ['banking77_1']='322 444 848 858 868' ['banking77_4']='295 926 962 2951 9622' ['banking77_64']='131 888 893 912 933')
++ declare -A dataset2seed
++ source ./scripts/generative_no_adaptation.sh
+++ accelerator=gpu
+++ precision=bf16-true
+++ strategy=auto
+++ devices=1
+++ num_nodes=1
+++ checkpoint=/mnt/extra/lestienne/lit-checkpoints/TinyLlama/TinyLlama-1.1B-intermediate-step-1431k-3T
+++ for dataset in $DATASETS
+++ output_dir=outputs/adaptation/tinyllama/no_adaptation/sst2/size=all/rs=all
+++ '[' '!' -f outputs/adaptation/tinyllama/no_adaptation/sst2/size=all/rs=all/test_logits.csv ']'
+++ for size in ${dataset2samples[$dataset]}
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ total_train_samples=16
+++ output_dir=outputs/adaptation/tinyllama/no_adaptation/sst2/size=8/rs=639
+++ '[' '!' -f outputs/adaptation/tinyllama/no_adaptation/sst2/size=8/rs=639/train_logits.csv ']'
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ total_train_samples=16
+++ output_dir=outputs/adaptation/tinyllama/no_adaptation/sst2/size=8/rs=923
+++ '[' '!' -f outputs/adaptation/tinyllama/no_adaptation/sst2/size=8/rs=923/train_logits.csv ']'
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ total_train_samples=16
+++ output_dir=outputs/adaptation/tinyllama/no_adaptation/sst2/size=8/rs=932
+++ '[' '!' -f outputs/adaptation/tinyllama/no_adaptation/sst2/size=8/rs=932/train_logits.csv ']'
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ total_train_samples=16
+++ output_dir=outputs/adaptation/tinyllama/no_adaptation/sst2/size=8/rs=6391
+++ '[' '!' -f outputs/adaptation/tinyllama/no_adaptation/sst2/size=8/rs=6391/train_logits.csv ']'
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ total_train_samples=16
+++ output_dir=outputs/adaptation/tinyllama/no_adaptation/sst2/size=8/rs=9322
+++ '[' '!' -f outputs/adaptation/tinyllama/no_adaptation/sst2/size=8/rs=9322/train_logits.csv ']'
+++ for size in ${dataset2samples[$dataset]}
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ total_train_samples=64
+++ output_dir=outputs/adaptation/tinyllama/no_adaptation/sst2/size=32/rs=1564
+++ '[' '!' -f outputs/adaptation/tinyllama/no_adaptation/sst2/size=32/rs=1564/train_logits.csv ']'
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ total_train_samples=64
+++ output_dir=outputs/adaptation/tinyllama/no_adaptation/sst2/size=32/rs=1738
+++ '[' '!' -f outputs/adaptation/tinyllama/no_adaptation/sst2/size=32/rs=1738/train_logits.csv ']'
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ total_train_samples=64
+++ output_dir=outputs/adaptation/tinyllama/no_adaptation/sst2/size=32/rs=1783
+++ '[' '!' -f outputs/adaptation/tinyllama/no_adaptation/sst2/size=32/rs=1783/train_logits.csv ']'
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ total_train_samples=64
+++ output_dir=outputs/adaptation/tinyllama/no_adaptation/sst2/size=32/rs=15641
+++ '[' '!' -f outputs/adaptation/tinyllama/no_adaptation/sst2/size=32/rs=15641/train_logits.csv ']'
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ total_train_samples=64
+++ output_dir=outputs/adaptation/tinyllama/no_adaptation/sst2/size=32/rs=17832
+++ '[' '!' -f outputs/adaptation/tinyllama/no_adaptation/sst2/size=32/rs=17832/train_logits.csv ']'
+++ for size in ${dataset2samples[$dataset]}
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ total_train_samples=1024
+++ output_dir=outputs/adaptation/tinyllama/no_adaptation/sst2/size=512/rs=111
+++ '[' '!' -f outputs/adaptation/tinyllama/no_adaptation/sst2/size=512/rs=111/train_logits.csv ']'
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ total_train_samples=1024
+++ output_dir=outputs/adaptation/tinyllama/no_adaptation/sst2/size=512/rs=121
+++ '[' '!' -f outputs/adaptation/tinyllama/no_adaptation/sst2/size=512/rs=121/train_logits.csv ']'
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ total_train_samples=1024
+++ output_dir=outputs/adaptation/tinyllama/no_adaptation/sst2/size=512/rs=767
+++ '[' '!' -f outputs/adaptation/tinyllama/no_adaptation/sst2/size=512/rs=767/train_logits.csv ']'
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ total_train_samples=1024
+++ output_dir=outputs/adaptation/tinyllama/no_adaptation/sst2/size=512/rs=890
+++ '[' '!' -f outputs/adaptation/tinyllama/no_adaptation/sst2/size=512/rs=890/train_logits.csv ']'
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ total_train_samples=1024
+++ output_dir=outputs/adaptation/tinyllama/no_adaptation/sst2/size=512/rs=999
+++ '[' '!' -f outputs/adaptation/tinyllama/no_adaptation/sst2/size=512/rs=999/train_logits.csv ']'
+++ for dataset in $DATASETS
+++ output_dir=outputs/adaptation/tinyllama/no_adaptation/agnews/size=all/rs=all
+++ '[' '!' -f outputs/adaptation/tinyllama/no_adaptation/agnews/size=all/rs=all/test_logits.csv ']'
+++ for size in ${dataset2samples[$dataset]}
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ total_train_samples=16
+++ output_dir=outputs/adaptation/tinyllama/no_adaptation/agnews/size=4/rs=295
+++ '[' '!' -f outputs/adaptation/tinyllama/no_adaptation/agnews/size=4/rs=295/train_logits.csv ']'
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ total_train_samples=16
+++ output_dir=outputs/adaptation/tinyllama/no_adaptation/agnews/size=4/rs=926
+++ '[' '!' -f outputs/adaptation/tinyllama/no_adaptation/agnews/size=4/rs=926/train_logits.csv ']'
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ total_train_samples=16
+++ output_dir=outputs/adaptation/tinyllama/no_adaptation/agnews/size=4/rs=962
+++ '[' '!' -f outputs/adaptation/tinyllama/no_adaptation/agnews/size=4/rs=962/train_logits.csv ']'
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ total_train_samples=16
+++ output_dir=outputs/adaptation/tinyllama/no_adaptation/agnews/size=4/rs=2951
+++ '[' '!' -f outputs/adaptation/tinyllama/no_adaptation/agnews/size=4/rs=2951/train_logits.csv ']'
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ total_train_samples=16
+++ output_dir=outputs/adaptation/tinyllama/no_adaptation/agnews/size=4/rs=9622
+++ '[' '!' -f outputs/adaptation/tinyllama/no_adaptation/agnews/size=4/rs=9622/train_logits.csv ']'
+++ for size in ${dataset2samples[$dataset]}
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ total_train_samples=64
+++ output_dir=outputs/adaptation/tinyllama/no_adaptation/agnews/size=16/rs=738
+++ '[' '!' -f outputs/adaptation/tinyllama/no_adaptation/agnews/size=16/rs=738/train_logits.csv ']'
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ total_train_samples=64
+++ output_dir=outputs/adaptation/tinyllama/no_adaptation/agnews/size=16/rs=564
+++ '[' '!' -f outputs/adaptation/tinyllama/no_adaptation/agnews/size=16/rs=564/train_logits.csv ']'
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ total_train_samples=64
+++ output_dir=outputs/adaptation/tinyllama/no_adaptation/agnews/size=16/rs=783
+++ '[' '!' -f outputs/adaptation/tinyllama/no_adaptation/agnews/size=16/rs=783/train_logits.csv ']'
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ total_train_samples=64
+++ output_dir=outputs/adaptation/tinyllama/no_adaptation/agnews/size=16/rs=5641
+++ '[' '!' -f outputs/adaptation/tinyllama/no_adaptation/agnews/size=16/rs=5641/train_logits.csv ']'
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ total_train_samples=64
+++ output_dir=outputs/adaptation/tinyllama/no_adaptation/agnews/size=16/rs=7832
+++ '[' '!' -f outputs/adaptation/tinyllama/no_adaptation/agnews/size=16/rs=7832/train_logits.csv ']'
+++ for size in ${dataset2samples[$dataset]}
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ total_train_samples=1024
+++ output_dir=outputs/adaptation/tinyllama/no_adaptation/agnews/size=256/rs=493
+++ '[' '!' -f outputs/adaptation/tinyllama/no_adaptation/agnews/size=256/rs=493/train_logits.csv ']'
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ total_train_samples=1024
+++ output_dir=outputs/adaptation/tinyllama/no_adaptation/agnews/size=256/rs=821
+++ '[' '!' -f outputs/adaptation/tinyllama/no_adaptation/agnews/size=256/rs=821/train_logits.csv ']'
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ total_train_samples=1024
+++ output_dir=outputs/adaptation/tinyllama/no_adaptation/agnews/size=256/rs=812
+++ '[' '!' -f outputs/adaptation/tinyllama/no_adaptation/agnews/size=256/rs=812/train_logits.csv ']'
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ total_train_samples=1024
+++ output_dir=outputs/adaptation/tinyllama/no_adaptation/agnews/size=256/rs=4931
+++ '[' '!' -f outputs/adaptation/tinyllama/no_adaptation/agnews/size=256/rs=4931/train_logits.csv ']'
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ total_train_samples=1024
+++ output_dir=outputs/adaptation/tinyllama/no_adaptation/agnews/size=256/rs=8212
+++ '[' '!' -f outputs/adaptation/tinyllama/no_adaptation/agnews/size=256/rs=8212/train_logits.csv ']'
+++ for dataset in $DATASETS
+++ output_dir=outputs/adaptation/tinyllama/no_adaptation/dbpedia/size=all/rs=all
+++ '[' '!' -f outputs/adaptation/tinyllama/no_adaptation/dbpedia/size=all/rs=all/test_logits.csv ']'
+++ for size in ${dataset2samples[$dataset]}
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ total_train_samples=28
+++ output_dir=outputs/adaptation/tinyllama/no_adaptation/dbpedia/size=2/rs=435
+++ '[' '!' -f outputs/adaptation/tinyllama/no_adaptation/dbpedia/size=2/rs=435/train_logits.csv ']'
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ total_train_samples=28
+++ output_dir=outputs/adaptation/tinyllama/no_adaptation/dbpedia/size=2/rs=927
+++ '[' '!' -f outputs/adaptation/tinyllama/no_adaptation/dbpedia/size=2/rs=927/train_logits.csv ']'
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ total_train_samples=28
+++ output_dir=outputs/adaptation/tinyllama/no_adaptation/dbpedia/size=2/rs=972
+++ '[' '!' -f outputs/adaptation/tinyllama/no_adaptation/dbpedia/size=2/rs=972/train_logits.csv ']'
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ total_train_samples=28
+++ output_dir=outputs/adaptation/tinyllama/no_adaptation/dbpedia/size=2/rs=4351
+++ '[' '!' -f outputs/adaptation/tinyllama/no_adaptation/dbpedia/size=2/rs=4351/train_logits.csv ']'
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ total_train_samples=28
+++ output_dir=outputs/adaptation/tinyllama/no_adaptation/dbpedia/size=2/rs=9722
+++ '[' '!' -f outputs/adaptation/tinyllama/no_adaptation/dbpedia/size=2/rs=9722/train_logits.csv ']'
+++ for size in ${dataset2samples[$dataset]}
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ total_train_samples=112
+++ output_dir=outputs/adaptation/tinyllama/no_adaptation/dbpedia/size=8/rs=338
+++ '[' '!' -f outputs/adaptation/tinyllama/no_adaptation/dbpedia/size=8/rs=338/train_logits.csv ']'
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ total_train_samples=112
+++ output_dir=outputs/adaptation/tinyllama/no_adaptation/dbpedia/size=8/rs=364
+++ '[' '!' -f outputs/adaptation/tinyllama/no_adaptation/dbpedia/size=8/rs=364/train_logits.csv ']'
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ total_train_samples=112
+++ output_dir=outputs/adaptation/tinyllama/no_adaptation/dbpedia/size=8/rs=383
+++ '[' '!' -f outputs/adaptation/tinyllama/no_adaptation/dbpedia/size=8/rs=383/train_logits.csv ']'
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ total_train_samples=112
+++ output_dir=outputs/adaptation/tinyllama/no_adaptation/dbpedia/size=8/rs=3641
+++ '[' '!' -f outputs/adaptation/tinyllama/no_adaptation/dbpedia/size=8/rs=3641/train_logits.csv ']'
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ total_train_samples=112
+++ output_dir=outputs/adaptation/tinyllama/no_adaptation/dbpedia/size=8/rs=3832
+++ '[' '!' -f outputs/adaptation/tinyllama/no_adaptation/dbpedia/size=8/rs=3832/train_logits.csv ']'
+++ for size in ${dataset2samples[$dataset]}
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ total_train_samples=1792
+++ output_dir=outputs/adaptation/tinyllama/no_adaptation/dbpedia/size=128/rs=129
+++ '[' '!' -f outputs/adaptation/tinyllama/no_adaptation/dbpedia/size=128/rs=129/train_logits.csv ']'
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ total_train_samples=1792
+++ output_dir=outputs/adaptation/tinyllama/no_adaptation/dbpedia/size=128/rs=131
+++ '[' '!' -f outputs/adaptation/tinyllama/no_adaptation/dbpedia/size=128/rs=131/train_logits.csv ']'
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ total_train_samples=1792
+++ output_dir=outputs/adaptation/tinyllama/no_adaptation/dbpedia/size=128/rs=543
+++ '[' '!' -f outputs/adaptation/tinyllama/no_adaptation/dbpedia/size=128/rs=543/train_logits.csv ']'
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ total_train_samples=1792
+++ output_dir=outputs/adaptation/tinyllama/no_adaptation/dbpedia/size=128/rs=878
+++ '[' '!' -f outputs/adaptation/tinyllama/no_adaptation/dbpedia/size=128/rs=878/train_logits.csv ']'
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ total_train_samples=1792
+++ output_dir=outputs/adaptation/tinyllama/no_adaptation/dbpedia/size=128/rs=909
+++ '[' '!' -f outputs/adaptation/tinyllama/no_adaptation/dbpedia/size=128/rs=909/train_logits.csv ']'
+++ for dataset in $DATASETS
+++ output_dir=outputs/adaptation/tinyllama/no_adaptation/20newsgroups/size=all/rs=all
+++ '[' '!' -f outputs/adaptation/tinyllama/no_adaptation/20newsgroups/size=all/rs=all/test_logits.csv ']'
+++ for size in ${dataset2samples[$dataset]}
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ total_train_samples=40
+++ output_dir=outputs/adaptation/tinyllama/no_adaptation/20newsgroups/size=2/rs=435
+++ '[' '!' -f outputs/adaptation/tinyllama/no_adaptation/20newsgroups/size=2/rs=435/train_logits.csv ']'
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ total_train_samples=40
+++ output_dir=outputs/adaptation/tinyllama/no_adaptation/20newsgroups/size=2/rs=927
+++ '[' '!' -f outputs/adaptation/tinyllama/no_adaptation/20newsgroups/size=2/rs=927/train_logits.csv ']'
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ total_train_samples=40
+++ output_dir=outputs/adaptation/tinyllama/no_adaptation/20newsgroups/size=2/rs=972
+++ '[' '!' -f outputs/adaptation/tinyllama/no_adaptation/20newsgroups/size=2/rs=972/train_logits.csv ']'
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ total_train_samples=40
+++ output_dir=outputs/adaptation/tinyllama/no_adaptation/20newsgroups/size=2/rs=4351
+++ '[' '!' -f outputs/adaptation/tinyllama/no_adaptation/20newsgroups/size=2/rs=4351/train_logits.csv ']'
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ total_train_samples=40
+++ output_dir=outputs/adaptation/tinyllama/no_adaptation/20newsgroups/size=2/rs=9722
+++ '[' '!' -f outputs/adaptation/tinyllama/no_adaptation/20newsgroups/size=2/rs=9722/train_logits.csv ']'
+++ for size in ${dataset2samples[$dataset]}
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ total_train_samples=160
+++ output_dir=outputs/adaptation/tinyllama/no_adaptation/20newsgroups/size=8/rs=338
+++ '[' '!' -f outputs/adaptation/tinyllama/no_adaptation/20newsgroups/size=8/rs=338/train_logits.csv ']'
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ total_train_samples=160
+++ output_dir=outputs/adaptation/tinyllama/no_adaptation/20newsgroups/size=8/rs=364
+++ '[' '!' -f outputs/adaptation/tinyllama/no_adaptation/20newsgroups/size=8/rs=364/train_logits.csv ']'
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ total_train_samples=160
+++ output_dir=outputs/adaptation/tinyllama/no_adaptation/20newsgroups/size=8/rs=383
+++ '[' '!' -f outputs/adaptation/tinyllama/no_adaptation/20newsgroups/size=8/rs=383/train_logits.csv ']'
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ total_train_samples=160
+++ output_dir=outputs/adaptation/tinyllama/no_adaptation/20newsgroups/size=8/rs=3641
+++ '[' '!' -f outputs/adaptation/tinyllama/no_adaptation/20newsgroups/size=8/rs=3641/train_logits.csv ']'
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ total_train_samples=160
+++ output_dir=outputs/adaptation/tinyllama/no_adaptation/20newsgroups/size=8/rs=3832
+++ '[' '!' -f outputs/adaptation/tinyllama/no_adaptation/20newsgroups/size=8/rs=3832/train_logits.csv ']'
+++ for size in ${dataset2samples[$dataset]}
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ total_train_samples=2560
+++ output_dir=outputs/adaptation/tinyllama/no_adaptation/20newsgroups/size=128/rs=129
+++ '[' '!' -f outputs/adaptation/tinyllama/no_adaptation/20newsgroups/size=128/rs=129/train_logits.csv ']'
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ total_train_samples=2560
+++ output_dir=outputs/adaptation/tinyllama/no_adaptation/20newsgroups/size=128/rs=131
+++ '[' '!' -f outputs/adaptation/tinyllama/no_adaptation/20newsgroups/size=128/rs=131/train_logits.csv ']'
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ total_train_samples=2560
+++ output_dir=outputs/adaptation/tinyllama/no_adaptation/20newsgroups/size=128/rs=543
+++ '[' '!' -f outputs/adaptation/tinyllama/no_adaptation/20newsgroups/size=128/rs=543/train_logits.csv ']'
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ total_train_samples=2560
+++ output_dir=outputs/adaptation/tinyllama/no_adaptation/20newsgroups/size=128/rs=878
+++ '[' '!' -f outputs/adaptation/tinyllama/no_adaptation/20newsgroups/size=128/rs=878/train_logits.csv ']'
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ total_train_samples=2560
+++ output_dir=outputs/adaptation/tinyllama/no_adaptation/20newsgroups/size=128/rs=909
+++ '[' '!' -f outputs/adaptation/tinyllama/no_adaptation/20newsgroups/size=128/rs=909/train_logits.csv ']'
+++ for dataset in $DATASETS
+++ output_dir=outputs/adaptation/tinyllama/no_adaptation/banking77/size=all/rs=all
+++ '[' '!' -f outputs/adaptation/tinyllama/no_adaptation/banking77/size=all/rs=all/test_logits.csv ']'
+++ for size in ${dataset2samples[$dataset]}
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ total_train_samples=77
+++ output_dir=outputs/adaptation/tinyllama/no_adaptation/banking77/size=1/rs=322
+++ '[' '!' -f outputs/adaptation/tinyllama/no_adaptation/banking77/size=1/rs=322/train_logits.csv ']'
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ total_train_samples=77
+++ output_dir=outputs/adaptation/tinyllama/no_adaptation/banking77/size=1/rs=444
+++ '[' '!' -f outputs/adaptation/tinyllama/no_adaptation/banking77/size=1/rs=444/train_logits.csv ']'
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ total_train_samples=77
+++ output_dir=outputs/adaptation/tinyllama/no_adaptation/banking77/size=1/rs=848
+++ '[' '!' -f outputs/adaptation/tinyllama/no_adaptation/banking77/size=1/rs=848/train_logits.csv ']'
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ total_train_samples=77
+++ output_dir=outputs/adaptation/tinyllama/no_adaptation/banking77/size=1/rs=858
+++ '[' '!' -f outputs/adaptation/tinyllama/no_adaptation/banking77/size=1/rs=858/train_logits.csv ']'
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ total_train_samples=77
+++ output_dir=outputs/adaptation/tinyllama/no_adaptation/banking77/size=1/rs=868
+++ '[' '!' -f outputs/adaptation/tinyllama/no_adaptation/banking77/size=1/rs=868/train_logits.csv ']'
+++ for size in ${dataset2samples[$dataset]}
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ total_train_samples=308
+++ output_dir=outputs/adaptation/tinyllama/no_adaptation/banking77/size=4/rs=295
+++ '[' '!' -f outputs/adaptation/tinyllama/no_adaptation/banking77/size=4/rs=295/train_logits.csv ']'
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ total_train_samples=308
+++ output_dir=outputs/adaptation/tinyllama/no_adaptation/banking77/size=4/rs=926
+++ '[' '!' -f outputs/adaptation/tinyllama/no_adaptation/banking77/size=4/rs=926/train_logits.csv ']'
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ total_train_samples=308
+++ output_dir=outputs/adaptation/tinyllama/no_adaptation/banking77/size=4/rs=962
+++ '[' '!' -f outputs/adaptation/tinyllama/no_adaptation/banking77/size=4/rs=962/train_logits.csv ']'
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ total_train_samples=308
+++ output_dir=outputs/adaptation/tinyllama/no_adaptation/banking77/size=4/rs=2951
+++ '[' '!' -f outputs/adaptation/tinyllama/no_adaptation/banking77/size=4/rs=2951/train_logits.csv ']'
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ total_train_samples=308
+++ output_dir=outputs/adaptation/tinyllama/no_adaptation/banking77/size=4/rs=9622
+++ '[' '!' -f outputs/adaptation/tinyllama/no_adaptation/banking77/size=4/rs=9622/train_logits.csv ']'
+++ for size in ${dataset2samples[$dataset]}
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ total_train_samples=4928
+++ output_dir=outputs/adaptation/tinyllama/no_adaptation/banking77/size=64/rs=131
+++ '[' '!' -f outputs/adaptation/tinyllama/no_adaptation/banking77/size=64/rs=131/train_logits.csv ']'
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ total_train_samples=4928
+++ output_dir=outputs/adaptation/tinyllama/no_adaptation/banking77/size=64/rs=888
+++ '[' '!' -f outputs/adaptation/tinyllama/no_adaptation/banking77/size=64/rs=888/train_logits.csv ']'
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ total_train_samples=4928
+++ output_dir=outputs/adaptation/tinyllama/no_adaptation/banking77/size=64/rs=893
+++ '[' '!' -f outputs/adaptation/tinyllama/no_adaptation/banking77/size=64/rs=893/train_logits.csv ']'
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ total_train_samples=4928
+++ output_dir=outputs/adaptation/tinyllama/no_adaptation/banking77/size=64/rs=912
+++ '[' '!' -f outputs/adaptation/tinyllama/no_adaptation/banking77/size=64/rs=912/train_logits.csv ']'
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ total_train_samples=4928
+++ output_dir=outputs/adaptation/tinyllama/no_adaptation/banking77/size=64/rs=933
+++ '[' '!' -f outputs/adaptation/tinyllama/no_adaptation/banking77/size=64/rs=933/train_logits.csv ']'
++ source ./scripts/affine_calibration.sh
+++ accelerator=cpu
+++ max_ls=40
+++ learning_rate=1e-2
+++ max_epochs=30
+++ methods='dp_calibration temp_scaling bias_only'
+++ checkpoint=/mnt/extra/lestienne/lit-checkpoints/TinyLlama/TinyLlama-1.1B-intermediate-step-1431k-3T
+++ for dataset in $DATASETS
+++ for size in ${dataset2samples[$dataset]}
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ for method in $methods
+++ total_train_samples=16
+++ output_dir=outputs/adaptation/tinyllama/dp_calibration/sst2/size=8/rs=639
+++ '[' '!' -f outputs/adaptation/tinyllama/dp_calibration/sst2/size=8/rs=639/test_logits.csv ']'
+++ for method in $methods
+++ total_train_samples=16
+++ output_dir=outputs/adaptation/tinyllama/temp_scaling/sst2/size=8/rs=639
+++ '[' '!' -f outputs/adaptation/tinyllama/temp_scaling/sst2/size=8/rs=639/test_logits.csv ']'
+++ for method in $methods
+++ total_train_samples=16
+++ output_dir=outputs/adaptation/tinyllama/bias_only/sst2/size=8/rs=639
+++ '[' '!' -f outputs/adaptation/tinyllama/bias_only/sst2/size=8/rs=639/test_logits.csv ']'
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ for method in $methods
+++ total_train_samples=16
+++ output_dir=outputs/adaptation/tinyllama/dp_calibration/sst2/size=8/rs=923
+++ '[' '!' -f outputs/adaptation/tinyllama/dp_calibration/sst2/size=8/rs=923/test_logits.csv ']'
+++ for method in $methods
+++ total_train_samples=16
+++ output_dir=outputs/adaptation/tinyllama/temp_scaling/sst2/size=8/rs=923
+++ '[' '!' -f outputs/adaptation/tinyllama/temp_scaling/sst2/size=8/rs=923/test_logits.csv ']'
+++ for method in $methods
+++ total_train_samples=16
+++ output_dir=outputs/adaptation/tinyllama/bias_only/sst2/size=8/rs=923
+++ '[' '!' -f outputs/adaptation/tinyllama/bias_only/sst2/size=8/rs=923/test_logits.csv ']'
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ for method in $methods
+++ total_train_samples=16
+++ output_dir=outputs/adaptation/tinyllama/dp_calibration/sst2/size=8/rs=932
+++ '[' '!' -f outputs/adaptation/tinyllama/dp_calibration/sst2/size=8/rs=932/test_logits.csv ']'
+++ for method in $methods
+++ total_train_samples=16
+++ output_dir=outputs/adaptation/tinyllama/temp_scaling/sst2/size=8/rs=932
+++ '[' '!' -f outputs/adaptation/tinyllama/temp_scaling/sst2/size=8/rs=932/test_logits.csv ']'
+++ for method in $methods
+++ total_train_samples=16
+++ output_dir=outputs/adaptation/tinyllama/bias_only/sst2/size=8/rs=932
+++ '[' '!' -f outputs/adaptation/tinyllama/bias_only/sst2/size=8/rs=932/test_logits.csv ']'
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ for method in $methods
+++ total_train_samples=16
+++ output_dir=outputs/adaptation/tinyllama/dp_calibration/sst2/size=8/rs=6391
+++ '[' '!' -f outputs/adaptation/tinyllama/dp_calibration/sst2/size=8/rs=6391/test_logits.csv ']'
+++ for method in $methods
+++ total_train_samples=16
+++ output_dir=outputs/adaptation/tinyllama/temp_scaling/sst2/size=8/rs=6391
+++ '[' '!' -f outputs/adaptation/tinyllama/temp_scaling/sst2/size=8/rs=6391/test_logits.csv ']'
+++ for method in $methods
+++ total_train_samples=16
+++ output_dir=outputs/adaptation/tinyllama/bias_only/sst2/size=8/rs=6391
+++ '[' '!' -f outputs/adaptation/tinyllama/bias_only/sst2/size=8/rs=6391/test_logits.csv ']'
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ for method in $methods
+++ total_train_samples=16
+++ output_dir=outputs/adaptation/tinyllama/dp_calibration/sst2/size=8/rs=9322
+++ '[' '!' -f outputs/adaptation/tinyllama/dp_calibration/sst2/size=8/rs=9322/test_logits.csv ']'
+++ for method in $methods
+++ total_train_samples=16
+++ output_dir=outputs/adaptation/tinyllama/temp_scaling/sst2/size=8/rs=9322
+++ '[' '!' -f outputs/adaptation/tinyllama/temp_scaling/sst2/size=8/rs=9322/test_logits.csv ']'
+++ for method in $methods
+++ total_train_samples=16
+++ output_dir=outputs/adaptation/tinyllama/bias_only/sst2/size=8/rs=9322
+++ '[' '!' -f outputs/adaptation/tinyllama/bias_only/sst2/size=8/rs=9322/test_logits.csv ']'
+++ for size in ${dataset2samples[$dataset]}
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ for method in $methods
+++ total_train_samples=64
+++ output_dir=outputs/adaptation/tinyllama/dp_calibration/sst2/size=32/rs=1564
+++ '[' '!' -f outputs/adaptation/tinyllama/dp_calibration/sst2/size=32/rs=1564/test_logits.csv ']'
+++ for method in $methods
+++ total_train_samples=64
+++ output_dir=outputs/adaptation/tinyllama/temp_scaling/sst2/size=32/rs=1564
+++ '[' '!' -f outputs/adaptation/tinyllama/temp_scaling/sst2/size=32/rs=1564/test_logits.csv ']'
+++ for method in $methods
+++ total_train_samples=64
+++ output_dir=outputs/adaptation/tinyllama/bias_only/sst2/size=32/rs=1564
+++ '[' '!' -f outputs/adaptation/tinyllama/bias_only/sst2/size=32/rs=1564/test_logits.csv ']'
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ for method in $methods
+++ total_train_samples=64
+++ output_dir=outputs/adaptation/tinyllama/dp_calibration/sst2/size=32/rs=1738
+++ '[' '!' -f outputs/adaptation/tinyllama/dp_calibration/sst2/size=32/rs=1738/test_logits.csv ']'
+++ for method in $methods
+++ total_train_samples=64
+++ output_dir=outputs/adaptation/tinyllama/temp_scaling/sst2/size=32/rs=1738
+++ '[' '!' -f outputs/adaptation/tinyllama/temp_scaling/sst2/size=32/rs=1738/test_logits.csv ']'
+++ for method in $methods
+++ total_train_samples=64
+++ output_dir=outputs/adaptation/tinyllama/bias_only/sst2/size=32/rs=1738
+++ '[' '!' -f outputs/adaptation/tinyllama/bias_only/sst2/size=32/rs=1738/test_logits.csv ']'
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ for method in $methods
+++ total_train_samples=64
+++ output_dir=outputs/adaptation/tinyllama/dp_calibration/sst2/size=32/rs=1783
+++ '[' '!' -f outputs/adaptation/tinyllama/dp_calibration/sst2/size=32/rs=1783/test_logits.csv ']'
+++ for method in $methods
+++ total_train_samples=64
+++ output_dir=outputs/adaptation/tinyllama/temp_scaling/sst2/size=32/rs=1783
+++ '[' '!' -f outputs/adaptation/tinyllama/temp_scaling/sst2/size=32/rs=1783/test_logits.csv ']'
+++ for method in $methods
+++ total_train_samples=64
+++ output_dir=outputs/adaptation/tinyllama/bias_only/sst2/size=32/rs=1783
+++ '[' '!' -f outputs/adaptation/tinyllama/bias_only/sst2/size=32/rs=1783/test_logits.csv ']'
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ for method in $methods
+++ total_train_samples=64
+++ output_dir=outputs/adaptation/tinyllama/dp_calibration/sst2/size=32/rs=15641
+++ '[' '!' -f outputs/adaptation/tinyllama/dp_calibration/sst2/size=32/rs=15641/test_logits.csv ']'
+++ for method in $methods
+++ total_train_samples=64
+++ output_dir=outputs/adaptation/tinyllama/temp_scaling/sst2/size=32/rs=15641
+++ '[' '!' -f outputs/adaptation/tinyllama/temp_scaling/sst2/size=32/rs=15641/test_logits.csv ']'
+++ for method in $methods
+++ total_train_samples=64
+++ output_dir=outputs/adaptation/tinyllama/bias_only/sst2/size=32/rs=15641
+++ '[' '!' -f outputs/adaptation/tinyllama/bias_only/sst2/size=32/rs=15641/test_logits.csv ']'
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ for method in $methods
+++ total_train_samples=64
+++ output_dir=outputs/adaptation/tinyllama/dp_calibration/sst2/size=32/rs=17832
+++ '[' '!' -f outputs/adaptation/tinyllama/dp_calibration/sst2/size=32/rs=17832/test_logits.csv ']'
+++ for method in $methods
+++ total_train_samples=64
+++ output_dir=outputs/adaptation/tinyllama/temp_scaling/sst2/size=32/rs=17832
+++ '[' '!' -f outputs/adaptation/tinyllama/temp_scaling/sst2/size=32/rs=17832/test_logits.csv ']'
+++ for method in $methods
+++ total_train_samples=64
+++ output_dir=outputs/adaptation/tinyllama/bias_only/sst2/size=32/rs=17832
+++ '[' '!' -f outputs/adaptation/tinyllama/bias_only/sst2/size=32/rs=17832/test_logits.csv ']'
+++ for size in ${dataset2samples[$dataset]}
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ for method in $methods
+++ total_train_samples=1024
+++ output_dir=outputs/adaptation/tinyllama/dp_calibration/sst2/size=512/rs=111
+++ '[' '!' -f outputs/adaptation/tinyllama/dp_calibration/sst2/size=512/rs=111/test_logits.csv ']'
+++ for method in $methods
+++ total_train_samples=1024
+++ output_dir=outputs/adaptation/tinyllama/temp_scaling/sst2/size=512/rs=111
+++ '[' '!' -f outputs/adaptation/tinyllama/temp_scaling/sst2/size=512/rs=111/test_logits.csv ']'
+++ for method in $methods
+++ total_train_samples=1024
+++ output_dir=outputs/adaptation/tinyllama/bias_only/sst2/size=512/rs=111
+++ '[' '!' -f outputs/adaptation/tinyllama/bias_only/sst2/size=512/rs=111/test_logits.csv ']'
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ for method in $methods
+++ total_train_samples=1024
+++ output_dir=outputs/adaptation/tinyllama/dp_calibration/sst2/size=512/rs=121
+++ '[' '!' -f outputs/adaptation/tinyllama/dp_calibration/sst2/size=512/rs=121/test_logits.csv ']'
+++ for method in $methods
+++ total_train_samples=1024
+++ output_dir=outputs/adaptation/tinyllama/temp_scaling/sst2/size=512/rs=121
+++ '[' '!' -f outputs/adaptation/tinyllama/temp_scaling/sst2/size=512/rs=121/test_logits.csv ']'
+++ for method in $methods
+++ total_train_samples=1024
+++ output_dir=outputs/adaptation/tinyllama/bias_only/sst2/size=512/rs=121
+++ '[' '!' -f outputs/adaptation/tinyllama/bias_only/sst2/size=512/rs=121/test_logits.csv ']'
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ for method in $methods
+++ total_train_samples=1024
+++ output_dir=outputs/adaptation/tinyllama/dp_calibration/sst2/size=512/rs=767
+++ '[' '!' -f outputs/adaptation/tinyllama/dp_calibration/sst2/size=512/rs=767/test_logits.csv ']'
+++ for method in $methods
+++ total_train_samples=1024
+++ output_dir=outputs/adaptation/tinyllama/temp_scaling/sst2/size=512/rs=767
+++ '[' '!' -f outputs/adaptation/tinyllama/temp_scaling/sst2/size=512/rs=767/test_logits.csv ']'
+++ for method in $methods
+++ total_train_samples=1024
+++ output_dir=outputs/adaptation/tinyllama/bias_only/sst2/size=512/rs=767
+++ '[' '!' -f outputs/adaptation/tinyllama/bias_only/sst2/size=512/rs=767/test_logits.csv ']'
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ for method in $methods
+++ total_train_samples=1024
+++ output_dir=outputs/adaptation/tinyllama/dp_calibration/sst2/size=512/rs=890
+++ '[' '!' -f outputs/adaptation/tinyllama/dp_calibration/sst2/size=512/rs=890/test_logits.csv ']'
+++ for method in $methods
+++ total_train_samples=1024
+++ output_dir=outputs/adaptation/tinyllama/temp_scaling/sst2/size=512/rs=890
+++ '[' '!' -f outputs/adaptation/tinyllama/temp_scaling/sst2/size=512/rs=890/test_logits.csv ']'
+++ for method in $methods
+++ total_train_samples=1024
+++ output_dir=outputs/adaptation/tinyllama/bias_only/sst2/size=512/rs=890
+++ '[' '!' -f outputs/adaptation/tinyllama/bias_only/sst2/size=512/rs=890/test_logits.csv ']'
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ for method in $methods
+++ total_train_samples=1024
+++ output_dir=outputs/adaptation/tinyllama/dp_calibration/sst2/size=512/rs=999
+++ '[' '!' -f outputs/adaptation/tinyllama/dp_calibration/sst2/size=512/rs=999/test_logits.csv ']'
+++ for method in $methods
+++ total_train_samples=1024
+++ output_dir=outputs/adaptation/tinyllama/temp_scaling/sst2/size=512/rs=999
+++ '[' '!' -f outputs/adaptation/tinyllama/temp_scaling/sst2/size=512/rs=999/test_logits.csv ']'
+++ for method in $methods
+++ total_train_samples=1024
+++ output_dir=outputs/adaptation/tinyllama/bias_only/sst2/size=512/rs=999
+++ '[' '!' -f outputs/adaptation/tinyllama/bias_only/sst2/size=512/rs=999/test_logits.csv ']'
+++ for dataset in $DATASETS
+++ for size in ${dataset2samples[$dataset]}
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ for method in $methods
+++ total_train_samples=16
+++ output_dir=outputs/adaptation/tinyllama/dp_calibration/agnews/size=4/rs=295
+++ '[' '!' -f outputs/adaptation/tinyllama/dp_calibration/agnews/size=4/rs=295/test_logits.csv ']'
+++ for method in $methods
+++ total_train_samples=16
+++ output_dir=outputs/adaptation/tinyllama/temp_scaling/agnews/size=4/rs=295
+++ '[' '!' -f outputs/adaptation/tinyllama/temp_scaling/agnews/size=4/rs=295/test_logits.csv ']'
+++ for method in $methods
+++ total_train_samples=16
+++ output_dir=outputs/adaptation/tinyllama/bias_only/agnews/size=4/rs=295
+++ '[' '!' -f outputs/adaptation/tinyllama/bias_only/agnews/size=4/rs=295/test_logits.csv ']'
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ for method in $methods
+++ total_train_samples=16
+++ output_dir=outputs/adaptation/tinyllama/dp_calibration/agnews/size=4/rs=926
+++ '[' '!' -f outputs/adaptation/tinyllama/dp_calibration/agnews/size=4/rs=926/test_logits.csv ']'
+++ for method in $methods
+++ total_train_samples=16
+++ output_dir=outputs/adaptation/tinyllama/temp_scaling/agnews/size=4/rs=926
+++ '[' '!' -f outputs/adaptation/tinyllama/temp_scaling/agnews/size=4/rs=926/test_logits.csv ']'
+++ for method in $methods
+++ total_train_samples=16
+++ output_dir=outputs/adaptation/tinyllama/bias_only/agnews/size=4/rs=926
+++ '[' '!' -f outputs/adaptation/tinyllama/bias_only/agnews/size=4/rs=926/test_logits.csv ']'
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ for method in $methods
+++ total_train_samples=16
+++ output_dir=outputs/adaptation/tinyllama/dp_calibration/agnews/size=4/rs=962
+++ '[' '!' -f outputs/adaptation/tinyllama/dp_calibration/agnews/size=4/rs=962/test_logits.csv ']'
+++ for method in $methods
+++ total_train_samples=16
+++ output_dir=outputs/adaptation/tinyllama/temp_scaling/agnews/size=4/rs=962
+++ '[' '!' -f outputs/adaptation/tinyllama/temp_scaling/agnews/size=4/rs=962/test_logits.csv ']'
+++ for method in $methods
+++ total_train_samples=16
+++ output_dir=outputs/adaptation/tinyllama/bias_only/agnews/size=4/rs=962
+++ '[' '!' -f outputs/adaptation/tinyllama/bias_only/agnews/size=4/rs=962/test_logits.csv ']'
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ for method in $methods
+++ total_train_samples=16
+++ output_dir=outputs/adaptation/tinyllama/dp_calibration/agnews/size=4/rs=2951
+++ '[' '!' -f outputs/adaptation/tinyllama/dp_calibration/agnews/size=4/rs=2951/test_logits.csv ']'
+++ for method in $methods
+++ total_train_samples=16
+++ output_dir=outputs/adaptation/tinyllama/temp_scaling/agnews/size=4/rs=2951
+++ '[' '!' -f outputs/adaptation/tinyllama/temp_scaling/agnews/size=4/rs=2951/test_logits.csv ']'
+++ for method in $methods
+++ total_train_samples=16
+++ output_dir=outputs/adaptation/tinyllama/bias_only/agnews/size=4/rs=2951
+++ '[' '!' -f outputs/adaptation/tinyllama/bias_only/agnews/size=4/rs=2951/test_logits.csv ']'
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ for method in $methods
+++ total_train_samples=16
+++ output_dir=outputs/adaptation/tinyllama/dp_calibration/agnews/size=4/rs=9622
+++ '[' '!' -f outputs/adaptation/tinyllama/dp_calibration/agnews/size=4/rs=9622/test_logits.csv ']'
+++ for method in $methods
+++ total_train_samples=16
+++ output_dir=outputs/adaptation/tinyllama/temp_scaling/agnews/size=4/rs=9622
+++ '[' '!' -f outputs/adaptation/tinyllama/temp_scaling/agnews/size=4/rs=9622/test_logits.csv ']'
+++ for method in $methods
+++ total_train_samples=16
+++ output_dir=outputs/adaptation/tinyllama/bias_only/agnews/size=4/rs=9622
+++ '[' '!' -f outputs/adaptation/tinyllama/bias_only/agnews/size=4/rs=9622/test_logits.csv ']'
+++ for size in ${dataset2samples[$dataset]}
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ for method in $methods
+++ total_train_samples=64
+++ output_dir=outputs/adaptation/tinyllama/dp_calibration/agnews/size=16/rs=738
+++ '[' '!' -f outputs/adaptation/tinyllama/dp_calibration/agnews/size=16/rs=738/test_logits.csv ']'
+++ for method in $methods
+++ total_train_samples=64
+++ output_dir=outputs/adaptation/tinyllama/temp_scaling/agnews/size=16/rs=738
+++ '[' '!' -f outputs/adaptation/tinyllama/temp_scaling/agnews/size=16/rs=738/test_logits.csv ']'
+++ for method in $methods
+++ total_train_samples=64
+++ output_dir=outputs/adaptation/tinyllama/bias_only/agnews/size=16/rs=738
+++ '[' '!' -f outputs/adaptation/tinyllama/bias_only/agnews/size=16/rs=738/test_logits.csv ']'
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ for method in $methods
+++ total_train_samples=64
+++ output_dir=outputs/adaptation/tinyllama/dp_calibration/agnews/size=16/rs=564
+++ '[' '!' -f outputs/adaptation/tinyllama/dp_calibration/agnews/size=16/rs=564/test_logits.csv ']'
+++ for method in $methods
+++ total_train_samples=64
+++ output_dir=outputs/adaptation/tinyllama/temp_scaling/agnews/size=16/rs=564
+++ '[' '!' -f outputs/adaptation/tinyllama/temp_scaling/agnews/size=16/rs=564/test_logits.csv ']'
+++ for method in $methods
+++ total_train_samples=64
+++ output_dir=outputs/adaptation/tinyllama/bias_only/agnews/size=16/rs=564
+++ '[' '!' -f outputs/adaptation/tinyllama/bias_only/agnews/size=16/rs=564/test_logits.csv ']'
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ for method in $methods
+++ total_train_samples=64
+++ output_dir=outputs/adaptation/tinyllama/dp_calibration/agnews/size=16/rs=783
+++ '[' '!' -f outputs/adaptation/tinyllama/dp_calibration/agnews/size=16/rs=783/test_logits.csv ']'
+++ for method in $methods
+++ total_train_samples=64
+++ output_dir=outputs/adaptation/tinyllama/temp_scaling/agnews/size=16/rs=783
+++ '[' '!' -f outputs/adaptation/tinyllama/temp_scaling/agnews/size=16/rs=783/test_logits.csv ']'
+++ for method in $methods
+++ total_train_samples=64
+++ output_dir=outputs/adaptation/tinyllama/bias_only/agnews/size=16/rs=783
+++ '[' '!' -f outputs/adaptation/tinyllama/bias_only/agnews/size=16/rs=783/test_logits.csv ']'
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ for method in $methods
+++ total_train_samples=64
+++ output_dir=outputs/adaptation/tinyllama/dp_calibration/agnews/size=16/rs=5641
+++ '[' '!' -f outputs/adaptation/tinyllama/dp_calibration/agnews/size=16/rs=5641/test_logits.csv ']'
+++ for method in $methods
+++ total_train_samples=64
+++ output_dir=outputs/adaptation/tinyllama/temp_scaling/agnews/size=16/rs=5641
+++ '[' '!' -f outputs/adaptation/tinyllama/temp_scaling/agnews/size=16/rs=5641/test_logits.csv ']'
+++ for method in $methods
+++ total_train_samples=64
+++ output_dir=outputs/adaptation/tinyllama/bias_only/agnews/size=16/rs=5641
+++ '[' '!' -f outputs/adaptation/tinyllama/bias_only/agnews/size=16/rs=5641/test_logits.csv ']'
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ for method in $methods
+++ total_train_samples=64
+++ output_dir=outputs/adaptation/tinyllama/dp_calibration/agnews/size=16/rs=7832
+++ '[' '!' -f outputs/adaptation/tinyllama/dp_calibration/agnews/size=16/rs=7832/test_logits.csv ']'
+++ for method in $methods
+++ total_train_samples=64
+++ output_dir=outputs/adaptation/tinyllama/temp_scaling/agnews/size=16/rs=7832
+++ '[' '!' -f outputs/adaptation/tinyllama/temp_scaling/agnews/size=16/rs=7832/test_logits.csv ']'
+++ for method in $methods
+++ total_train_samples=64
+++ output_dir=outputs/adaptation/tinyllama/bias_only/agnews/size=16/rs=7832
+++ '[' '!' -f outputs/adaptation/tinyllama/bias_only/agnews/size=16/rs=7832/test_logits.csv ']'
+++ for size in ${dataset2samples[$dataset]}
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ for method in $methods
+++ total_train_samples=1024
+++ output_dir=outputs/adaptation/tinyllama/dp_calibration/agnews/size=256/rs=493
+++ '[' '!' -f outputs/adaptation/tinyllama/dp_calibration/agnews/size=256/rs=493/test_logits.csv ']'
+++ for method in $methods
+++ total_train_samples=1024
+++ output_dir=outputs/adaptation/tinyllama/temp_scaling/agnews/size=256/rs=493
+++ '[' '!' -f outputs/adaptation/tinyllama/temp_scaling/agnews/size=256/rs=493/test_logits.csv ']'
+++ for method in $methods
+++ total_train_samples=1024
+++ output_dir=outputs/adaptation/tinyllama/bias_only/agnews/size=256/rs=493
+++ '[' '!' -f outputs/adaptation/tinyllama/bias_only/agnews/size=256/rs=493/test_logits.csv ']'
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ for method in $methods
+++ total_train_samples=1024
+++ output_dir=outputs/adaptation/tinyllama/dp_calibration/agnews/size=256/rs=821
+++ '[' '!' -f outputs/adaptation/tinyllama/dp_calibration/agnews/size=256/rs=821/test_logits.csv ']'
+++ for method in $methods
+++ total_train_samples=1024
+++ output_dir=outputs/adaptation/tinyllama/temp_scaling/agnews/size=256/rs=821
+++ '[' '!' -f outputs/adaptation/tinyllama/temp_scaling/agnews/size=256/rs=821/test_logits.csv ']'
+++ for method in $methods
+++ total_train_samples=1024
+++ output_dir=outputs/adaptation/tinyllama/bias_only/agnews/size=256/rs=821
+++ '[' '!' -f outputs/adaptation/tinyllama/bias_only/agnews/size=256/rs=821/test_logits.csv ']'
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ for method in $methods
+++ total_train_samples=1024
+++ output_dir=outputs/adaptation/tinyllama/dp_calibration/agnews/size=256/rs=812
+++ '[' '!' -f outputs/adaptation/tinyllama/dp_calibration/agnews/size=256/rs=812/test_logits.csv ']'
+++ for method in $methods
+++ total_train_samples=1024
+++ output_dir=outputs/adaptation/tinyllama/temp_scaling/agnews/size=256/rs=812
+++ '[' '!' -f outputs/adaptation/tinyllama/temp_scaling/agnews/size=256/rs=812/test_logits.csv ']'
+++ for method in $methods
+++ total_train_samples=1024
+++ output_dir=outputs/adaptation/tinyllama/bias_only/agnews/size=256/rs=812
+++ '[' '!' -f outputs/adaptation/tinyllama/bias_only/agnews/size=256/rs=812/test_logits.csv ']'
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ for method in $methods
+++ total_train_samples=1024
+++ output_dir=outputs/adaptation/tinyllama/dp_calibration/agnews/size=256/rs=4931
+++ '[' '!' -f outputs/adaptation/tinyllama/dp_calibration/agnews/size=256/rs=4931/test_logits.csv ']'
+++ for method in $methods
+++ total_train_samples=1024
+++ output_dir=outputs/adaptation/tinyllama/temp_scaling/agnews/size=256/rs=4931
+++ '[' '!' -f outputs/adaptation/tinyllama/temp_scaling/agnews/size=256/rs=4931/test_logits.csv ']'
+++ for method in $methods
+++ total_train_samples=1024
+++ output_dir=outputs/adaptation/tinyllama/bias_only/agnews/size=256/rs=4931
+++ '[' '!' -f outputs/adaptation/tinyllama/bias_only/agnews/size=256/rs=4931/test_logits.csv ']'
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ for method in $methods
+++ total_train_samples=1024
+++ output_dir=outputs/adaptation/tinyllama/dp_calibration/agnews/size=256/rs=8212
+++ '[' '!' -f outputs/adaptation/tinyllama/dp_calibration/agnews/size=256/rs=8212/test_logits.csv ']'
+++ for method in $methods
+++ total_train_samples=1024
+++ output_dir=outputs/adaptation/tinyllama/temp_scaling/agnews/size=256/rs=8212
+++ '[' '!' -f outputs/adaptation/tinyllama/temp_scaling/agnews/size=256/rs=8212/test_logits.csv ']'
+++ for method in $methods
+++ total_train_samples=1024
+++ output_dir=outputs/adaptation/tinyllama/bias_only/agnews/size=256/rs=8212
+++ '[' '!' -f outputs/adaptation/tinyllama/bias_only/agnews/size=256/rs=8212/test_logits.csv ']'
+++ for dataset in $DATASETS
+++ for size in ${dataset2samples[$dataset]}
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ for method in $methods
+++ total_train_samples=28
+++ output_dir=outputs/adaptation/tinyllama/dp_calibration/dbpedia/size=2/rs=435
+++ '[' '!' -f outputs/adaptation/tinyllama/dp_calibration/dbpedia/size=2/rs=435/test_logits.csv ']'
+++ for method in $methods
+++ total_train_samples=28
+++ output_dir=outputs/adaptation/tinyllama/temp_scaling/dbpedia/size=2/rs=435
+++ '[' '!' -f outputs/adaptation/tinyllama/temp_scaling/dbpedia/size=2/rs=435/test_logits.csv ']'
+++ for method in $methods
+++ total_train_samples=28
+++ output_dir=outputs/adaptation/tinyllama/bias_only/dbpedia/size=2/rs=435
+++ '[' '!' -f outputs/adaptation/tinyllama/bias_only/dbpedia/size=2/rs=435/test_logits.csv ']'
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ for method in $methods
+++ total_train_samples=28
+++ output_dir=outputs/adaptation/tinyllama/dp_calibration/dbpedia/size=2/rs=927
+++ '[' '!' -f outputs/adaptation/tinyllama/dp_calibration/dbpedia/size=2/rs=927/test_logits.csv ']'
+++ for method in $methods
+++ total_train_samples=28
+++ output_dir=outputs/adaptation/tinyllama/temp_scaling/dbpedia/size=2/rs=927
+++ '[' '!' -f outputs/adaptation/tinyllama/temp_scaling/dbpedia/size=2/rs=927/test_logits.csv ']'
+++ for method in $methods
+++ total_train_samples=28
+++ output_dir=outputs/adaptation/tinyllama/bias_only/dbpedia/size=2/rs=927
+++ '[' '!' -f outputs/adaptation/tinyllama/bias_only/dbpedia/size=2/rs=927/test_logits.csv ']'
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ for method in $methods
+++ total_train_samples=28
+++ output_dir=outputs/adaptation/tinyllama/dp_calibration/dbpedia/size=2/rs=972
+++ '[' '!' -f outputs/adaptation/tinyllama/dp_calibration/dbpedia/size=2/rs=972/test_logits.csv ']'
+++ for method in $methods
+++ total_train_samples=28
+++ output_dir=outputs/adaptation/tinyllama/temp_scaling/dbpedia/size=2/rs=972
+++ '[' '!' -f outputs/adaptation/tinyllama/temp_scaling/dbpedia/size=2/rs=972/test_logits.csv ']'
+++ for method in $methods
+++ total_train_samples=28
+++ output_dir=outputs/adaptation/tinyllama/bias_only/dbpedia/size=2/rs=972
+++ '[' '!' -f outputs/adaptation/tinyllama/bias_only/dbpedia/size=2/rs=972/test_logits.csv ']'
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ for method in $methods
+++ total_train_samples=28
+++ output_dir=outputs/adaptation/tinyllama/dp_calibration/dbpedia/size=2/rs=4351
+++ '[' '!' -f outputs/adaptation/tinyllama/dp_calibration/dbpedia/size=2/rs=4351/test_logits.csv ']'
+++ for method in $methods
+++ total_train_samples=28
+++ output_dir=outputs/adaptation/tinyllama/temp_scaling/dbpedia/size=2/rs=4351
+++ '[' '!' -f outputs/adaptation/tinyllama/temp_scaling/dbpedia/size=2/rs=4351/test_logits.csv ']'
+++ for method in $methods
+++ total_train_samples=28
+++ output_dir=outputs/adaptation/tinyllama/bias_only/dbpedia/size=2/rs=4351
+++ '[' '!' -f outputs/adaptation/tinyllama/bias_only/dbpedia/size=2/rs=4351/test_logits.csv ']'
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ for method in $methods
+++ total_train_samples=28
+++ output_dir=outputs/adaptation/tinyllama/dp_calibration/dbpedia/size=2/rs=9722
+++ '[' '!' -f outputs/adaptation/tinyllama/dp_calibration/dbpedia/size=2/rs=9722/test_logits.csv ']'
+++ for method in $methods
+++ total_train_samples=28
+++ output_dir=outputs/adaptation/tinyllama/temp_scaling/dbpedia/size=2/rs=9722
+++ '[' '!' -f outputs/adaptation/tinyllama/temp_scaling/dbpedia/size=2/rs=9722/test_logits.csv ']'
+++ for method in $methods
+++ total_train_samples=28
+++ output_dir=outputs/adaptation/tinyllama/bias_only/dbpedia/size=2/rs=9722
+++ '[' '!' -f outputs/adaptation/tinyllama/bias_only/dbpedia/size=2/rs=9722/test_logits.csv ']'
+++ for size in ${dataset2samples[$dataset]}
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ for method in $methods
+++ total_train_samples=112
+++ output_dir=outputs/adaptation/tinyllama/dp_calibration/dbpedia/size=8/rs=338
+++ '[' '!' -f outputs/adaptation/tinyllama/dp_calibration/dbpedia/size=8/rs=338/test_logits.csv ']'
+++ for method in $methods
+++ total_train_samples=112
+++ output_dir=outputs/adaptation/tinyllama/temp_scaling/dbpedia/size=8/rs=338
+++ '[' '!' -f outputs/adaptation/tinyllama/temp_scaling/dbpedia/size=8/rs=338/test_logits.csv ']'
+++ for method in $methods
+++ total_train_samples=112
+++ output_dir=outputs/adaptation/tinyllama/bias_only/dbpedia/size=8/rs=338
+++ '[' '!' -f outputs/adaptation/tinyllama/bias_only/dbpedia/size=8/rs=338/test_logits.csv ']'
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ for method in $methods
+++ total_train_samples=112
+++ output_dir=outputs/adaptation/tinyllama/dp_calibration/dbpedia/size=8/rs=364
+++ '[' '!' -f outputs/adaptation/tinyllama/dp_calibration/dbpedia/size=8/rs=364/test_logits.csv ']'
+++ for method in $methods
+++ total_train_samples=112
+++ output_dir=outputs/adaptation/tinyllama/temp_scaling/dbpedia/size=8/rs=364
+++ '[' '!' -f outputs/adaptation/tinyllama/temp_scaling/dbpedia/size=8/rs=364/test_logits.csv ']'
+++ for method in $methods
+++ total_train_samples=112
+++ output_dir=outputs/adaptation/tinyllama/bias_only/dbpedia/size=8/rs=364
+++ '[' '!' -f outputs/adaptation/tinyllama/bias_only/dbpedia/size=8/rs=364/test_logits.csv ']'
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ for method in $methods
+++ total_train_samples=112
+++ output_dir=outputs/adaptation/tinyllama/dp_calibration/dbpedia/size=8/rs=383
+++ '[' '!' -f outputs/adaptation/tinyllama/dp_calibration/dbpedia/size=8/rs=383/test_logits.csv ']'
+++ for method in $methods
+++ total_train_samples=112
+++ output_dir=outputs/adaptation/tinyllama/temp_scaling/dbpedia/size=8/rs=383
+++ '[' '!' -f outputs/adaptation/tinyllama/temp_scaling/dbpedia/size=8/rs=383/test_logits.csv ']'
+++ for method in $methods
+++ total_train_samples=112
+++ output_dir=outputs/adaptation/tinyllama/bias_only/dbpedia/size=8/rs=383
+++ '[' '!' -f outputs/adaptation/tinyllama/bias_only/dbpedia/size=8/rs=383/test_logits.csv ']'
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ for method in $methods
+++ total_train_samples=112
+++ output_dir=outputs/adaptation/tinyllama/dp_calibration/dbpedia/size=8/rs=3641
+++ '[' '!' -f outputs/adaptation/tinyllama/dp_calibration/dbpedia/size=8/rs=3641/test_logits.csv ']'
+++ for method in $methods
+++ total_train_samples=112
+++ output_dir=outputs/adaptation/tinyllama/temp_scaling/dbpedia/size=8/rs=3641
+++ '[' '!' -f outputs/adaptation/tinyllama/temp_scaling/dbpedia/size=8/rs=3641/test_logits.csv ']'
+++ for method in $methods
+++ total_train_samples=112
+++ output_dir=outputs/adaptation/tinyllama/bias_only/dbpedia/size=8/rs=3641
+++ '[' '!' -f outputs/adaptation/tinyllama/bias_only/dbpedia/size=8/rs=3641/test_logits.csv ']'
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ for method in $methods
+++ total_train_samples=112
+++ output_dir=outputs/adaptation/tinyllama/dp_calibration/dbpedia/size=8/rs=3832
+++ '[' '!' -f outputs/adaptation/tinyllama/dp_calibration/dbpedia/size=8/rs=3832/test_logits.csv ']'
+++ for method in $methods
+++ total_train_samples=112
+++ output_dir=outputs/adaptation/tinyllama/temp_scaling/dbpedia/size=8/rs=3832
+++ '[' '!' -f outputs/adaptation/tinyllama/temp_scaling/dbpedia/size=8/rs=3832/test_logits.csv ']'
+++ for method in $methods
+++ total_train_samples=112
+++ output_dir=outputs/adaptation/tinyllama/bias_only/dbpedia/size=8/rs=3832
+++ '[' '!' -f outputs/adaptation/tinyllama/bias_only/dbpedia/size=8/rs=3832/test_logits.csv ']'
+++ for size in ${dataset2samples[$dataset]}
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ for method in $methods
+++ total_train_samples=1792
+++ output_dir=outputs/adaptation/tinyllama/dp_calibration/dbpedia/size=128/rs=129
+++ '[' '!' -f outputs/adaptation/tinyllama/dp_calibration/dbpedia/size=128/rs=129/test_logits.csv ']'
+++ for method in $methods
+++ total_train_samples=1792
+++ output_dir=outputs/adaptation/tinyllama/temp_scaling/dbpedia/size=128/rs=129
+++ '[' '!' -f outputs/adaptation/tinyllama/temp_scaling/dbpedia/size=128/rs=129/test_logits.csv ']'
+++ for method in $methods
+++ total_train_samples=1792
+++ output_dir=outputs/adaptation/tinyllama/bias_only/dbpedia/size=128/rs=129
+++ '[' '!' -f outputs/adaptation/tinyllama/bias_only/dbpedia/size=128/rs=129/test_logits.csv ']'
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ for method in $methods
+++ total_train_samples=1792
+++ output_dir=outputs/adaptation/tinyllama/dp_calibration/dbpedia/size=128/rs=131
+++ '[' '!' -f outputs/adaptation/tinyllama/dp_calibration/dbpedia/size=128/rs=131/test_logits.csv ']'
+++ for method in $methods
+++ total_train_samples=1792
+++ output_dir=outputs/adaptation/tinyllama/temp_scaling/dbpedia/size=128/rs=131
+++ '[' '!' -f outputs/adaptation/tinyllama/temp_scaling/dbpedia/size=128/rs=131/test_logits.csv ']'
+++ for method in $methods
+++ total_train_samples=1792
+++ output_dir=outputs/adaptation/tinyllama/bias_only/dbpedia/size=128/rs=131
+++ '[' '!' -f outputs/adaptation/tinyllama/bias_only/dbpedia/size=128/rs=131/test_logits.csv ']'
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ for method in $methods
+++ total_train_samples=1792
+++ output_dir=outputs/adaptation/tinyllama/dp_calibration/dbpedia/size=128/rs=543
+++ '[' '!' -f outputs/adaptation/tinyllama/dp_calibration/dbpedia/size=128/rs=543/test_logits.csv ']'
+++ for method in $methods
+++ total_train_samples=1792
+++ output_dir=outputs/adaptation/tinyllama/temp_scaling/dbpedia/size=128/rs=543
+++ '[' '!' -f outputs/adaptation/tinyllama/temp_scaling/dbpedia/size=128/rs=543/test_logits.csv ']'
+++ for method in $methods
+++ total_train_samples=1792
+++ output_dir=outputs/adaptation/tinyllama/bias_only/dbpedia/size=128/rs=543
+++ '[' '!' -f outputs/adaptation/tinyllama/bias_only/dbpedia/size=128/rs=543/test_logits.csv ']'
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ for method in $methods
+++ total_train_samples=1792
+++ output_dir=outputs/adaptation/tinyllama/dp_calibration/dbpedia/size=128/rs=878
+++ '[' '!' -f outputs/adaptation/tinyllama/dp_calibration/dbpedia/size=128/rs=878/test_logits.csv ']'
+++ for method in $methods
+++ total_train_samples=1792
+++ output_dir=outputs/adaptation/tinyllama/temp_scaling/dbpedia/size=128/rs=878
+++ '[' '!' -f outputs/adaptation/tinyllama/temp_scaling/dbpedia/size=128/rs=878/test_logits.csv ']'
+++ for method in $methods
+++ total_train_samples=1792
+++ output_dir=outputs/adaptation/tinyllama/bias_only/dbpedia/size=128/rs=878
+++ '[' '!' -f outputs/adaptation/tinyllama/bias_only/dbpedia/size=128/rs=878/test_logits.csv ']'
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ for method in $methods
+++ total_train_samples=1792
+++ output_dir=outputs/adaptation/tinyllama/dp_calibration/dbpedia/size=128/rs=909
+++ '[' '!' -f outputs/adaptation/tinyllama/dp_calibration/dbpedia/size=128/rs=909/test_logits.csv ']'
+++ for method in $methods
+++ total_train_samples=1792
+++ output_dir=outputs/adaptation/tinyllama/temp_scaling/dbpedia/size=128/rs=909
+++ '[' '!' -f outputs/adaptation/tinyllama/temp_scaling/dbpedia/size=128/rs=909/test_logits.csv ']'
+++ for method in $methods
+++ total_train_samples=1792
+++ output_dir=outputs/adaptation/tinyllama/bias_only/dbpedia/size=128/rs=909
+++ '[' '!' -f outputs/adaptation/tinyllama/bias_only/dbpedia/size=128/rs=909/test_logits.csv ']'
+++ for dataset in $DATASETS
+++ for size in ${dataset2samples[$dataset]}
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ for method in $methods
+++ total_train_samples=40
+++ output_dir=outputs/adaptation/tinyllama/dp_calibration/20newsgroups/size=2/rs=435
+++ '[' '!' -f outputs/adaptation/tinyllama/dp_calibration/20newsgroups/size=2/rs=435/test_logits.csv ']'
+++ for method in $methods
+++ total_train_samples=40
+++ output_dir=outputs/adaptation/tinyllama/temp_scaling/20newsgroups/size=2/rs=435
+++ '[' '!' -f outputs/adaptation/tinyllama/temp_scaling/20newsgroups/size=2/rs=435/test_logits.csv ']'
+++ for method in $methods
+++ total_train_samples=40
+++ output_dir=outputs/adaptation/tinyllama/bias_only/20newsgroups/size=2/rs=435
+++ '[' '!' -f outputs/adaptation/tinyllama/bias_only/20newsgroups/size=2/rs=435/test_logits.csv ']'
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ for method in $methods
+++ total_train_samples=40
+++ output_dir=outputs/adaptation/tinyllama/dp_calibration/20newsgroups/size=2/rs=927
+++ '[' '!' -f outputs/adaptation/tinyllama/dp_calibration/20newsgroups/size=2/rs=927/test_logits.csv ']'
+++ for method in $methods
+++ total_train_samples=40
+++ output_dir=outputs/adaptation/tinyllama/temp_scaling/20newsgroups/size=2/rs=927
+++ '[' '!' -f outputs/adaptation/tinyllama/temp_scaling/20newsgroups/size=2/rs=927/test_logits.csv ']'
+++ for method in $methods
+++ total_train_samples=40
+++ output_dir=outputs/adaptation/tinyllama/bias_only/20newsgroups/size=2/rs=927
+++ '[' '!' -f outputs/adaptation/tinyllama/bias_only/20newsgroups/size=2/rs=927/test_logits.csv ']'
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ for method in $methods
+++ total_train_samples=40
+++ output_dir=outputs/adaptation/tinyllama/dp_calibration/20newsgroups/size=2/rs=972
+++ '[' '!' -f outputs/adaptation/tinyllama/dp_calibration/20newsgroups/size=2/rs=972/test_logits.csv ']'
+++ for method in $methods
+++ total_train_samples=40
+++ output_dir=outputs/adaptation/tinyllama/temp_scaling/20newsgroups/size=2/rs=972
+++ '[' '!' -f outputs/adaptation/tinyllama/temp_scaling/20newsgroups/size=2/rs=972/test_logits.csv ']'
+++ for method in $methods
+++ total_train_samples=40
+++ output_dir=outputs/adaptation/tinyllama/bias_only/20newsgroups/size=2/rs=972
+++ '[' '!' -f outputs/adaptation/tinyllama/bias_only/20newsgroups/size=2/rs=972/test_logits.csv ']'
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ for method in $methods
+++ total_train_samples=40
+++ output_dir=outputs/adaptation/tinyllama/dp_calibration/20newsgroups/size=2/rs=4351
+++ '[' '!' -f outputs/adaptation/tinyllama/dp_calibration/20newsgroups/size=2/rs=4351/test_logits.csv ']'
+++ for method in $methods
+++ total_train_samples=40
+++ output_dir=outputs/adaptation/tinyllama/temp_scaling/20newsgroups/size=2/rs=4351
+++ '[' '!' -f outputs/adaptation/tinyllama/temp_scaling/20newsgroups/size=2/rs=4351/test_logits.csv ']'
+++ for method in $methods
+++ total_train_samples=40
+++ output_dir=outputs/adaptation/tinyllama/bias_only/20newsgroups/size=2/rs=4351
+++ '[' '!' -f outputs/adaptation/tinyllama/bias_only/20newsgroups/size=2/rs=4351/test_logits.csv ']'
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ for method in $methods
+++ total_train_samples=40
+++ output_dir=outputs/adaptation/tinyllama/dp_calibration/20newsgroups/size=2/rs=9722
+++ '[' '!' -f outputs/adaptation/tinyllama/dp_calibration/20newsgroups/size=2/rs=9722/test_logits.csv ']'
+++ for method in $methods
+++ total_train_samples=40
+++ output_dir=outputs/adaptation/tinyllama/temp_scaling/20newsgroups/size=2/rs=9722
+++ '[' '!' -f outputs/adaptation/tinyllama/temp_scaling/20newsgroups/size=2/rs=9722/test_logits.csv ']'
+++ for method in $methods
+++ total_train_samples=40
+++ output_dir=outputs/adaptation/tinyllama/bias_only/20newsgroups/size=2/rs=9722
+++ '[' '!' -f outputs/adaptation/tinyllama/bias_only/20newsgroups/size=2/rs=9722/test_logits.csv ']'
+++ for size in ${dataset2samples[$dataset]}
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ for method in $methods
+++ total_train_samples=160
+++ output_dir=outputs/adaptation/tinyllama/dp_calibration/20newsgroups/size=8/rs=338
+++ '[' '!' -f outputs/adaptation/tinyllama/dp_calibration/20newsgroups/size=8/rs=338/test_logits.csv ']'
+++ for method in $methods
+++ total_train_samples=160
+++ output_dir=outputs/adaptation/tinyllama/temp_scaling/20newsgroups/size=8/rs=338
+++ '[' '!' -f outputs/adaptation/tinyllama/temp_scaling/20newsgroups/size=8/rs=338/test_logits.csv ']'
+++ for method in $methods
+++ total_train_samples=160
+++ output_dir=outputs/adaptation/tinyllama/bias_only/20newsgroups/size=8/rs=338
+++ '[' '!' -f outputs/adaptation/tinyllama/bias_only/20newsgroups/size=8/rs=338/test_logits.csv ']'
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ for method in $methods
+++ total_train_samples=160
+++ output_dir=outputs/adaptation/tinyllama/dp_calibration/20newsgroups/size=8/rs=364
+++ '[' '!' -f outputs/adaptation/tinyllama/dp_calibration/20newsgroups/size=8/rs=364/test_logits.csv ']'
+++ for method in $methods
+++ total_train_samples=160
+++ output_dir=outputs/adaptation/tinyllama/temp_scaling/20newsgroups/size=8/rs=364
+++ '[' '!' -f outputs/adaptation/tinyllama/temp_scaling/20newsgroups/size=8/rs=364/test_logits.csv ']'
+++ for method in $methods
+++ total_train_samples=160
+++ output_dir=outputs/adaptation/tinyllama/bias_only/20newsgroups/size=8/rs=364
+++ '[' '!' -f outputs/adaptation/tinyllama/bias_only/20newsgroups/size=8/rs=364/test_logits.csv ']'
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ for method in $methods
+++ total_train_samples=160
+++ output_dir=outputs/adaptation/tinyllama/dp_calibration/20newsgroups/size=8/rs=383
+++ '[' '!' -f outputs/adaptation/tinyllama/dp_calibration/20newsgroups/size=8/rs=383/test_logits.csv ']'
+++ for method in $methods
+++ total_train_samples=160
+++ output_dir=outputs/adaptation/tinyllama/temp_scaling/20newsgroups/size=8/rs=383
+++ '[' '!' -f outputs/adaptation/tinyllama/temp_scaling/20newsgroups/size=8/rs=383/test_logits.csv ']'
+++ for method in $methods
+++ total_train_samples=160
+++ output_dir=outputs/adaptation/tinyllama/bias_only/20newsgroups/size=8/rs=383
+++ '[' '!' -f outputs/adaptation/tinyllama/bias_only/20newsgroups/size=8/rs=383/test_logits.csv ']'
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ for method in $methods
+++ total_train_samples=160
+++ output_dir=outputs/adaptation/tinyllama/dp_calibration/20newsgroups/size=8/rs=3641
+++ '[' '!' -f outputs/adaptation/tinyllama/dp_calibration/20newsgroups/size=8/rs=3641/test_logits.csv ']'
+++ for method in $methods
+++ total_train_samples=160
+++ output_dir=outputs/adaptation/tinyllama/temp_scaling/20newsgroups/size=8/rs=3641
+++ '[' '!' -f outputs/adaptation/tinyllama/temp_scaling/20newsgroups/size=8/rs=3641/test_logits.csv ']'
+++ for method in $methods
+++ total_train_samples=160
+++ output_dir=outputs/adaptation/tinyllama/bias_only/20newsgroups/size=8/rs=3641
+++ '[' '!' -f outputs/adaptation/tinyllama/bias_only/20newsgroups/size=8/rs=3641/test_logits.csv ']'
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ for method in $methods
+++ total_train_samples=160
+++ output_dir=outputs/adaptation/tinyllama/dp_calibration/20newsgroups/size=8/rs=3832
+++ '[' '!' -f outputs/adaptation/tinyllama/dp_calibration/20newsgroups/size=8/rs=3832/test_logits.csv ']'
+++ for method in $methods
+++ total_train_samples=160
+++ output_dir=outputs/adaptation/tinyllama/temp_scaling/20newsgroups/size=8/rs=3832
+++ '[' '!' -f outputs/adaptation/tinyllama/temp_scaling/20newsgroups/size=8/rs=3832/test_logits.csv ']'
+++ for method in $methods
+++ total_train_samples=160
+++ output_dir=outputs/adaptation/tinyllama/bias_only/20newsgroups/size=8/rs=3832
+++ '[' '!' -f outputs/adaptation/tinyllama/bias_only/20newsgroups/size=8/rs=3832/test_logits.csv ']'
+++ for size in ${dataset2samples[$dataset]}
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ for method in $methods
+++ total_train_samples=2560
+++ output_dir=outputs/adaptation/tinyllama/dp_calibration/20newsgroups/size=128/rs=129
+++ '[' '!' -f outputs/adaptation/tinyllama/dp_calibration/20newsgroups/size=128/rs=129/test_logits.csv ']'
+++ for method in $methods
+++ total_train_samples=2560
+++ output_dir=outputs/adaptation/tinyllama/temp_scaling/20newsgroups/size=128/rs=129
+++ '[' '!' -f outputs/adaptation/tinyllama/temp_scaling/20newsgroups/size=128/rs=129/test_logits.csv ']'
+++ for method in $methods
+++ total_train_samples=2560
+++ output_dir=outputs/adaptation/tinyllama/bias_only/20newsgroups/size=128/rs=129
+++ '[' '!' -f outputs/adaptation/tinyllama/bias_only/20newsgroups/size=128/rs=129/test_logits.csv ']'
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ for method in $methods
+++ total_train_samples=2560
+++ output_dir=outputs/adaptation/tinyllama/dp_calibration/20newsgroups/size=128/rs=131
+++ '[' '!' -f outputs/adaptation/tinyllama/dp_calibration/20newsgroups/size=128/rs=131/test_logits.csv ']'
+++ for method in $methods
+++ total_train_samples=2560
+++ output_dir=outputs/adaptation/tinyllama/temp_scaling/20newsgroups/size=128/rs=131
+++ '[' '!' -f outputs/adaptation/tinyllama/temp_scaling/20newsgroups/size=128/rs=131/test_logits.csv ']'
+++ for method in $methods
+++ total_train_samples=2560
+++ output_dir=outputs/adaptation/tinyllama/bias_only/20newsgroups/size=128/rs=131
+++ '[' '!' -f outputs/adaptation/tinyllama/bias_only/20newsgroups/size=128/rs=131/test_logits.csv ']'
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ for method in $methods
+++ total_train_samples=2560
+++ output_dir=outputs/adaptation/tinyllama/dp_calibration/20newsgroups/size=128/rs=543
+++ '[' '!' -f outputs/adaptation/tinyllama/dp_calibration/20newsgroups/size=128/rs=543/test_logits.csv ']'
+++ for method in $methods
+++ total_train_samples=2560
+++ output_dir=outputs/adaptation/tinyllama/temp_scaling/20newsgroups/size=128/rs=543
+++ '[' '!' -f outputs/adaptation/tinyllama/temp_scaling/20newsgroups/size=128/rs=543/test_logits.csv ']'
+++ for method in $methods
+++ total_train_samples=2560
+++ output_dir=outputs/adaptation/tinyllama/bias_only/20newsgroups/size=128/rs=543
+++ '[' '!' -f outputs/adaptation/tinyllama/bias_only/20newsgroups/size=128/rs=543/test_logits.csv ']'
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ for method in $methods
+++ total_train_samples=2560
+++ output_dir=outputs/adaptation/tinyllama/dp_calibration/20newsgroups/size=128/rs=878
+++ '[' '!' -f outputs/adaptation/tinyllama/dp_calibration/20newsgroups/size=128/rs=878/test_logits.csv ']'
+++ for method in $methods
+++ total_train_samples=2560
+++ output_dir=outputs/adaptation/tinyllama/temp_scaling/20newsgroups/size=128/rs=878
+++ '[' '!' -f outputs/adaptation/tinyllama/temp_scaling/20newsgroups/size=128/rs=878/test_logits.csv ']'
+++ for method in $methods
+++ total_train_samples=2560
+++ output_dir=outputs/adaptation/tinyllama/bias_only/20newsgroups/size=128/rs=878
+++ '[' '!' -f outputs/adaptation/tinyllama/bias_only/20newsgroups/size=128/rs=878/test_logits.csv ']'
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ for method in $methods
+++ total_train_samples=2560
+++ output_dir=outputs/adaptation/tinyllama/dp_calibration/20newsgroups/size=128/rs=909
+++ '[' '!' -f outputs/adaptation/tinyllama/dp_calibration/20newsgroups/size=128/rs=909/test_logits.csv ']'
+++ for method in $methods
+++ total_train_samples=2560
+++ output_dir=outputs/adaptation/tinyllama/temp_scaling/20newsgroups/size=128/rs=909
+++ '[' '!' -f outputs/adaptation/tinyllama/temp_scaling/20newsgroups/size=128/rs=909/test_logits.csv ']'
+++ for method in $methods
+++ total_train_samples=2560
+++ output_dir=outputs/adaptation/tinyllama/bias_only/20newsgroups/size=128/rs=909
+++ '[' '!' -f outputs/adaptation/tinyllama/bias_only/20newsgroups/size=128/rs=909/test_logits.csv ']'
+++ for dataset in $DATASETS
+++ for size in ${dataset2samples[$dataset]}
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ for method in $methods
+++ total_train_samples=77
+++ output_dir=outputs/adaptation/tinyllama/dp_calibration/banking77/size=1/rs=322
+++ '[' '!' -f outputs/adaptation/tinyllama/dp_calibration/banking77/size=1/rs=322/test_logits.csv ']'
+++ for method in $methods
+++ total_train_samples=77
+++ output_dir=outputs/adaptation/tinyllama/temp_scaling/banking77/size=1/rs=322
+++ '[' '!' -f outputs/adaptation/tinyllama/temp_scaling/banking77/size=1/rs=322/test_logits.csv ']'
+++ for method in $methods
+++ total_train_samples=77
+++ output_dir=outputs/adaptation/tinyllama/bias_only/banking77/size=1/rs=322
+++ '[' '!' -f outputs/adaptation/tinyllama/bias_only/banking77/size=1/rs=322/test_logits.csv ']'
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ for method in $methods
+++ total_train_samples=77
+++ output_dir=outputs/adaptation/tinyllama/dp_calibration/banking77/size=1/rs=444
+++ '[' '!' -f outputs/adaptation/tinyllama/dp_calibration/banking77/size=1/rs=444/test_logits.csv ']'
+++ for method in $methods
+++ total_train_samples=77
+++ output_dir=outputs/adaptation/tinyllama/temp_scaling/banking77/size=1/rs=444
+++ '[' '!' -f outputs/adaptation/tinyllama/temp_scaling/banking77/size=1/rs=444/test_logits.csv ']'
+++ for method in $methods
+++ total_train_samples=77
+++ output_dir=outputs/adaptation/tinyllama/bias_only/banking77/size=1/rs=444
+++ '[' '!' -f outputs/adaptation/tinyllama/bias_only/banking77/size=1/rs=444/test_logits.csv ']'
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ for method in $methods
+++ total_train_samples=77
+++ output_dir=outputs/adaptation/tinyllama/dp_calibration/banking77/size=1/rs=848
+++ '[' '!' -f outputs/adaptation/tinyllama/dp_calibration/banking77/size=1/rs=848/test_logits.csv ']'
+++ for method in $methods
+++ total_train_samples=77
+++ output_dir=outputs/adaptation/tinyllama/temp_scaling/banking77/size=1/rs=848
+++ '[' '!' -f outputs/adaptation/tinyllama/temp_scaling/banking77/size=1/rs=848/test_logits.csv ']'
+++ for method in $methods
+++ total_train_samples=77
+++ output_dir=outputs/adaptation/tinyllama/bias_only/banking77/size=1/rs=848
+++ '[' '!' -f outputs/adaptation/tinyllama/bias_only/banking77/size=1/rs=848/test_logits.csv ']'
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ for method in $methods
+++ total_train_samples=77
+++ output_dir=outputs/adaptation/tinyllama/dp_calibration/banking77/size=1/rs=858
+++ '[' '!' -f outputs/adaptation/tinyllama/dp_calibration/banking77/size=1/rs=858/test_logits.csv ']'
+++ for method in $methods
+++ total_train_samples=77
+++ output_dir=outputs/adaptation/tinyllama/temp_scaling/banking77/size=1/rs=858
+++ '[' '!' -f outputs/adaptation/tinyllama/temp_scaling/banking77/size=1/rs=858/test_logits.csv ']'
+++ for method in $methods
+++ total_train_samples=77
+++ output_dir=outputs/adaptation/tinyllama/bias_only/banking77/size=1/rs=858
+++ '[' '!' -f outputs/adaptation/tinyllama/bias_only/banking77/size=1/rs=858/test_logits.csv ']'
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ for method in $methods
+++ total_train_samples=77
+++ output_dir=outputs/adaptation/tinyllama/dp_calibration/banking77/size=1/rs=868
+++ '[' '!' -f outputs/adaptation/tinyllama/dp_calibration/banking77/size=1/rs=868/test_logits.csv ']'
+++ for method in $methods
+++ total_train_samples=77
+++ output_dir=outputs/adaptation/tinyllama/temp_scaling/banking77/size=1/rs=868
+++ '[' '!' -f outputs/adaptation/tinyllama/temp_scaling/banking77/size=1/rs=868/test_logits.csv ']'
+++ for method in $methods
+++ total_train_samples=77
+++ output_dir=outputs/adaptation/tinyllama/bias_only/banking77/size=1/rs=868
+++ '[' '!' -f outputs/adaptation/tinyllama/bias_only/banking77/size=1/rs=868/test_logits.csv ']'
+++ for size in ${dataset2samples[$dataset]}
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ for method in $methods
+++ total_train_samples=308
+++ output_dir=outputs/adaptation/tinyllama/dp_calibration/banking77/size=4/rs=295
+++ '[' '!' -f outputs/adaptation/tinyllama/dp_calibration/banking77/size=4/rs=295/test_logits.csv ']'
+++ for method in $methods
+++ total_train_samples=308
+++ output_dir=outputs/adaptation/tinyllama/temp_scaling/banking77/size=4/rs=295
+++ '[' '!' -f outputs/adaptation/tinyllama/temp_scaling/banking77/size=4/rs=295/test_logits.csv ']'
+++ for method in $methods
+++ total_train_samples=308
+++ output_dir=outputs/adaptation/tinyllama/bias_only/banking77/size=4/rs=295
+++ '[' '!' -f outputs/adaptation/tinyllama/bias_only/banking77/size=4/rs=295/test_logits.csv ']'
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ for method in $methods
+++ total_train_samples=308
+++ output_dir=outputs/adaptation/tinyllama/dp_calibration/banking77/size=4/rs=926
+++ '[' '!' -f outputs/adaptation/tinyllama/dp_calibration/banking77/size=4/rs=926/test_logits.csv ']'
+++ for method in $methods
+++ total_train_samples=308
+++ output_dir=outputs/adaptation/tinyllama/temp_scaling/banking77/size=4/rs=926
+++ '[' '!' -f outputs/adaptation/tinyllama/temp_scaling/banking77/size=4/rs=926/test_logits.csv ']'
+++ for method in $methods
+++ total_train_samples=308
+++ output_dir=outputs/adaptation/tinyllama/bias_only/banking77/size=4/rs=926
+++ '[' '!' -f outputs/adaptation/tinyllama/bias_only/banking77/size=4/rs=926/test_logits.csv ']'
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ for method in $methods
+++ total_train_samples=308
+++ output_dir=outputs/adaptation/tinyllama/dp_calibration/banking77/size=4/rs=962
+++ '[' '!' -f outputs/adaptation/tinyllama/dp_calibration/banking77/size=4/rs=962/test_logits.csv ']'
+++ for method in $methods
+++ total_train_samples=308
+++ output_dir=outputs/adaptation/tinyllama/temp_scaling/banking77/size=4/rs=962
+++ '[' '!' -f outputs/adaptation/tinyllama/temp_scaling/banking77/size=4/rs=962/test_logits.csv ']'
+++ for method in $methods
+++ total_train_samples=308
+++ output_dir=outputs/adaptation/tinyllama/bias_only/banking77/size=4/rs=962
+++ '[' '!' -f outputs/adaptation/tinyllama/bias_only/banking77/size=4/rs=962/test_logits.csv ']'
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ for method in $methods
+++ total_train_samples=308
+++ output_dir=outputs/adaptation/tinyllama/dp_calibration/banking77/size=4/rs=2951
+++ '[' '!' -f outputs/adaptation/tinyllama/dp_calibration/banking77/size=4/rs=2951/test_logits.csv ']'
+++ for method in $methods
+++ total_train_samples=308
+++ output_dir=outputs/adaptation/tinyllama/temp_scaling/banking77/size=4/rs=2951
+++ '[' '!' -f outputs/adaptation/tinyllama/temp_scaling/banking77/size=4/rs=2951/test_logits.csv ']'
+++ for method in $methods
+++ total_train_samples=308
+++ output_dir=outputs/adaptation/tinyllama/bias_only/banking77/size=4/rs=2951
+++ '[' '!' -f outputs/adaptation/tinyllama/bias_only/banking77/size=4/rs=2951/test_logits.csv ']'
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ for method in $methods
+++ total_train_samples=308
+++ output_dir=outputs/adaptation/tinyllama/dp_calibration/banking77/size=4/rs=9622
+++ '[' '!' -f outputs/adaptation/tinyllama/dp_calibration/banking77/size=4/rs=9622/test_logits.csv ']'
+++ for method in $methods
+++ total_train_samples=308
+++ output_dir=outputs/adaptation/tinyllama/temp_scaling/banking77/size=4/rs=9622
+++ '[' '!' -f outputs/adaptation/tinyllama/temp_scaling/banking77/size=4/rs=9622/test_logits.csv ']'
+++ for method in $methods
+++ total_train_samples=308
+++ output_dir=outputs/adaptation/tinyllama/bias_only/banking77/size=4/rs=9622
+++ '[' '!' -f outputs/adaptation/tinyllama/bias_only/banking77/size=4/rs=9622/test_logits.csv ']'
+++ for size in ${dataset2samples[$dataset]}
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ for method in $methods
+++ total_train_samples=4928
+++ output_dir=outputs/adaptation/tinyllama/dp_calibration/banking77/size=64/rs=131
+++ '[' '!' -f outputs/adaptation/tinyllama/dp_calibration/banking77/size=64/rs=131/test_logits.csv ']'
+++ for method in $methods
+++ total_train_samples=4928
+++ output_dir=outputs/adaptation/tinyllama/temp_scaling/banking77/size=64/rs=131
+++ '[' '!' -f outputs/adaptation/tinyllama/temp_scaling/banking77/size=64/rs=131/test_logits.csv ']'
+++ for method in $methods
+++ total_train_samples=4928
+++ output_dir=outputs/adaptation/tinyllama/bias_only/banking77/size=64/rs=131
+++ '[' '!' -f outputs/adaptation/tinyllama/bias_only/banking77/size=64/rs=131/test_logits.csv ']'
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ for method in $methods
+++ total_train_samples=4928
+++ output_dir=outputs/adaptation/tinyllama/dp_calibration/banking77/size=64/rs=888
+++ '[' '!' -f outputs/adaptation/tinyllama/dp_calibration/banking77/size=64/rs=888/test_logits.csv ']'
+++ for method in $methods
+++ total_train_samples=4928
+++ output_dir=outputs/adaptation/tinyllama/temp_scaling/banking77/size=64/rs=888
+++ '[' '!' -f outputs/adaptation/tinyllama/temp_scaling/banking77/size=64/rs=888/test_logits.csv ']'
+++ for method in $methods
+++ total_train_samples=4928
+++ output_dir=outputs/adaptation/tinyllama/bias_only/banking77/size=64/rs=888
+++ '[' '!' -f outputs/adaptation/tinyllama/bias_only/banking77/size=64/rs=888/test_logits.csv ']'
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ for method in $methods
+++ total_train_samples=4928
+++ output_dir=outputs/adaptation/tinyllama/dp_calibration/banking77/size=64/rs=893
+++ '[' '!' -f outputs/adaptation/tinyllama/dp_calibration/banking77/size=64/rs=893/test_logits.csv ']'
+++ for method in $methods
+++ total_train_samples=4928
+++ output_dir=outputs/adaptation/tinyllama/temp_scaling/banking77/size=64/rs=893
+++ '[' '!' -f outputs/adaptation/tinyllama/temp_scaling/banking77/size=64/rs=893/test_logits.csv ']'
+++ for method in $methods
+++ total_train_samples=4928
+++ output_dir=outputs/adaptation/tinyllama/bias_only/banking77/size=64/rs=893
+++ '[' '!' -f outputs/adaptation/tinyllama/bias_only/banking77/size=64/rs=893/test_logits.csv ']'
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ for method in $methods
+++ total_train_samples=4928
+++ output_dir=outputs/adaptation/tinyllama/dp_calibration/banking77/size=64/rs=912
+++ '[' '!' -f outputs/adaptation/tinyllama/dp_calibration/banking77/size=64/rs=912/test_logits.csv ']'
+++ for method in $methods
+++ total_train_samples=4928
+++ output_dir=outputs/adaptation/tinyllama/temp_scaling/banking77/size=64/rs=912
+++ '[' '!' -f outputs/adaptation/tinyllama/temp_scaling/banking77/size=64/rs=912/test_logits.csv ']'
+++ for method in $methods
+++ total_train_samples=4928
+++ output_dir=outputs/adaptation/tinyllama/bias_only/banking77/size=64/rs=912
+++ '[' '!' -f outputs/adaptation/tinyllama/bias_only/banking77/size=64/rs=912/test_logits.csv ']'
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ for method in $methods
+++ total_train_samples=4928
+++ output_dir=outputs/adaptation/tinyllama/dp_calibration/banking77/size=64/rs=933
+++ '[' '!' -f outputs/adaptation/tinyllama/dp_calibration/banking77/size=64/rs=933/test_logits.csv ']'
+++ for method in $methods
+++ total_train_samples=4928
+++ output_dir=outputs/adaptation/tinyllama/temp_scaling/banking77/size=64/rs=933
+++ '[' '!' -f outputs/adaptation/tinyllama/temp_scaling/banking77/size=64/rs=933/test_logits.csv ']'
+++ for method in $methods
+++ total_train_samples=4928
+++ output_dir=outputs/adaptation/tinyllama/bias_only/banking77/size=64/rs=933
+++ '[' '!' -f outputs/adaptation/tinyllama/bias_only/banking77/size=64/rs=933/test_logits.csv ']'
++ source ./scripts/lora.sh
+++ accelerator=gpu
+++ precision=bf16-true
+++ strategy=auto
+++ devices=1
+++ num_nodes=1
+++ batch_size=1
+++ accumulate_grad_batches=8
+++ max_epochs=-1
+++ val_check_interval=16
+++ learning_rate=0.0001
+++ lora_args='--lora_r=8 --lora_alpha=16 --lora_dropout=0.05 --lora_query --lora_key --lora_value --lora_projection --lora_mlp --lora_head'
+++ optimizer=adamw
+++ weight_decay=0.0
+++ max_steps=-1
+++ checkpoint=/mnt/extra/lestienne/lit-checkpoints/TinyLlama/TinyLlama-1.1B-intermediate-step-1431k-3T
+++ for dataset in $DATASETS
+++ for size in ${dataset2samples[$dataset]}
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ total_train_samples=16
+++ use_train_samples_as_val=-1
+++ output_dir=outputs/adaptation/tinyllama/lora/sst2/size=8/rs=639
+++ '[' '!' -f outputs/adaptation/tinyllama/lora/sst2/size=8/rs=639/test_logits.csv ']'
+++ mkdir -p outputs/adaptation/tinyllama/lora/sst2/size=8/rs=639 outputs/adaptation/tinyllama/lora/sst2/size=8/rs=639/logs outputs/adaptation/tinyllama/lora/sst2/size=8/rs=639/checkpoints
+++ python -m llmcal2.scripts.lora --data_dir outputs/prompts/generative/sst2 --total_train_samples 16 --val_prop 0.3 --use_train_samples_as_val -1 --random_state 639 --checkpoint_dir /mnt/extra/lestienne/lit-checkpoints/TinyLlama/TinyLlama-1.1B-intermediate-step-1431k-3T --batch_size 1 --accelerator gpu --strategy auto --devices 1 --num_nodes 1 --precision bf16-true --max_epochs=-1 --max_steps=-1 --val_check_interval=16 --accumulate_grad_batches=8 --lora_r=8 --lora_alpha=16 --lora_dropout=0.05 --lora_query --lora_key --lora_value --lora_projection --lora_mlp --lora_head --optimizer=adamw --learning_rate=0.0001 --weight_decay=0.0 --output_dir outputs/adaptation/tinyllama/lora/sst2/size=8/rs=639 --log_dir outputs/adaptation/tinyllama/lora/sst2/size=8/rs=639/logs --output_checkpoint_dir outputs/adaptation/tinyllama/lora/sst2/size=8/rs=639/checkpoints
+Seed set to 639
+GPU available: True (cuda), used: True
+TPU available: False, using: 0 TPU cores
+HPU available: False, using: 0 HPUs
+/mnt/extra/lestienne/anaconda3/envs/llmcal/lib/python3.10/site-packages/lightning/fabric/loggers/csv_logs.py:269: Experiment logs directory outputs/adaptation/tinyllama/lora/sst2/size=8/rs=639/logs exists and is not empty. Previous log files in this directory will be deleted when the new ones are saved!
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+
+  | Name | Type           | Params | Mode 
+------------------------------------------------
+0 | gpt  | GenerativeLoRA | 1.1 B  | train
+------------------------------------------------
+6.6 M     Trainable params
+1.1 B     Non-trainable params
+1.1 B     Total params
+4,426.514 Total estimated model params size (MB)
+/mnt/extra/lestienne/anaconda3/envs/llmcal/lib/python3.10/site-packages/lightning/pytorch/loops/fit_loop.py:298: The number of training batches (11) is smaller than the logging interval Trainer(log_every_n_steps=50). Set a lower value for log_every_n_steps if you want to see logs for the training epoch.
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+++ for file in config.json generation_config.json model_config.yaml tokenizer.json tokenizer.model tokenizer_config.json
+++ cp /mnt/extra/lestienne/lit-checkpoints/TinyLlama/TinyLlama-1.1B-intermediate-step-1431k-3T/config.json outputs/adaptation/tinyllama/lora/sst2/size=8/rs=639/checkpoints
+++ for file in config.json generation_config.json model_config.yaml tokenizer.json tokenizer.model tokenizer_config.json
+++ cp /mnt/extra/lestienne/lit-checkpoints/TinyLlama/TinyLlama-1.1B-intermediate-step-1431k-3T/generation_config.json outputs/adaptation/tinyllama/lora/sst2/size=8/rs=639/checkpoints
+++ for file in config.json generation_config.json model_config.yaml tokenizer.json tokenizer.model tokenizer_config.json
+++ cp /mnt/extra/lestienne/lit-checkpoints/TinyLlama/TinyLlama-1.1B-intermediate-step-1431k-3T/model_config.yaml outputs/adaptation/tinyllama/lora/sst2/size=8/rs=639/checkpoints
+++ for file in config.json generation_config.json model_config.yaml tokenizer.json tokenizer.model tokenizer_config.json
+++ cp /mnt/extra/lestienne/lit-checkpoints/TinyLlama/TinyLlama-1.1B-intermediate-step-1431k-3T/tokenizer.json outputs/adaptation/tinyllama/lora/sst2/size=8/rs=639/checkpoints
+++ for file in config.json generation_config.json model_config.yaml tokenizer.json tokenizer.model tokenizer_config.json
+++ cp /mnt/extra/lestienne/lit-checkpoints/TinyLlama/TinyLlama-1.1B-intermediate-step-1431k-3T/tokenizer.model outputs/adaptation/tinyllama/lora/sst2/size=8/rs=639/checkpoints
+++ for file in config.json generation_config.json model_config.yaml tokenizer.json tokenizer.model tokenizer_config.json
+++ cp /mnt/extra/lestienne/lit-checkpoints/TinyLlama/TinyLlama-1.1B-intermediate-step-1431k-3T/tokenizer_config.json outputs/adaptation/tinyllama/lora/sst2/size=8/rs=639/checkpoints
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ total_train_samples=16
+++ use_train_samples_as_val=-1
+++ output_dir=outputs/adaptation/tinyllama/lora/sst2/size=8/rs=923
+++ '[' '!' -f outputs/adaptation/tinyllama/lora/sst2/size=8/rs=923/test_logits.csv ']'
+++ mkdir -p outputs/adaptation/tinyllama/lora/sst2/size=8/rs=923 outputs/adaptation/tinyllama/lora/sst2/size=8/rs=923/logs outputs/adaptation/tinyllama/lora/sst2/size=8/rs=923/checkpoints
+++ python -m llmcal2.scripts.lora --data_dir outputs/prompts/generative/sst2 --total_train_samples 16 --val_prop 0.3 --use_train_samples_as_val -1 --random_state 923 --checkpoint_dir /mnt/extra/lestienne/lit-checkpoints/TinyLlama/TinyLlama-1.1B-intermediate-step-1431k-3T --batch_size 1 --accelerator gpu --strategy auto --devices 1 --num_nodes 1 --precision bf16-true --max_epochs=-1 --max_steps=-1 --val_check_interval=16 --accumulate_grad_batches=8 --lora_r=8 --lora_alpha=16 --lora_dropout=0.05 --lora_query --lora_key --lora_value --lora_projection --lora_mlp --lora_head --optimizer=adamw --learning_rate=0.0001 --weight_decay=0.0 --output_dir outputs/adaptation/tinyllama/lora/sst2/size=8/rs=923 --log_dir outputs/adaptation/tinyllama/lora/sst2/size=8/rs=923/logs --output_checkpoint_dir outputs/adaptation/tinyllama/lora/sst2/size=8/rs=923/checkpoints
+Seed set to 923
+GPU available: True (cuda), used: True
+TPU available: False, using: 0 TPU cores
+HPU available: False, using: 0 HPUs
+/mnt/extra/lestienne/anaconda3/envs/llmcal/lib/python3.10/site-packages/lightning/fabric/loggers/csv_logs.py:269: Experiment logs directory outputs/adaptation/tinyllama/lora/sst2/size=8/rs=923/logs exists and is not empty. Previous log files in this directory will be deleted when the new ones are saved!
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+
+  | Name | Type           | Params | Mode 
+------------------------------------------------
+0 | gpt  | GenerativeLoRA | 1.1 B  | train
+------------------------------------------------
+6.6 M     Trainable params
+1.1 B     Non-trainable params
+1.1 B     Total params
+4,426.514 Total estimated model params size (MB)
+/mnt/extra/lestienne/anaconda3/envs/llmcal/lib/python3.10/site-packages/lightning/pytorch/loops/fit_loop.py:298: The number of training batches (11) is smaller than the logging interval Trainer(log_every_n_steps=50). Set a lower value for log_every_n_steps if you want to see logs for the training epoch.
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+++ for file in config.json generation_config.json model_config.yaml tokenizer.json tokenizer.model tokenizer_config.json
+++ cp /mnt/extra/lestienne/lit-checkpoints/TinyLlama/TinyLlama-1.1B-intermediate-step-1431k-3T/config.json outputs/adaptation/tinyllama/lora/sst2/size=8/rs=923/checkpoints
+++ for file in config.json generation_config.json model_config.yaml tokenizer.json tokenizer.model tokenizer_config.json
+++ cp /mnt/extra/lestienne/lit-checkpoints/TinyLlama/TinyLlama-1.1B-intermediate-step-1431k-3T/generation_config.json outputs/adaptation/tinyllama/lora/sst2/size=8/rs=923/checkpoints
+++ for file in config.json generation_config.json model_config.yaml tokenizer.json tokenizer.model tokenizer_config.json
+++ cp /mnt/extra/lestienne/lit-checkpoints/TinyLlama/TinyLlama-1.1B-intermediate-step-1431k-3T/model_config.yaml outputs/adaptation/tinyllama/lora/sst2/size=8/rs=923/checkpoints
+++ for file in config.json generation_config.json model_config.yaml tokenizer.json tokenizer.model tokenizer_config.json
+++ cp /mnt/extra/lestienne/lit-checkpoints/TinyLlama/TinyLlama-1.1B-intermediate-step-1431k-3T/tokenizer.json outputs/adaptation/tinyllama/lora/sst2/size=8/rs=923/checkpoints
+++ for file in config.json generation_config.json model_config.yaml tokenizer.json tokenizer.model tokenizer_config.json
+++ cp /mnt/extra/lestienne/lit-checkpoints/TinyLlama/TinyLlama-1.1B-intermediate-step-1431k-3T/tokenizer.model outputs/adaptation/tinyllama/lora/sst2/size=8/rs=923/checkpoints
+++ for file in config.json generation_config.json model_config.yaml tokenizer.json tokenizer.model tokenizer_config.json
+++ cp /mnt/extra/lestienne/lit-checkpoints/TinyLlama/TinyLlama-1.1B-intermediate-step-1431k-3T/tokenizer_config.json outputs/adaptation/tinyllama/lora/sst2/size=8/rs=923/checkpoints
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ total_train_samples=16
+++ use_train_samples_as_val=-1
+++ output_dir=outputs/adaptation/tinyllama/lora/sst2/size=8/rs=932
+++ '[' '!' -f outputs/adaptation/tinyllama/lora/sst2/size=8/rs=932/test_logits.csv ']'
+++ mkdir -p outputs/adaptation/tinyllama/lora/sst2/size=8/rs=932 outputs/adaptation/tinyllama/lora/sst2/size=8/rs=932/logs outputs/adaptation/tinyllama/lora/sst2/size=8/rs=932/checkpoints
+++ python -m llmcal2.scripts.lora --data_dir outputs/prompts/generative/sst2 --total_train_samples 16 --val_prop 0.3 --use_train_samples_as_val -1 --random_state 932 --checkpoint_dir /mnt/extra/lestienne/lit-checkpoints/TinyLlama/TinyLlama-1.1B-intermediate-step-1431k-3T --batch_size 1 --accelerator gpu --strategy auto --devices 1 --num_nodes 1 --precision bf16-true --max_epochs=-1 --max_steps=-1 --val_check_interval=16 --accumulate_grad_batches=8 --lora_r=8 --lora_alpha=16 --lora_dropout=0.05 --lora_query --lora_key --lora_value --lora_projection --lora_mlp --lora_head --optimizer=adamw --learning_rate=0.0001 --weight_decay=0.0 --output_dir outputs/adaptation/tinyllama/lora/sst2/size=8/rs=932 --log_dir outputs/adaptation/tinyllama/lora/sst2/size=8/rs=932/logs --output_checkpoint_dir outputs/adaptation/tinyllama/lora/sst2/size=8/rs=932/checkpoints
+Seed set to 932
+GPU available: True (cuda), used: True
+TPU available: False, using: 0 TPU cores
+HPU available: False, using: 0 HPUs
+/mnt/extra/lestienne/anaconda3/envs/llmcal/lib/python3.10/site-packages/lightning/fabric/loggers/csv_logs.py:269: Experiment logs directory outputs/adaptation/tinyllama/lora/sst2/size=8/rs=932/logs exists and is not empty. Previous log files in this directory will be deleted when the new ones are saved!
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+
+  | Name | Type           | Params | Mode 
+------------------------------------------------
+0 | gpt  | GenerativeLoRA | 1.1 B  | train
+------------------------------------------------
+6.6 M     Trainable params
+1.1 B     Non-trainable params
+1.1 B     Total params
+4,426.514 Total estimated model params size (MB)
+/mnt/extra/lestienne/anaconda3/envs/llmcal/lib/python3.10/site-packages/lightning/pytorch/loops/fit_loop.py:298: The number of training batches (11) is smaller than the logging interval Trainer(log_every_n_steps=50). Set a lower value for log_every_n_steps if you want to see logs for the training epoch.
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+++ for file in config.json generation_config.json model_config.yaml tokenizer.json tokenizer.model tokenizer_config.json
+++ cp /mnt/extra/lestienne/lit-checkpoints/TinyLlama/TinyLlama-1.1B-intermediate-step-1431k-3T/config.json outputs/adaptation/tinyllama/lora/sst2/size=8/rs=932/checkpoints
+++ for file in config.json generation_config.json model_config.yaml tokenizer.json tokenizer.model tokenizer_config.json
+++ cp /mnt/extra/lestienne/lit-checkpoints/TinyLlama/TinyLlama-1.1B-intermediate-step-1431k-3T/generation_config.json outputs/adaptation/tinyllama/lora/sst2/size=8/rs=932/checkpoints
+++ for file in config.json generation_config.json model_config.yaml tokenizer.json tokenizer.model tokenizer_config.json
+++ cp /mnt/extra/lestienne/lit-checkpoints/TinyLlama/TinyLlama-1.1B-intermediate-step-1431k-3T/model_config.yaml outputs/adaptation/tinyllama/lora/sst2/size=8/rs=932/checkpoints
+++ for file in config.json generation_config.json model_config.yaml tokenizer.json tokenizer.model tokenizer_config.json
+++ cp /mnt/extra/lestienne/lit-checkpoints/TinyLlama/TinyLlama-1.1B-intermediate-step-1431k-3T/tokenizer.json outputs/adaptation/tinyllama/lora/sst2/size=8/rs=932/checkpoints
+++ for file in config.json generation_config.json model_config.yaml tokenizer.json tokenizer.model tokenizer_config.json
+++ cp /mnt/extra/lestienne/lit-checkpoints/TinyLlama/TinyLlama-1.1B-intermediate-step-1431k-3T/tokenizer.model outputs/adaptation/tinyllama/lora/sst2/size=8/rs=932/checkpoints
+++ for file in config.json generation_config.json model_config.yaml tokenizer.json tokenizer.model tokenizer_config.json
+++ cp /mnt/extra/lestienne/lit-checkpoints/TinyLlama/TinyLlama-1.1B-intermediate-step-1431k-3T/tokenizer_config.json outputs/adaptation/tinyllama/lora/sst2/size=8/rs=932/checkpoints
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ total_train_samples=16
+++ use_train_samples_as_val=-1
+++ output_dir=outputs/adaptation/tinyllama/lora/sst2/size=8/rs=6391
+++ '[' '!' -f outputs/adaptation/tinyllama/lora/sst2/size=8/rs=6391/test_logits.csv ']'
+++ mkdir -p outputs/adaptation/tinyllama/lora/sst2/size=8/rs=6391 outputs/adaptation/tinyllama/lora/sst2/size=8/rs=6391/logs outputs/adaptation/tinyllama/lora/sst2/size=8/rs=6391/checkpoints
+++ python -m llmcal2.scripts.lora --data_dir outputs/prompts/generative/sst2 --total_train_samples 16 --val_prop 0.3 --use_train_samples_as_val -1 --random_state 6391 --checkpoint_dir /mnt/extra/lestienne/lit-checkpoints/TinyLlama/TinyLlama-1.1B-intermediate-step-1431k-3T --batch_size 1 --accelerator gpu --strategy auto --devices 1 --num_nodes 1 --precision bf16-true --max_epochs=-1 --max_steps=-1 --val_check_interval=16 --accumulate_grad_batches=8 --lora_r=8 --lora_alpha=16 --lora_dropout=0.05 --lora_query --lora_key --lora_value --lora_projection --lora_mlp --lora_head --optimizer=adamw --learning_rate=0.0001 --weight_decay=0.0 --output_dir outputs/adaptation/tinyllama/lora/sst2/size=8/rs=6391 --log_dir outputs/adaptation/tinyllama/lora/sst2/size=8/rs=6391/logs --output_checkpoint_dir outputs/adaptation/tinyllama/lora/sst2/size=8/rs=6391/checkpoints
+Seed set to 6391
+GPU available: True (cuda), used: True
+TPU available: False, using: 0 TPU cores
+HPU available: False, using: 0 HPUs
+/mnt/extra/lestienne/anaconda3/envs/llmcal/lib/python3.10/site-packages/lightning/fabric/loggers/csv_logs.py:269: Experiment logs directory outputs/adaptation/tinyllama/lora/sst2/size=8/rs=6391/logs exists and is not empty. Previous log files in this directory will be deleted when the new ones are saved!
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+
+  | Name | Type           | Params | Mode 
+------------------------------------------------
+0 | gpt  | GenerativeLoRA | 1.1 B  | train
+------------------------------------------------
+6.6 M     Trainable params
+1.1 B     Non-trainable params
+1.1 B     Total params
+4,426.514 Total estimated model params size (MB)
+/mnt/extra/lestienne/anaconda3/envs/llmcal/lib/python3.10/site-packages/lightning/pytorch/loops/fit_loop.py:298: The number of training batches (11) is smaller than the logging interval Trainer(log_every_n_steps=50). Set a lower value for log_every_n_steps if you want to see logs for the training epoch.
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+++ for file in config.json generation_config.json model_config.yaml tokenizer.json tokenizer.model tokenizer_config.json
+++ cp /mnt/extra/lestienne/lit-checkpoints/TinyLlama/TinyLlama-1.1B-intermediate-step-1431k-3T/config.json outputs/adaptation/tinyllama/lora/sst2/size=8/rs=6391/checkpoints
+++ for file in config.json generation_config.json model_config.yaml tokenizer.json tokenizer.model tokenizer_config.json
+++ cp /mnt/extra/lestienne/lit-checkpoints/TinyLlama/TinyLlama-1.1B-intermediate-step-1431k-3T/generation_config.json outputs/adaptation/tinyllama/lora/sst2/size=8/rs=6391/checkpoints
+++ for file in config.json generation_config.json model_config.yaml tokenizer.json tokenizer.model tokenizer_config.json
+++ cp /mnt/extra/lestienne/lit-checkpoints/TinyLlama/TinyLlama-1.1B-intermediate-step-1431k-3T/model_config.yaml outputs/adaptation/tinyllama/lora/sst2/size=8/rs=6391/checkpoints
+++ for file in config.json generation_config.json model_config.yaml tokenizer.json tokenizer.model tokenizer_config.json
+++ cp /mnt/extra/lestienne/lit-checkpoints/TinyLlama/TinyLlama-1.1B-intermediate-step-1431k-3T/tokenizer.json outputs/adaptation/tinyllama/lora/sst2/size=8/rs=6391/checkpoints
+++ for file in config.json generation_config.json model_config.yaml tokenizer.json tokenizer.model tokenizer_config.json
+++ cp /mnt/extra/lestienne/lit-checkpoints/TinyLlama/TinyLlama-1.1B-intermediate-step-1431k-3T/tokenizer.model outputs/adaptation/tinyllama/lora/sst2/size=8/rs=6391/checkpoints
+++ for file in config.json generation_config.json model_config.yaml tokenizer.json tokenizer.model tokenizer_config.json
+++ cp /mnt/extra/lestienne/lit-checkpoints/TinyLlama/TinyLlama-1.1B-intermediate-step-1431k-3T/tokenizer_config.json outputs/adaptation/tinyllama/lora/sst2/size=8/rs=6391/checkpoints
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ total_train_samples=16
+++ use_train_samples_as_val=-1
+++ output_dir=outputs/adaptation/tinyllama/lora/sst2/size=8/rs=9322
+++ '[' '!' -f outputs/adaptation/tinyllama/lora/sst2/size=8/rs=9322/test_logits.csv ']'
+++ mkdir -p outputs/adaptation/tinyllama/lora/sst2/size=8/rs=9322 outputs/adaptation/tinyllama/lora/sst2/size=8/rs=9322/logs outputs/adaptation/tinyllama/lora/sst2/size=8/rs=9322/checkpoints
+++ python -m llmcal2.scripts.lora --data_dir outputs/prompts/generative/sst2 --total_train_samples 16 --val_prop 0.3 --use_train_samples_as_val -1 --random_state 9322 --checkpoint_dir /mnt/extra/lestienne/lit-checkpoints/TinyLlama/TinyLlama-1.1B-intermediate-step-1431k-3T --batch_size 1 --accelerator gpu --strategy auto --devices 1 --num_nodes 1 --precision bf16-true --max_epochs=-1 --max_steps=-1 --val_check_interval=16 --accumulate_grad_batches=8 --lora_r=8 --lora_alpha=16 --lora_dropout=0.05 --lora_query --lora_key --lora_value --lora_projection --lora_mlp --lora_head --optimizer=adamw --learning_rate=0.0001 --weight_decay=0.0 --output_dir outputs/adaptation/tinyllama/lora/sst2/size=8/rs=9322 --log_dir outputs/adaptation/tinyllama/lora/sst2/size=8/rs=9322/logs --output_checkpoint_dir outputs/adaptation/tinyllama/lora/sst2/size=8/rs=9322/checkpoints
+Seed set to 9322
+GPU available: True (cuda), used: True
+TPU available: False, using: 0 TPU cores
+HPU available: False, using: 0 HPUs
+/mnt/extra/lestienne/anaconda3/envs/llmcal/lib/python3.10/site-packages/lightning/fabric/loggers/csv_logs.py:269: Experiment logs directory outputs/adaptation/tinyllama/lora/sst2/size=8/rs=9322/logs exists and is not empty. Previous log files in this directory will be deleted when the new ones are saved!
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+
+  | Name | Type           | Params | Mode 
+------------------------------------------------
+0 | gpt  | GenerativeLoRA | 1.1 B  | train
+------------------------------------------------
+6.6 M     Trainable params
+1.1 B     Non-trainable params
+1.1 B     Total params
+4,426.514 Total estimated model params size (MB)
+/mnt/extra/lestienne/anaconda3/envs/llmcal/lib/python3.10/site-packages/lightning/pytorch/loops/fit_loop.py:298: The number of training batches (11) is smaller than the logging interval Trainer(log_every_n_steps=50). Set a lower value for log_every_n_steps if you want to see logs for the training epoch.
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+++ for file in config.json generation_config.json model_config.yaml tokenizer.json tokenizer.model tokenizer_config.json
+++ cp /mnt/extra/lestienne/lit-checkpoints/TinyLlama/TinyLlama-1.1B-intermediate-step-1431k-3T/config.json outputs/adaptation/tinyllama/lora/sst2/size=8/rs=9322/checkpoints
+++ for file in config.json generation_config.json model_config.yaml tokenizer.json tokenizer.model tokenizer_config.json
+++ cp /mnt/extra/lestienne/lit-checkpoints/TinyLlama/TinyLlama-1.1B-intermediate-step-1431k-3T/generation_config.json outputs/adaptation/tinyllama/lora/sst2/size=8/rs=9322/checkpoints
+++ for file in config.json generation_config.json model_config.yaml tokenizer.json tokenizer.model tokenizer_config.json
+++ cp /mnt/extra/lestienne/lit-checkpoints/TinyLlama/TinyLlama-1.1B-intermediate-step-1431k-3T/model_config.yaml outputs/adaptation/tinyllama/lora/sst2/size=8/rs=9322/checkpoints
+++ for file in config.json generation_config.json model_config.yaml tokenizer.json tokenizer.model tokenizer_config.json
+++ cp /mnt/extra/lestienne/lit-checkpoints/TinyLlama/TinyLlama-1.1B-intermediate-step-1431k-3T/tokenizer.json outputs/adaptation/tinyllama/lora/sst2/size=8/rs=9322/checkpoints
+++ for file in config.json generation_config.json model_config.yaml tokenizer.json tokenizer.model tokenizer_config.json
+++ cp /mnt/extra/lestienne/lit-checkpoints/TinyLlama/TinyLlama-1.1B-intermediate-step-1431k-3T/tokenizer.model outputs/adaptation/tinyllama/lora/sst2/size=8/rs=9322/checkpoints
+++ for file in config.json generation_config.json model_config.yaml tokenizer.json tokenizer.model tokenizer_config.json
+++ cp /mnt/extra/lestienne/lit-checkpoints/TinyLlama/TinyLlama-1.1B-intermediate-step-1431k-3T/tokenizer_config.json outputs/adaptation/tinyllama/lora/sst2/size=8/rs=9322/checkpoints
+++ for size in ${dataset2samples[$dataset]}
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ total_train_samples=64
+++ use_train_samples_as_val=-1
+++ output_dir=outputs/adaptation/tinyllama/lora/sst2/size=32/rs=1564
+++ '[' '!' -f outputs/adaptation/tinyllama/lora/sst2/size=32/rs=1564/test_logits.csv ']'
+++ mkdir -p outputs/adaptation/tinyllama/lora/sst2/size=32/rs=1564 outputs/adaptation/tinyllama/lora/sst2/size=32/rs=1564/logs outputs/adaptation/tinyllama/lora/sst2/size=32/rs=1564/checkpoints
+++ python -m llmcal2.scripts.lora --data_dir outputs/prompts/generative/sst2 --total_train_samples 64 --val_prop 0.3 --use_train_samples_as_val -1 --random_state 1564 --checkpoint_dir /mnt/extra/lestienne/lit-checkpoints/TinyLlama/TinyLlama-1.1B-intermediate-step-1431k-3T --batch_size 1 --accelerator gpu --strategy auto --devices 1 --num_nodes 1 --precision bf16-true --max_epochs=-1 --max_steps=-1 --val_check_interval=16 --accumulate_grad_batches=8 --lora_r=8 --lora_alpha=16 --lora_dropout=0.05 --lora_query --lora_key --lora_value --lora_projection --lora_mlp --lora_head --optimizer=adamw --learning_rate=0.0001 --weight_decay=0.0 --output_dir outputs/adaptation/tinyllama/lora/sst2/size=32/rs=1564 --log_dir outputs/adaptation/tinyllama/lora/sst2/size=32/rs=1564/logs --output_checkpoint_dir outputs/adaptation/tinyllama/lora/sst2/size=32/rs=1564/checkpoints
+Seed set to 1564
+GPU available: True (cuda), used: True
+TPU available: False, using: 0 TPU cores
+HPU available: False, using: 0 HPUs
+/mnt/extra/lestienne/anaconda3/envs/llmcal/lib/python3.10/site-packages/lightning/fabric/loggers/csv_logs.py:269: Experiment logs directory outputs/adaptation/tinyllama/lora/sst2/size=32/rs=1564/logs exists and is not empty. Previous log files in this directory will be deleted when the new ones are saved!
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+
+  | Name | Type           | Params | Mode 
+------------------------------------------------
+0 | gpt  | GenerativeLoRA | 1.1 B  | train
+------------------------------------------------
+6.6 M     Trainable params
+1.1 B     Non-trainable params
+1.1 B     Total params
+4,426.514 Total estimated model params size (MB)
+/mnt/extra/lestienne/anaconda3/envs/llmcal/lib/python3.10/site-packages/lightning/pytorch/loops/fit_loop.py:298: The number of training batches (44) is smaller than the logging interval Trainer(log_every_n_steps=50). Set a lower value for log_every_n_steps if you want to see logs for the training epoch.
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+++ for file in config.json generation_config.json model_config.yaml tokenizer.json tokenizer.model tokenizer_config.json
+++ cp /mnt/extra/lestienne/lit-checkpoints/TinyLlama/TinyLlama-1.1B-intermediate-step-1431k-3T/config.json outputs/adaptation/tinyllama/lora/sst2/size=32/rs=1564/checkpoints
+++ for file in config.json generation_config.json model_config.yaml tokenizer.json tokenizer.model tokenizer_config.json
+++ cp /mnt/extra/lestienne/lit-checkpoints/TinyLlama/TinyLlama-1.1B-intermediate-step-1431k-3T/generation_config.json outputs/adaptation/tinyllama/lora/sst2/size=32/rs=1564/checkpoints
+++ for file in config.json generation_config.json model_config.yaml tokenizer.json tokenizer.model tokenizer_config.json
+++ cp /mnt/extra/lestienne/lit-checkpoints/TinyLlama/TinyLlama-1.1B-intermediate-step-1431k-3T/model_config.yaml outputs/adaptation/tinyllama/lora/sst2/size=32/rs=1564/checkpoints
+++ for file in config.json generation_config.json model_config.yaml tokenizer.json tokenizer.model tokenizer_config.json
+++ cp /mnt/extra/lestienne/lit-checkpoints/TinyLlama/TinyLlama-1.1B-intermediate-step-1431k-3T/tokenizer.json outputs/adaptation/tinyllama/lora/sst2/size=32/rs=1564/checkpoints
+++ for file in config.json generation_config.json model_config.yaml tokenizer.json tokenizer.model tokenizer_config.json
+++ cp /mnt/extra/lestienne/lit-checkpoints/TinyLlama/TinyLlama-1.1B-intermediate-step-1431k-3T/tokenizer.model outputs/adaptation/tinyllama/lora/sst2/size=32/rs=1564/checkpoints
+++ for file in config.json generation_config.json model_config.yaml tokenizer.json tokenizer.model tokenizer_config.json
+++ cp /mnt/extra/lestienne/lit-checkpoints/TinyLlama/TinyLlama-1.1B-intermediate-step-1431k-3T/tokenizer_config.json outputs/adaptation/tinyllama/lora/sst2/size=32/rs=1564/checkpoints
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ total_train_samples=64
+++ use_train_samples_as_val=-1
+++ output_dir=outputs/adaptation/tinyllama/lora/sst2/size=32/rs=1738
+++ '[' '!' -f outputs/adaptation/tinyllama/lora/sst2/size=32/rs=1738/test_logits.csv ']'
+++ mkdir -p outputs/adaptation/tinyllama/lora/sst2/size=32/rs=1738 outputs/adaptation/tinyllama/lora/sst2/size=32/rs=1738/logs outputs/adaptation/tinyllama/lora/sst2/size=32/rs=1738/checkpoints
+++ python -m llmcal2.scripts.lora --data_dir outputs/prompts/generative/sst2 --total_train_samples 64 --val_prop 0.3 --use_train_samples_as_val -1 --random_state 1738 --checkpoint_dir /mnt/extra/lestienne/lit-checkpoints/TinyLlama/TinyLlama-1.1B-intermediate-step-1431k-3T --batch_size 1 --accelerator gpu --strategy auto --devices 1 --num_nodes 1 --precision bf16-true --max_epochs=-1 --max_steps=-1 --val_check_interval=16 --accumulate_grad_batches=8 --lora_r=8 --lora_alpha=16 --lora_dropout=0.05 --lora_query --lora_key --lora_value --lora_projection --lora_mlp --lora_head --optimizer=adamw --learning_rate=0.0001 --weight_decay=0.0 --output_dir outputs/adaptation/tinyllama/lora/sst2/size=32/rs=1738 --log_dir outputs/adaptation/tinyllama/lora/sst2/size=32/rs=1738/logs --output_checkpoint_dir outputs/adaptation/tinyllama/lora/sst2/size=32/rs=1738/checkpoints
+Seed set to 1738
+GPU available: True (cuda), used: True
+TPU available: False, using: 0 TPU cores
+HPU available: False, using: 0 HPUs
+/mnt/extra/lestienne/anaconda3/envs/llmcal/lib/python3.10/site-packages/lightning/fabric/loggers/csv_logs.py:269: Experiment logs directory outputs/adaptation/tinyllama/lora/sst2/size=32/rs=1738/logs exists and is not empty. Previous log files in this directory will be deleted when the new ones are saved!
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+
+  | Name | Type           | Params | Mode 
+------------------------------------------------
+0 | gpt  | GenerativeLoRA | 1.1 B  | train
+------------------------------------------------
+6.6 M     Trainable params
+1.1 B     Non-trainable params
+1.1 B     Total params
+4,426.514 Total estimated model params size (MB)
+/mnt/extra/lestienne/anaconda3/envs/llmcal/lib/python3.10/site-packages/lightning/pytorch/loops/fit_loop.py:298: The number of training batches (44) is smaller than the logging interval Trainer(log_every_n_steps=50). Set a lower value for log_every_n_steps if you want to see logs for the training epoch.
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+++ for file in config.json generation_config.json model_config.yaml tokenizer.json tokenizer.model tokenizer_config.json
+++ cp /mnt/extra/lestienne/lit-checkpoints/TinyLlama/TinyLlama-1.1B-intermediate-step-1431k-3T/config.json outputs/adaptation/tinyllama/lora/sst2/size=32/rs=1738/checkpoints
+++ for file in config.json generation_config.json model_config.yaml tokenizer.json tokenizer.model tokenizer_config.json
+++ cp /mnt/extra/lestienne/lit-checkpoints/TinyLlama/TinyLlama-1.1B-intermediate-step-1431k-3T/generation_config.json outputs/adaptation/tinyllama/lora/sst2/size=32/rs=1738/checkpoints
+++ for file in config.json generation_config.json model_config.yaml tokenizer.json tokenizer.model tokenizer_config.json
+++ cp /mnt/extra/lestienne/lit-checkpoints/TinyLlama/TinyLlama-1.1B-intermediate-step-1431k-3T/model_config.yaml outputs/adaptation/tinyllama/lora/sst2/size=32/rs=1738/checkpoints
+++ for file in config.json generation_config.json model_config.yaml tokenizer.json tokenizer.model tokenizer_config.json
+++ cp /mnt/extra/lestienne/lit-checkpoints/TinyLlama/TinyLlama-1.1B-intermediate-step-1431k-3T/tokenizer.json outputs/adaptation/tinyllama/lora/sst2/size=32/rs=1738/checkpoints
+++ for file in config.json generation_config.json model_config.yaml tokenizer.json tokenizer.model tokenizer_config.json
+++ cp /mnt/extra/lestienne/lit-checkpoints/TinyLlama/TinyLlama-1.1B-intermediate-step-1431k-3T/tokenizer.model outputs/adaptation/tinyllama/lora/sst2/size=32/rs=1738/checkpoints
+++ for file in config.json generation_config.json model_config.yaml tokenizer.json tokenizer.model tokenizer_config.json
+++ cp /mnt/extra/lestienne/lit-checkpoints/TinyLlama/TinyLlama-1.1B-intermediate-step-1431k-3T/tokenizer_config.json outputs/adaptation/tinyllama/lora/sst2/size=32/rs=1738/checkpoints
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ total_train_samples=64
+++ use_train_samples_as_val=-1
+++ output_dir=outputs/adaptation/tinyllama/lora/sst2/size=32/rs=1783
+++ '[' '!' -f outputs/adaptation/tinyllama/lora/sst2/size=32/rs=1783/test_logits.csv ']'
+++ mkdir -p outputs/adaptation/tinyllama/lora/sst2/size=32/rs=1783 outputs/adaptation/tinyllama/lora/sst2/size=32/rs=1783/logs outputs/adaptation/tinyllama/lora/sst2/size=32/rs=1783/checkpoints
+++ python -m llmcal2.scripts.lora --data_dir outputs/prompts/generative/sst2 --total_train_samples 64 --val_prop 0.3 --use_train_samples_as_val -1 --random_state 1783 --checkpoint_dir /mnt/extra/lestienne/lit-checkpoints/TinyLlama/TinyLlama-1.1B-intermediate-step-1431k-3T --batch_size 1 --accelerator gpu --strategy auto --devices 1 --num_nodes 1 --precision bf16-true --max_epochs=-1 --max_steps=-1 --val_check_interval=16 --accumulate_grad_batches=8 --lora_r=8 --lora_alpha=16 --lora_dropout=0.05 --lora_query --lora_key --lora_value --lora_projection --lora_mlp --lora_head --optimizer=adamw --learning_rate=0.0001 --weight_decay=0.0 --output_dir outputs/adaptation/tinyllama/lora/sst2/size=32/rs=1783 --log_dir outputs/adaptation/tinyllama/lora/sst2/size=32/rs=1783/logs --output_checkpoint_dir outputs/adaptation/tinyllama/lora/sst2/size=32/rs=1783/checkpoints
+Seed set to 1783
+GPU available: True (cuda), used: True
+TPU available: False, using: 0 TPU cores
+HPU available: False, using: 0 HPUs
+/mnt/extra/lestienne/anaconda3/envs/llmcal/lib/python3.10/site-packages/lightning/fabric/loggers/csv_logs.py:269: Experiment logs directory outputs/adaptation/tinyllama/lora/sst2/size=32/rs=1783/logs exists and is not empty. Previous log files in this directory will be deleted when the new ones are saved!
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+
+  | Name | Type           | Params | Mode 
+------------------------------------------------
+0 | gpt  | GenerativeLoRA | 1.1 B  | train
+------------------------------------------------
+6.6 M     Trainable params
+1.1 B     Non-trainable params
+1.1 B     Total params
+4,426.514 Total estimated model params size (MB)
+/mnt/extra/lestienne/anaconda3/envs/llmcal/lib/python3.10/site-packages/lightning/pytorch/loops/fit_loop.py:298: The number of training batches (44) is smaller than the logging interval Trainer(log_every_n_steps=50). Set a lower value for log_every_n_steps if you want to see logs for the training epoch.
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+++ for file in config.json generation_config.json model_config.yaml tokenizer.json tokenizer.model tokenizer_config.json
+++ cp /mnt/extra/lestienne/lit-checkpoints/TinyLlama/TinyLlama-1.1B-intermediate-step-1431k-3T/config.json outputs/adaptation/tinyllama/lora/sst2/size=32/rs=1783/checkpoints
+++ for file in config.json generation_config.json model_config.yaml tokenizer.json tokenizer.model tokenizer_config.json
+++ cp /mnt/extra/lestienne/lit-checkpoints/TinyLlama/TinyLlama-1.1B-intermediate-step-1431k-3T/generation_config.json outputs/adaptation/tinyllama/lora/sst2/size=32/rs=1783/checkpoints
+++ for file in config.json generation_config.json model_config.yaml tokenizer.json tokenizer.model tokenizer_config.json
+++ cp /mnt/extra/lestienne/lit-checkpoints/TinyLlama/TinyLlama-1.1B-intermediate-step-1431k-3T/model_config.yaml outputs/adaptation/tinyllama/lora/sst2/size=32/rs=1783/checkpoints
+++ for file in config.json generation_config.json model_config.yaml tokenizer.json tokenizer.model tokenizer_config.json
+++ cp /mnt/extra/lestienne/lit-checkpoints/TinyLlama/TinyLlama-1.1B-intermediate-step-1431k-3T/tokenizer.json outputs/adaptation/tinyllama/lora/sst2/size=32/rs=1783/checkpoints
+++ for file in config.json generation_config.json model_config.yaml tokenizer.json tokenizer.model tokenizer_config.json
+++ cp /mnt/extra/lestienne/lit-checkpoints/TinyLlama/TinyLlama-1.1B-intermediate-step-1431k-3T/tokenizer.model outputs/adaptation/tinyllama/lora/sst2/size=32/rs=1783/checkpoints
+++ for file in config.json generation_config.json model_config.yaml tokenizer.json tokenizer.model tokenizer_config.json
+++ cp /mnt/extra/lestienne/lit-checkpoints/TinyLlama/TinyLlama-1.1B-intermediate-step-1431k-3T/tokenizer_config.json outputs/adaptation/tinyllama/lora/sst2/size=32/rs=1783/checkpoints
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ total_train_samples=64
+++ use_train_samples_as_val=-1
+++ output_dir=outputs/adaptation/tinyllama/lora/sst2/size=32/rs=15641
+++ '[' '!' -f outputs/adaptation/tinyllama/lora/sst2/size=32/rs=15641/test_logits.csv ']'
+++ mkdir -p outputs/adaptation/tinyllama/lora/sst2/size=32/rs=15641 outputs/adaptation/tinyllama/lora/sst2/size=32/rs=15641/logs outputs/adaptation/tinyllama/lora/sst2/size=32/rs=15641/checkpoints
+++ python -m llmcal2.scripts.lora --data_dir outputs/prompts/generative/sst2 --total_train_samples 64 --val_prop 0.3 --use_train_samples_as_val -1 --random_state 15641 --checkpoint_dir /mnt/extra/lestienne/lit-checkpoints/TinyLlama/TinyLlama-1.1B-intermediate-step-1431k-3T --batch_size 1 --accelerator gpu --strategy auto --devices 1 --num_nodes 1 --precision bf16-true --max_epochs=-1 --max_steps=-1 --val_check_interval=16 --accumulate_grad_batches=8 --lora_r=8 --lora_alpha=16 --lora_dropout=0.05 --lora_query --lora_key --lora_value --lora_projection --lora_mlp --lora_head --optimizer=adamw --learning_rate=0.0001 --weight_decay=0.0 --output_dir outputs/adaptation/tinyllama/lora/sst2/size=32/rs=15641 --log_dir outputs/adaptation/tinyllama/lora/sst2/size=32/rs=15641/logs --output_checkpoint_dir outputs/adaptation/tinyllama/lora/sst2/size=32/rs=15641/checkpoints
+Seed set to 15641
+GPU available: True (cuda), used: True
+TPU available: False, using: 0 TPU cores
+HPU available: False, using: 0 HPUs
+/mnt/extra/lestienne/anaconda3/envs/llmcal/lib/python3.10/site-packages/lightning/fabric/loggers/csv_logs.py:269: Experiment logs directory outputs/adaptation/tinyllama/lora/sst2/size=32/rs=15641/logs exists and is not empty. Previous log files in this directory will be deleted when the new ones are saved!
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+
+  | Name | Type           | Params | Mode 
+------------------------------------------------
+0 | gpt  | GenerativeLoRA | 1.1 B  | train
+------------------------------------------------
+6.6 M     Trainable params
+1.1 B     Non-trainable params
+1.1 B     Total params
+4,426.514 Total estimated model params size (MB)
+/mnt/extra/lestienne/anaconda3/envs/llmcal/lib/python3.10/site-packages/lightning/pytorch/loops/fit_loop.py:298: The number of training batches (44) is smaller than the logging interval Trainer(log_every_n_steps=50). Set a lower value for log_every_n_steps if you want to see logs for the training epoch.
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+++ for file in config.json generation_config.json model_config.yaml tokenizer.json tokenizer.model tokenizer_config.json
+++ cp /mnt/extra/lestienne/lit-checkpoints/TinyLlama/TinyLlama-1.1B-intermediate-step-1431k-3T/config.json outputs/adaptation/tinyllama/lora/sst2/size=32/rs=15641/checkpoints
+++ for file in config.json generation_config.json model_config.yaml tokenizer.json tokenizer.model tokenizer_config.json
+++ cp /mnt/extra/lestienne/lit-checkpoints/TinyLlama/TinyLlama-1.1B-intermediate-step-1431k-3T/generation_config.json outputs/adaptation/tinyllama/lora/sst2/size=32/rs=15641/checkpoints
+++ for file in config.json generation_config.json model_config.yaml tokenizer.json tokenizer.model tokenizer_config.json
+++ cp /mnt/extra/lestienne/lit-checkpoints/TinyLlama/TinyLlama-1.1B-intermediate-step-1431k-3T/model_config.yaml outputs/adaptation/tinyllama/lora/sst2/size=32/rs=15641/checkpoints
+++ for file in config.json generation_config.json model_config.yaml tokenizer.json tokenizer.model tokenizer_config.json
+++ cp /mnt/extra/lestienne/lit-checkpoints/TinyLlama/TinyLlama-1.1B-intermediate-step-1431k-3T/tokenizer.json outputs/adaptation/tinyllama/lora/sst2/size=32/rs=15641/checkpoints
+++ for file in config.json generation_config.json model_config.yaml tokenizer.json tokenizer.model tokenizer_config.json
+++ cp /mnt/extra/lestienne/lit-checkpoints/TinyLlama/TinyLlama-1.1B-intermediate-step-1431k-3T/tokenizer.model outputs/adaptation/tinyllama/lora/sst2/size=32/rs=15641/checkpoints
+++ for file in config.json generation_config.json model_config.yaml tokenizer.json tokenizer.model tokenizer_config.json
+++ cp /mnt/extra/lestienne/lit-checkpoints/TinyLlama/TinyLlama-1.1B-intermediate-step-1431k-3T/tokenizer_config.json outputs/adaptation/tinyllama/lora/sst2/size=32/rs=15641/checkpoints
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ total_train_samples=64
+++ use_train_samples_as_val=-1
+++ output_dir=outputs/adaptation/tinyllama/lora/sst2/size=32/rs=17832
+++ '[' '!' -f outputs/adaptation/tinyllama/lora/sst2/size=32/rs=17832/test_logits.csv ']'
+++ mkdir -p outputs/adaptation/tinyllama/lora/sst2/size=32/rs=17832 outputs/adaptation/tinyllama/lora/sst2/size=32/rs=17832/logs outputs/adaptation/tinyllama/lora/sst2/size=32/rs=17832/checkpoints
+++ python -m llmcal2.scripts.lora --data_dir outputs/prompts/generative/sst2 --total_train_samples 64 --val_prop 0.3 --use_train_samples_as_val -1 --random_state 17832 --checkpoint_dir /mnt/extra/lestienne/lit-checkpoints/TinyLlama/TinyLlama-1.1B-intermediate-step-1431k-3T --batch_size 1 --accelerator gpu --strategy auto --devices 1 --num_nodes 1 --precision bf16-true --max_epochs=-1 --max_steps=-1 --val_check_interval=16 --accumulate_grad_batches=8 --lora_r=8 --lora_alpha=16 --lora_dropout=0.05 --lora_query --lora_key --lora_value --lora_projection --lora_mlp --lora_head --optimizer=adamw --learning_rate=0.0001 --weight_decay=0.0 --output_dir outputs/adaptation/tinyllama/lora/sst2/size=32/rs=17832 --log_dir outputs/adaptation/tinyllama/lora/sst2/size=32/rs=17832/logs --output_checkpoint_dir outputs/adaptation/tinyllama/lora/sst2/size=32/rs=17832/checkpoints
+Seed set to 17832
+GPU available: True (cuda), used: True
+TPU available: False, using: 0 TPU cores
+HPU available: False, using: 0 HPUs
+/mnt/extra/lestienne/anaconda3/envs/llmcal/lib/python3.10/site-packages/lightning/fabric/loggers/csv_logs.py:269: Experiment logs directory outputs/adaptation/tinyllama/lora/sst2/size=32/rs=17832/logs exists and is not empty. Previous log files in this directory will be deleted when the new ones are saved!
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+
+  | Name | Type           | Params | Mode 
+------------------------------------------------
+0 | gpt  | GenerativeLoRA | 1.1 B  | train
+------------------------------------------------
+6.6 M     Trainable params
+1.1 B     Non-trainable params
+1.1 B     Total params
+4,426.514 Total estimated model params size (MB)
+/mnt/extra/lestienne/anaconda3/envs/llmcal/lib/python3.10/site-packages/lightning/pytorch/loops/fit_loop.py:298: The number of training batches (44) is smaller than the logging interval Trainer(log_every_n_steps=50). Set a lower value for log_every_n_steps if you want to see logs for the training epoch.
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+++ for file in config.json generation_config.json model_config.yaml tokenizer.json tokenizer.model tokenizer_config.json
+++ cp /mnt/extra/lestienne/lit-checkpoints/TinyLlama/TinyLlama-1.1B-intermediate-step-1431k-3T/config.json outputs/adaptation/tinyllama/lora/sst2/size=32/rs=17832/checkpoints
+++ for file in config.json generation_config.json model_config.yaml tokenizer.json tokenizer.model tokenizer_config.json
+++ cp /mnt/extra/lestienne/lit-checkpoints/TinyLlama/TinyLlama-1.1B-intermediate-step-1431k-3T/generation_config.json outputs/adaptation/tinyllama/lora/sst2/size=32/rs=17832/checkpoints
+++ for file in config.json generation_config.json model_config.yaml tokenizer.json tokenizer.model tokenizer_config.json
+++ cp /mnt/extra/lestienne/lit-checkpoints/TinyLlama/TinyLlama-1.1B-intermediate-step-1431k-3T/model_config.yaml outputs/adaptation/tinyllama/lora/sst2/size=32/rs=17832/checkpoints
+++ for file in config.json generation_config.json model_config.yaml tokenizer.json tokenizer.model tokenizer_config.json
+++ cp /mnt/extra/lestienne/lit-checkpoints/TinyLlama/TinyLlama-1.1B-intermediate-step-1431k-3T/tokenizer.json outputs/adaptation/tinyllama/lora/sst2/size=32/rs=17832/checkpoints
+++ for file in config.json generation_config.json model_config.yaml tokenizer.json tokenizer.model tokenizer_config.json
+++ cp /mnt/extra/lestienne/lit-checkpoints/TinyLlama/TinyLlama-1.1B-intermediate-step-1431k-3T/tokenizer.model outputs/adaptation/tinyllama/lora/sst2/size=32/rs=17832/checkpoints
+++ for file in config.json generation_config.json model_config.yaml tokenizer.json tokenizer.model tokenizer_config.json
+++ cp /mnt/extra/lestienne/lit-checkpoints/TinyLlama/TinyLlama-1.1B-intermediate-step-1431k-3T/tokenizer_config.json outputs/adaptation/tinyllama/lora/sst2/size=32/rs=17832/checkpoints
+++ for size in ${dataset2samples[$dataset]}
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ total_train_samples=1024
+++ use_train_samples_as_val=-1
+++ output_dir=outputs/adaptation/tinyllama/lora/sst2/size=512/rs=111
+++ '[' '!' -f outputs/adaptation/tinyllama/lora/sst2/size=512/rs=111/test_logits.csv ']'
+++ mkdir -p outputs/adaptation/tinyllama/lora/sst2/size=512/rs=111 outputs/adaptation/tinyllama/lora/sst2/size=512/rs=111/logs outputs/adaptation/tinyllama/lora/sst2/size=512/rs=111/checkpoints
+++ python -m llmcal2.scripts.lora --data_dir outputs/prompts/generative/sst2 --total_train_samples 1024 --val_prop 0.3 --use_train_samples_as_val -1 --random_state 111 --checkpoint_dir /mnt/extra/lestienne/lit-checkpoints/TinyLlama/TinyLlama-1.1B-intermediate-step-1431k-3T --batch_size 1 --accelerator gpu --strategy auto --devices 1 --num_nodes 1 --precision bf16-true --max_epochs=-1 --max_steps=-1 --val_check_interval=16 --accumulate_grad_batches=8 --lora_r=8 --lora_alpha=16 --lora_dropout=0.05 --lora_query --lora_key --lora_value --lora_projection --lora_mlp --lora_head --optimizer=adamw --learning_rate=0.0001 --weight_decay=0.0 --output_dir outputs/adaptation/tinyllama/lora/sst2/size=512/rs=111 --log_dir outputs/adaptation/tinyllama/lora/sst2/size=512/rs=111/logs --output_checkpoint_dir outputs/adaptation/tinyllama/lora/sst2/size=512/rs=111/checkpoints
+Seed set to 111
+GPU available: True (cuda), used: True
+TPU available: False, using: 0 TPU cores
+HPU available: False, using: 0 HPUs
+/mnt/extra/lestienne/anaconda3/envs/llmcal/lib/python3.10/site-packages/lightning/fabric/loggers/csv_logs.py:269: Experiment logs directory outputs/adaptation/tinyllama/lora/sst2/size=512/rs=111/logs exists and is not empty. Previous log files in this directory will be deleted when the new ones are saved!
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+
+  | Name | Type           | Params | Mode 
+------------------------------------------------
+0 | gpt  | GenerativeLoRA | 1.1 B  | train
+------------------------------------------------
+6.6 M     Trainable params
+1.1 B     Non-trainable params
+1.1 B     Total params
+4,426.514 Total estimated model params size (MB)
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+++ for file in config.json generation_config.json model_config.yaml tokenizer.json tokenizer.model tokenizer_config.json
+++ cp /mnt/extra/lestienne/lit-checkpoints/TinyLlama/TinyLlama-1.1B-intermediate-step-1431k-3T/config.json outputs/adaptation/tinyllama/lora/sst2/size=512/rs=111/checkpoints
+++ for file in config.json generation_config.json model_config.yaml tokenizer.json tokenizer.model tokenizer_config.json
+++ cp /mnt/extra/lestienne/lit-checkpoints/TinyLlama/TinyLlama-1.1B-intermediate-step-1431k-3T/generation_config.json outputs/adaptation/tinyllama/lora/sst2/size=512/rs=111/checkpoints
+++ for file in config.json generation_config.json model_config.yaml tokenizer.json tokenizer.model tokenizer_config.json
+++ cp /mnt/extra/lestienne/lit-checkpoints/TinyLlama/TinyLlama-1.1B-intermediate-step-1431k-3T/model_config.yaml outputs/adaptation/tinyllama/lora/sst2/size=512/rs=111/checkpoints
+++ for file in config.json generation_config.json model_config.yaml tokenizer.json tokenizer.model tokenizer_config.json
+++ cp /mnt/extra/lestienne/lit-checkpoints/TinyLlama/TinyLlama-1.1B-intermediate-step-1431k-3T/tokenizer.json outputs/adaptation/tinyllama/lora/sst2/size=512/rs=111/checkpoints
+++ for file in config.json generation_config.json model_config.yaml tokenizer.json tokenizer.model tokenizer_config.json
+++ cp /mnt/extra/lestienne/lit-checkpoints/TinyLlama/TinyLlama-1.1B-intermediate-step-1431k-3T/tokenizer.model outputs/adaptation/tinyllama/lora/sst2/size=512/rs=111/checkpoints
+++ for file in config.json generation_config.json model_config.yaml tokenizer.json tokenizer.model tokenizer_config.json
+++ cp /mnt/extra/lestienne/lit-checkpoints/TinyLlama/TinyLlama-1.1B-intermediate-step-1431k-3T/tokenizer_config.json outputs/adaptation/tinyllama/lora/sst2/size=512/rs=111/checkpoints
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ total_train_samples=1024
+++ use_train_samples_as_val=-1
+++ output_dir=outputs/adaptation/tinyllama/lora/sst2/size=512/rs=121
+++ '[' '!' -f outputs/adaptation/tinyllama/lora/sst2/size=512/rs=121/test_logits.csv ']'
+++ mkdir -p outputs/adaptation/tinyllama/lora/sst2/size=512/rs=121 outputs/adaptation/tinyllama/lora/sst2/size=512/rs=121/logs outputs/adaptation/tinyllama/lora/sst2/size=512/rs=121/checkpoints
+++ python -m llmcal2.scripts.lora --data_dir outputs/prompts/generative/sst2 --total_train_samples 1024 --val_prop 0.3 --use_train_samples_as_val -1 --random_state 121 --checkpoint_dir /mnt/extra/lestienne/lit-checkpoints/TinyLlama/TinyLlama-1.1B-intermediate-step-1431k-3T --batch_size 1 --accelerator gpu --strategy auto --devices 1 --num_nodes 1 --precision bf16-true --max_epochs=-1 --max_steps=-1 --val_check_interval=16 --accumulate_grad_batches=8 --lora_r=8 --lora_alpha=16 --lora_dropout=0.05 --lora_query --lora_key --lora_value --lora_projection --lora_mlp --lora_head --optimizer=adamw --learning_rate=0.0001 --weight_decay=0.0 --output_dir outputs/adaptation/tinyllama/lora/sst2/size=512/rs=121 --log_dir outputs/adaptation/tinyllama/lora/sst2/size=512/rs=121/logs --output_checkpoint_dir outputs/adaptation/tinyllama/lora/sst2/size=512/rs=121/checkpoints
+Seed set to 121
+GPU available: True (cuda), used: True
+TPU available: False, using: 0 TPU cores
+HPU available: False, using: 0 HPUs
+/mnt/extra/lestienne/anaconda3/envs/llmcal/lib/python3.10/site-packages/lightning/fabric/loggers/csv_logs.py:269: Experiment logs directory outputs/adaptation/tinyllama/lora/sst2/size=512/rs=121/logs exists and is not empty. Previous log files in this directory will be deleted when the new ones are saved!
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+
+  | Name | Type           | Params | Mode 
+------------------------------------------------
+0 | gpt  | GenerativeLoRA | 1.1 B  | train
+------------------------------------------------
+6.6 M     Trainable params
+1.1 B     Non-trainable params
+1.1 B     Total params
+4,426.514 Total estimated model params size (MB)
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+++ for file in config.json generation_config.json model_config.yaml tokenizer.json tokenizer.model tokenizer_config.json
+++ cp /mnt/extra/lestienne/lit-checkpoints/TinyLlama/TinyLlama-1.1B-intermediate-step-1431k-3T/config.json outputs/adaptation/tinyllama/lora/sst2/size=512/rs=121/checkpoints
+++ for file in config.json generation_config.json model_config.yaml tokenizer.json tokenizer.model tokenizer_config.json
+++ cp /mnt/extra/lestienne/lit-checkpoints/TinyLlama/TinyLlama-1.1B-intermediate-step-1431k-3T/generation_config.json outputs/adaptation/tinyllama/lora/sst2/size=512/rs=121/checkpoints
+++ for file in config.json generation_config.json model_config.yaml tokenizer.json tokenizer.model tokenizer_config.json
+++ cp /mnt/extra/lestienne/lit-checkpoints/TinyLlama/TinyLlama-1.1B-intermediate-step-1431k-3T/model_config.yaml outputs/adaptation/tinyllama/lora/sst2/size=512/rs=121/checkpoints
+++ for file in config.json generation_config.json model_config.yaml tokenizer.json tokenizer.model tokenizer_config.json
+++ cp /mnt/extra/lestienne/lit-checkpoints/TinyLlama/TinyLlama-1.1B-intermediate-step-1431k-3T/tokenizer.json outputs/adaptation/tinyllama/lora/sst2/size=512/rs=121/checkpoints
+++ for file in config.json generation_config.json model_config.yaml tokenizer.json tokenizer.model tokenizer_config.json
+++ cp /mnt/extra/lestienne/lit-checkpoints/TinyLlama/TinyLlama-1.1B-intermediate-step-1431k-3T/tokenizer.model outputs/adaptation/tinyllama/lora/sst2/size=512/rs=121/checkpoints
+++ for file in config.json generation_config.json model_config.yaml tokenizer.json tokenizer.model tokenizer_config.json
+++ cp /mnt/extra/lestienne/lit-checkpoints/TinyLlama/TinyLlama-1.1B-intermediate-step-1431k-3T/tokenizer_config.json outputs/adaptation/tinyllama/lora/sst2/size=512/rs=121/checkpoints
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ total_train_samples=1024
+++ use_train_samples_as_val=-1
+++ output_dir=outputs/adaptation/tinyllama/lora/sst2/size=512/rs=767
+++ '[' '!' -f outputs/adaptation/tinyllama/lora/sst2/size=512/rs=767/test_logits.csv ']'
+++ mkdir -p outputs/adaptation/tinyllama/lora/sst2/size=512/rs=767 outputs/adaptation/tinyllama/lora/sst2/size=512/rs=767/logs outputs/adaptation/tinyllama/lora/sst2/size=512/rs=767/checkpoints
+++ python -m llmcal2.scripts.lora --data_dir outputs/prompts/generative/sst2 --total_train_samples 1024 --val_prop 0.3 --use_train_samples_as_val -1 --random_state 767 --checkpoint_dir /mnt/extra/lestienne/lit-checkpoints/TinyLlama/TinyLlama-1.1B-intermediate-step-1431k-3T --batch_size 1 --accelerator gpu --strategy auto --devices 1 --num_nodes 1 --precision bf16-true --max_epochs=-1 --max_steps=-1 --val_check_interval=16 --accumulate_grad_batches=8 --lora_r=8 --lora_alpha=16 --lora_dropout=0.05 --lora_query --lora_key --lora_value --lora_projection --lora_mlp --lora_head --optimizer=adamw --learning_rate=0.0001 --weight_decay=0.0 --output_dir outputs/adaptation/tinyllama/lora/sst2/size=512/rs=767 --log_dir outputs/adaptation/tinyllama/lora/sst2/size=512/rs=767/logs --output_checkpoint_dir outputs/adaptation/tinyllama/lora/sst2/size=512/rs=767/checkpoints
+Seed set to 767
+GPU available: True (cuda), used: True
+TPU available: False, using: 0 TPU cores
+HPU available: False, using: 0 HPUs
+/mnt/extra/lestienne/anaconda3/envs/llmcal/lib/python3.10/site-packages/lightning/fabric/loggers/csv_logs.py:269: Experiment logs directory outputs/adaptation/tinyllama/lora/sst2/size=512/rs=767/logs exists and is not empty. Previous log files in this directory will be deleted when the new ones are saved!
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+
+  | Name | Type           | Params | Mode 
+------------------------------------------------
+0 | gpt  | GenerativeLoRA | 1.1 B  | train
+------------------------------------------------
+6.6 M     Trainable params
+1.1 B     Non-trainable params
+1.1 B     Total params
+4,426.514 Total estimated model params size (MB)
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+++ for file in config.json generation_config.json model_config.yaml tokenizer.json tokenizer.model tokenizer_config.json
+++ cp /mnt/extra/lestienne/lit-checkpoints/TinyLlama/TinyLlama-1.1B-intermediate-step-1431k-3T/config.json outputs/adaptation/tinyllama/lora/sst2/size=512/rs=767/checkpoints
+++ for file in config.json generation_config.json model_config.yaml tokenizer.json tokenizer.model tokenizer_config.json
+++ cp /mnt/extra/lestienne/lit-checkpoints/TinyLlama/TinyLlama-1.1B-intermediate-step-1431k-3T/generation_config.json outputs/adaptation/tinyllama/lora/sst2/size=512/rs=767/checkpoints
+++ for file in config.json generation_config.json model_config.yaml tokenizer.json tokenizer.model tokenizer_config.json
+++ cp /mnt/extra/lestienne/lit-checkpoints/TinyLlama/TinyLlama-1.1B-intermediate-step-1431k-3T/model_config.yaml outputs/adaptation/tinyllama/lora/sst2/size=512/rs=767/checkpoints
+++ for file in config.json generation_config.json model_config.yaml tokenizer.json tokenizer.model tokenizer_config.json
+++ cp /mnt/extra/lestienne/lit-checkpoints/TinyLlama/TinyLlama-1.1B-intermediate-step-1431k-3T/tokenizer.json outputs/adaptation/tinyllama/lora/sst2/size=512/rs=767/checkpoints
+++ for file in config.json generation_config.json model_config.yaml tokenizer.json tokenizer.model tokenizer_config.json
+++ cp /mnt/extra/lestienne/lit-checkpoints/TinyLlama/TinyLlama-1.1B-intermediate-step-1431k-3T/tokenizer.model outputs/adaptation/tinyllama/lora/sst2/size=512/rs=767/checkpoints
+++ for file in config.json generation_config.json model_config.yaml tokenizer.json tokenizer.model tokenizer_config.json
+++ cp /mnt/extra/lestienne/lit-checkpoints/TinyLlama/TinyLlama-1.1B-intermediate-step-1431k-3T/tokenizer_config.json outputs/adaptation/tinyllama/lora/sst2/size=512/rs=767/checkpoints
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ total_train_samples=1024
+++ use_train_samples_as_val=-1
+++ output_dir=outputs/adaptation/tinyllama/lora/sst2/size=512/rs=890
+++ '[' '!' -f outputs/adaptation/tinyllama/lora/sst2/size=512/rs=890/test_logits.csv ']'
+++ mkdir -p outputs/adaptation/tinyllama/lora/sst2/size=512/rs=890 outputs/adaptation/tinyllama/lora/sst2/size=512/rs=890/logs outputs/adaptation/tinyllama/lora/sst2/size=512/rs=890/checkpoints
+++ python -m llmcal2.scripts.lora --data_dir outputs/prompts/generative/sst2 --total_train_samples 1024 --val_prop 0.3 --use_train_samples_as_val -1 --random_state 890 --checkpoint_dir /mnt/extra/lestienne/lit-checkpoints/TinyLlama/TinyLlama-1.1B-intermediate-step-1431k-3T --batch_size 1 --accelerator gpu --strategy auto --devices 1 --num_nodes 1 --precision bf16-true --max_epochs=-1 --max_steps=-1 --val_check_interval=16 --accumulate_grad_batches=8 --lora_r=8 --lora_alpha=16 --lora_dropout=0.05 --lora_query --lora_key --lora_value --lora_projection --lora_mlp --lora_head --optimizer=adamw --learning_rate=0.0001 --weight_decay=0.0 --output_dir outputs/adaptation/tinyllama/lora/sst2/size=512/rs=890 --log_dir outputs/adaptation/tinyllama/lora/sst2/size=512/rs=890/logs --output_checkpoint_dir outputs/adaptation/tinyllama/lora/sst2/size=512/rs=890/checkpoints
+Seed set to 890
+GPU available: True (cuda), used: True
+TPU available: False, using: 0 TPU cores
+HPU available: False, using: 0 HPUs
+/mnt/extra/lestienne/anaconda3/envs/llmcal/lib/python3.10/site-packages/lightning/fabric/loggers/csv_logs.py:269: Experiment logs directory outputs/adaptation/tinyllama/lora/sst2/size=512/rs=890/logs exists and is not empty. Previous log files in this directory will be deleted when the new ones are saved!
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+
+  | Name | Type           | Params | Mode 
+------------------------------------------------
+0 | gpt  | GenerativeLoRA | 1.1 B  | train
+------------------------------------------------
+6.6 M     Trainable params
+1.1 B     Non-trainable params
+1.1 B     Total params
+4,426.514 Total estimated model params size (MB)
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+++ for file in config.json generation_config.json model_config.yaml tokenizer.json tokenizer.model tokenizer_config.json
+++ cp /mnt/extra/lestienne/lit-checkpoints/TinyLlama/TinyLlama-1.1B-intermediate-step-1431k-3T/config.json outputs/adaptation/tinyllama/lora/sst2/size=512/rs=890/checkpoints
+++ for file in config.json generation_config.json model_config.yaml tokenizer.json tokenizer.model tokenizer_config.json
+++ cp /mnt/extra/lestienne/lit-checkpoints/TinyLlama/TinyLlama-1.1B-intermediate-step-1431k-3T/generation_config.json outputs/adaptation/tinyllama/lora/sst2/size=512/rs=890/checkpoints
+++ for file in config.json generation_config.json model_config.yaml tokenizer.json tokenizer.model tokenizer_config.json
+++ cp /mnt/extra/lestienne/lit-checkpoints/TinyLlama/TinyLlama-1.1B-intermediate-step-1431k-3T/model_config.yaml outputs/adaptation/tinyllama/lora/sst2/size=512/rs=890/checkpoints
+++ for file in config.json generation_config.json model_config.yaml tokenizer.json tokenizer.model tokenizer_config.json
+++ cp /mnt/extra/lestienne/lit-checkpoints/TinyLlama/TinyLlama-1.1B-intermediate-step-1431k-3T/tokenizer.json outputs/adaptation/tinyllama/lora/sst2/size=512/rs=890/checkpoints
+++ for file in config.json generation_config.json model_config.yaml tokenizer.json tokenizer.model tokenizer_config.json
+++ cp /mnt/extra/lestienne/lit-checkpoints/TinyLlama/TinyLlama-1.1B-intermediate-step-1431k-3T/tokenizer.model outputs/adaptation/tinyllama/lora/sst2/size=512/rs=890/checkpoints
+++ for file in config.json generation_config.json model_config.yaml tokenizer.json tokenizer.model tokenizer_config.json
+++ cp /mnt/extra/lestienne/lit-checkpoints/TinyLlama/TinyLlama-1.1B-intermediate-step-1431k-3T/tokenizer_config.json outputs/adaptation/tinyllama/lora/sst2/size=512/rs=890/checkpoints
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ total_train_samples=1024
+++ use_train_samples_as_val=-1
+++ output_dir=outputs/adaptation/tinyllama/lora/sst2/size=512/rs=999
+++ '[' '!' -f outputs/adaptation/tinyllama/lora/sst2/size=512/rs=999/test_logits.csv ']'
+++ mkdir -p outputs/adaptation/tinyllama/lora/sst2/size=512/rs=999 outputs/adaptation/tinyllama/lora/sst2/size=512/rs=999/logs outputs/adaptation/tinyllama/lora/sst2/size=512/rs=999/checkpoints
+++ python -m llmcal2.scripts.lora --data_dir outputs/prompts/generative/sst2 --total_train_samples 1024 --val_prop 0.3 --use_train_samples_as_val -1 --random_state 999 --checkpoint_dir /mnt/extra/lestienne/lit-checkpoints/TinyLlama/TinyLlama-1.1B-intermediate-step-1431k-3T --batch_size 1 --accelerator gpu --strategy auto --devices 1 --num_nodes 1 --precision bf16-true --max_epochs=-1 --max_steps=-1 --val_check_interval=16 --accumulate_grad_batches=8 --lora_r=8 --lora_alpha=16 --lora_dropout=0.05 --lora_query --lora_key --lora_value --lora_projection --lora_mlp --lora_head --optimizer=adamw --learning_rate=0.0001 --weight_decay=0.0 --output_dir outputs/adaptation/tinyllama/lora/sst2/size=512/rs=999 --log_dir outputs/adaptation/tinyllama/lora/sst2/size=512/rs=999/logs --output_checkpoint_dir outputs/adaptation/tinyllama/lora/sst2/size=512/rs=999/checkpoints
+Seed set to 999
+GPU available: True (cuda), used: True
+TPU available: False, using: 0 TPU cores
+HPU available: False, using: 0 HPUs
+/mnt/extra/lestienne/anaconda3/envs/llmcal/lib/python3.10/site-packages/lightning/fabric/loggers/csv_logs.py:269: Experiment logs directory outputs/adaptation/tinyllama/lora/sst2/size=512/rs=999/logs exists and is not empty. Previous log files in this directory will be deleted when the new ones are saved!
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+
+  | Name | Type           | Params | Mode 
+------------------------------------------------
+0 | gpt  | GenerativeLoRA | 1.1 B  | train
+------------------------------------------------
+6.6 M     Trainable params
+1.1 B     Non-trainable params
+1.1 B     Total params
+4,426.514 Total estimated model params size (MB)
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+++ for file in config.json generation_config.json model_config.yaml tokenizer.json tokenizer.model tokenizer_config.json
+++ cp /mnt/extra/lestienne/lit-checkpoints/TinyLlama/TinyLlama-1.1B-intermediate-step-1431k-3T/config.json outputs/adaptation/tinyllama/lora/sst2/size=512/rs=999/checkpoints
+++ for file in config.json generation_config.json model_config.yaml tokenizer.json tokenizer.model tokenizer_config.json
+++ cp /mnt/extra/lestienne/lit-checkpoints/TinyLlama/TinyLlama-1.1B-intermediate-step-1431k-3T/generation_config.json outputs/adaptation/tinyllama/lora/sst2/size=512/rs=999/checkpoints
+++ for file in config.json generation_config.json model_config.yaml tokenizer.json tokenizer.model tokenizer_config.json
+++ cp /mnt/extra/lestienne/lit-checkpoints/TinyLlama/TinyLlama-1.1B-intermediate-step-1431k-3T/model_config.yaml outputs/adaptation/tinyllama/lora/sst2/size=512/rs=999/checkpoints
+++ for file in config.json generation_config.json model_config.yaml tokenizer.json tokenizer.model tokenizer_config.json
+++ cp /mnt/extra/lestienne/lit-checkpoints/TinyLlama/TinyLlama-1.1B-intermediate-step-1431k-3T/tokenizer.json outputs/adaptation/tinyllama/lora/sst2/size=512/rs=999/checkpoints
+++ for file in config.json generation_config.json model_config.yaml tokenizer.json tokenizer.model tokenizer_config.json
+++ cp /mnt/extra/lestienne/lit-checkpoints/TinyLlama/TinyLlama-1.1B-intermediate-step-1431k-3T/tokenizer.model outputs/adaptation/tinyllama/lora/sst2/size=512/rs=999/checkpoints
+++ for file in config.json generation_config.json model_config.yaml tokenizer.json tokenizer.model tokenizer_config.json
+++ cp /mnt/extra/lestienne/lit-checkpoints/TinyLlama/TinyLlama-1.1B-intermediate-step-1431k-3T/tokenizer_config.json outputs/adaptation/tinyllama/lora/sst2/size=512/rs=999/checkpoints
+++ for dataset in $DATASETS
+++ for size in ${dataset2samples[$dataset]}
+++ for random_state in ${dataset2seed[$dataset"_"$size]}
+++ total_train_samples=16
+++ use_train_samples_as_val=-1
+++ output_dir=outputs/adaptation/tinyllama/lora/agnews/size=4/rs=295
+++ '[' '!' -f outputs/adaptation/tinyllama/lora/agnews/size=4/rs=295/test_logits.csv ']'
+++ mkdir -p outputs/adaptation/tinyllama/lora/agnews/size=4/rs=295 outputs/adaptation/tinyllama/lora/agnews/size=4/rs=295/logs outputs/adaptation/tinyllama/lora/agnews/size=4/rs=295/checkpoints
+++ python -m llmcal2.scripts.lora --data_dir outputs/prompts/generative/agnews --total_train_samples 16 --val_prop 0.3 --use_train_samples_as_val -1 --random_state 295 --checkpoint_dir /mnt/extra/lestienne/lit-checkpoints/TinyLlama/TinyLlama-1.1B-intermediate-step-1431k-3T --batch_size 1 --accelerator gpu --strategy auto --devices 1 --num_nodes 1 --precision bf16-true --max_epochs=-1 --max_steps=-1 --val_check_interval=16 --accumulate_grad_batches=8 --lora_r=8 --lora_alpha=16 --lora_dropout=0.05 --lora_query --lora_key --lora_value --lora_projection --lora_mlp --lora_head --optimizer=adamw --learning_rate=0.0001 --weight_decay=0.0 --output_dir outputs/adaptation/tinyllama/lora/agnews/size=4/rs=295 --log_dir outputs/adaptation/tinyllama/lora/agnews/size=4/rs=295/logs --output_checkpoint_dir outputs/adaptation/tinyllama/lora/agnews/size=4/rs=295/checkpoints
+Seed set to 295
+GPU available: True (cuda), used: True
+TPU available: False, using: 0 TPU cores
+HPU available: False, using: 0 HPUs
+/mnt/extra/lestienne/anaconda3/envs/llmcal/lib/python3.10/site-packages/lightning/fabric/loggers/csv_logs.py:269: Experiment logs directory outputs/adaptation/tinyllama/lora/agnews/size=4/rs=295/logs exists and is not empty. Previous log files in this directory will be deleted when the new ones are saved!
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+
+  | Name | Type           | Params | Mode 
+------------------------------------------------
+0 | gpt  | GenerativeLoRA | 1.1 B  | train
+------------------------------------------------
+6.6 M     Trainable params
+1.1 B     Non-trainable params
+1.1 B     Total params
+4,426.514 Total estimated model params size (MB)
+/mnt/extra/lestienne/anaconda3/envs/llmcal/lib/python3.10/site-packages/lightning/pytorch/loops/fit_loop.py:298: The number of training batches (11) is smaller than the logging interval Trainer(log_every_n_steps=50). Set a lower value for log_every_n_steps if you want to see logs for the training epoch.
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+Traceback (most recent call last):
+  File "/mnt/extra/lestienne/anaconda3/envs/llmcal/lib/python3.10/multiprocessing/queues.py", line 244, in _feed
+  File "/mnt/extra/lestienne/anaconda3/envs/llmcal/lib/python3.10/multiprocessing/reduction.py", line 51, in dumps
+  File "/mnt/extra/lestienne/anaconda3/envs/llmcal/lib/python3.10/site-packages/torch/multiprocessing/reductions.py", line 569, in reduce_storage
+  File "/mnt/extra/lestienne/anaconda3/envs/llmcal/lib/python3.10/multiprocessing/reduction.py", line 198, in DupFd
+  File "/mnt/extra/lestienne/anaconda3/envs/llmcal/lib/python3.10/multiprocessing/resource_sharer.py", line 48, in __init__
+OSError: [Errno 24] Too many open files
+Traceback (most recent call last):
+  File "/mnt/extra/lestienne/anaconda3/envs/llmcal/lib/python3.10/multiprocessing/queues.py", line 244, in _feed
+  File "/mnt/extra/lestienne/anaconda3/envs/llmcal/lib/python3.10/multiprocessing/reduction.py", line 51, in dumps
+  File "/mnt/extra/lestienne/anaconda3/envs/llmcal/lib/python3.10/site-packages/torch/multiprocessing/reductions.py", line 569, in reduce_storage
+  File "/mnt/extra/lestienne/anaconda3/envs/llmcal/lib/python3.10/multiprocessing/reduction.py", line 198, in DupFd
+  File "/mnt/extra/lestienne/anaconda3/envs/llmcal/lib/python3.10/multiprocessing/resource_sharer.py", line 48, in __init__
+OSError: [Errno 24] Too many open files
+Traceback (most recent call last):
+  File "/mnt/extra/lestienne/anaconda3/envs/llmcal/lib/python3.10/multiprocessing/resource_sharer.py", line 145, in _serve
+    send(conn, destination_pid)
+  File "/mnt/extra/lestienne/anaconda3/envs/llmcal/lib/python3.10/multiprocessing/resource_sharer.py", line 50, in send
+    reduction.send_handle(conn, new_fd, pid)
+  File "/mnt/extra/lestienne/anaconda3/envs/llmcal/lib/python3.10/multiprocessing/reduction.py", line 183, in send_handle
+    with socket.fromfd(conn.fileno(), socket.AF_UNIX, socket.SOCK_STREAM) as s:
+  File "/mnt/extra/lestienne/anaconda3/envs/llmcal/lib/python3.10/socket.py", line 545, in fromfd
+    nfd = dup(fd)
+OSError: [Errno 24] Too many open files
+Traceback (most recent call last):
+  File "/mnt/extra/lestienne/anaconda3/envs/llmcal/lib/python3.10/runpy.py", line 196, in _run_module_as_main
+    return _run_code(code, main_globals, None,
+  File "/mnt/extra/lestienne/anaconda3/envs/llmcal/lib/python3.10/runpy.py", line 86, in _run_code
+    exec(code, run_globals)
+  File "/mnt/extra/lestienne/Documents/llmcal2/src/llmcal2/scripts/lora.py", line 269, in <module>
+    Fire(main)
+  File "/mnt/extra/lestienne/anaconda3/envs/llmcal/lib/python3.10/site-packages/fire/core.py", line 141, in Fire
+    component_trace = _Fire(component, args, parsed_flag_args, context, name)
+  File "/mnt/extra/lestienne/anaconda3/envs/llmcal/lib/python3.10/site-packages/fire/core.py", line 475, in _Fire
+    component, remaining_args = _CallAndUpdateTrace(
+  File "/mnt/extra/lestienne/anaconda3/envs/llmcal/lib/python3.10/site-packages/fire/core.py", line 691, in _CallAndUpdateTrace
+    component = fn(*varargs, **kwargs)
+  File "/mnt/extra/lestienne/Documents/llmcal2/src/llmcal2/scripts/lora.py", line 252, in main
+    trainer.predict(model, dataloaders=dataloader)
+  File "/mnt/extra/lestienne/anaconda3/envs/llmcal/lib/python3.10/site-packages/lightning/pytorch/trainer/trainer.py", line 863, in predict
+    return call._call_and_handle_interrupt(
+  File "/mnt/extra/lestienne/anaconda3/envs/llmcal/lib/python3.10/site-packages/lightning/pytorch/trainer/call.py", line 44, in _call_and_handle_interrupt
+    return trainer_fn(*args, **kwargs)
+  File "/mnt/extra/lestienne/anaconda3/envs/llmcal/lib/python3.10/site-packages/lightning/pytorch/trainer/trainer.py", line 902, in _predict_impl
+    results = self._run(model, ckpt_path=ckpt_path)
+  File "/mnt/extra/lestienne/anaconda3/envs/llmcal/lib/python3.10/site-packages/lightning/pytorch/trainer/trainer.py", line 986, in _run
+    results = self._run_stage()
+  File "/mnt/extra/lestienne/anaconda3/envs/llmcal/lib/python3.10/site-packages/lightning/pytorch/trainer/trainer.py", line 1025, in _run_stage
+    return self.predict_loop.run()
+  File "/mnt/extra/lestienne/anaconda3/envs/llmcal/lib/python3.10/site-packages/lightning/pytorch/loops/utilities.py", line 182, in _decorator
+    return loop_run(self, *args, **kwargs)
+  File "/mnt/extra/lestienne/anaconda3/envs/llmcal/lib/python3.10/site-packages/lightning/pytorch/loops/prediction_loop.py", line 121, in run
+    batch, batch_idx, dataloader_idx = next(data_fetcher)
+  File "/mnt/extra/lestienne/anaconda3/envs/llmcal/lib/python3.10/site-packages/lightning/pytorch/loops/fetchers.py", line 133, in __next__
+    batch = super().__next__()
+  File "/mnt/extra/lestienne/anaconda3/envs/llmcal/lib/python3.10/site-packages/lightning/pytorch/loops/fetchers.py", line 60, in __next__
+    batch = next(self.iterator)
+  File "/mnt/extra/lestienne/anaconda3/envs/llmcal/lib/python3.10/site-packages/lightning/pytorch/utilities/combined_loader.py", line 341, in __next__
+    out = next(self._iterator)
+  File "/mnt/extra/lestienne/anaconda3/envs/llmcal/lib/python3.10/site-packages/lightning/pytorch/utilities/combined_loader.py", line 142, in __next__
+    out = next(self.iterators[0])
+  File "/mnt/extra/lestienne/anaconda3/envs/llmcal/lib/python3.10/site-packages/torch/utils/data/dataloader.py", line 631, in __next__
+    data = self._next_data()
+  File "/mnt/extra/lestienne/anaconda3/envs/llmcal/lib/python3.10/site-packages/torch/utils/data/dataloader.py", line 1329, in _next_data
+    idx, data = self._get_data()
+  File "/mnt/extra/lestienne/anaconda3/envs/llmcal/lib/python3.10/site-packages/torch/utils/data/dataloader.py", line 1295, in _get_data
+    success, data = self._try_get_data()
+  File "/mnt/extra/lestienne/anaconda3/envs/llmcal/lib/python3.10/site-packages/torch/utils/data/dataloader.py", line 1133, in _try_get_data
+    data = self._data_queue.get(timeout=timeout)
+  File "/mnt/extra/lestienne/anaconda3/envs/llmcal/lib/python3.10/multiprocessing/queues.py", line 122, in get
+    return _ForkingPickler.loads(res)
+  File "/mnt/extra/lestienne/anaconda3/envs/llmcal/lib/python3.10/site-packages/torch/multiprocessing/reductions.py", line 495, in rebuild_storage_fd
+    fd = df.detach()
+  File "/mnt/extra/lestienne/anaconda3/envs/llmcal/lib/python3.10/multiprocessing/resource_sharer.py", line 58, in detach
+    return reduction.recv_handle(conn)
+  File "/mnt/extra/lestienne/anaconda3/envs/llmcal/lib/python3.10/multiprocessing/reduction.py", line 189, in recv_handle
+    return recvfds(s, 1)[0]
+  File "/mnt/extra/lestienne/anaconda3/envs/llmcal/lib/python3.10/multiprocessing/reduction.py", line 159, in recvfds
+    raise EOFError
+EOFError

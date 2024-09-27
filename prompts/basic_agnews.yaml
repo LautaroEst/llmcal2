@@ -1,0 +1,7 @@
+template_type: "generative"
+prompt_template: "Article: \"{text}\"\nCategory:"
+answers_templates: 
+  - "World"
+  - "Sports"
+  - "Business"
+  - "Science and Technology"

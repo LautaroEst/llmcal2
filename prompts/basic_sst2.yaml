@@ -1,0 +1,5 @@
+template_type: "generative"
+prompt_template: "Review: \"{text}\"\nSentiment:"
+answers_templates: 
+  - "Negative"
+  - "Positive"
