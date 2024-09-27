@@ -48,23 +48,20 @@ class GenerativeLMLoRANorm(L.LightningModule):
         prompt_mask = batch["prompt_mask"]
         labels = batch["label"]
         
-        lm_loss = 0
-        residual_loss = 0
-        for input_ids, attention_mask, label in zip(prompt_ids, prompt_mask, labels):
+        loss = 0
+        for input_ids, attention_mask, answers, label in zip(prompt_ids, prompt_mask, answers_ids, labels):
             input_ids = input_ids[attention_mask == 1].unsqueeze(0)
             class_logprobs = []
-            for i, ans_ids in zip(labels,answers_ids):
-                full_input_ids = torch.cat([input_ids, ans_ids], dim=1)
+            for i, ans_ids in enumerate(answers):
+                full_input_ids = torch.cat([input_ids, ans_ids.unsqueeze(0)], dim=1)
                 logprobs = self(full_input_ids, None, False)["logits"][:,:-1,:].log_softmax(dim=2)
                 index = full_input_ids[:,1:].unsqueeze(2)
                 gather_logprobs = torch.gather(logprobs, -1, index).squeeze(2)
                 logprob = gather_logprobs.sum()
-                if i == label:
-                    lm_loss = lm_loss - logprob
                 class_logprobs.append(logprob) 
-            residual_loss = residual_loss + torch.logsumexp(torch.stack(class_logprobs, dim=0), dim=0)
-        loss = lm_loss + residual_loss
-        batch_samples = len(prompt_ids)
+            logits = torch.stack(class_logprobs, dim=0)
+            loss = loss + torch.nn.functional.cross_entropy(logits.unsqueeze(0), label.unsqueeze(0), reduction="sum")
+        batch_samples = prompt_ids.shape[0]
 
         return {f"loss": loss / batch_samples, "cum_loss": loss, "batch_samples": batch_samples}
     
@@ -84,7 +81,7 @@ class GenerativeLMLoRANorm(L.LightningModule):
     def on_train_batch_end(self, outputs, batch, batch_idx):
         if self.last_global_step == self.global_step:
             self.cum_loss += outputs["cum_loss"]
-            self.cum_num_samples += outputs["num_samples"]
+            self.cum_num_samples += outputs["batch_samples"]
             return
 
         if self.cum_num_samples == 0:
@@ -113,7 +110,7 @@ class GenerativeLMLoRANorm(L.LightningModule):
 
     def on_validation_batch_end(self, outputs, batch, batch_idx):
         self.val_cum_loss += outputs["cum_loss"]
-        self.val_cum_num_samples += outputs["num_samples"]
+        self.val_cum_num_samples += outputs["batch_samples"]
         
     def on_validation_epoch_end(self):
         if self.trainer.state.stage != RunningStage.SANITY_CHECKING:

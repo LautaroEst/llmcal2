@@ -65,6 +65,7 @@ kwargs = {
     "temp_scaling": {"label": "Temperature scaling", "color": "tab:orange", "ls": "--", "marker": "*"},
     "bias_only": {"label": "Bias only", "color": "tab:green", "ls": "--", "marker": "*"},
     "lora": {"label": "LoRA", "color": "tab:green", "ls": "--", "marker": "*"},
+    "lora_norm": {"label": "LoRA CE", "color": "tab:orange", "ls": "--", "marker": "*"},
     "lora_plus_dp_calibration": {"label": "LoRA + DP calibration", "color": "tab:green", "ls": "-", "marker": "*"},
     "lora_no_es": {"label": "LoRA (no ES)", "color": "tab:red", "ls": "--", "marker": "*"},
     "lora_plus_dp_calibration_no_es": {"label": "LoRA + DP calibration (no ES)", "color": "tab:red", "ls": "-", "marker": "*"},

@@ -196,10 +196,7 @@ def main(
 
     # Init base model
     with trainer.init_module(empty_init=True):
-        if norm:
-            gpt = GenerativeLMLoRANorm(config)
-        else:
-            gpt = GenerativeLoRA(config)
+        gpt = GenerativeLoRA(config)
     mark_only_lora_as_trainable(gpt)
     
     checkpoint_path = checkpoint_dir / "lit_model.pth"
@@ -212,12 +209,20 @@ def main(
     else:
         init_lora_linear_modules(gpt)
 
-    model = GenerativeLMLoRA(
-        gpt = gpt,
-        optimizer = optimizer,
-        learning_rate = learning_rate,
-        weight_decay = weight_decay,
-    )
+    if norm:
+        model = GenerativeLMLoRANorm(
+            gpt = gpt,
+            optimizer = optimizer,
+            learning_rate = learning_rate,
+            weight_decay = weight_decay,
+        )
+    else:
+        model = GenerativeLMLoRA(
+            gpt = gpt,
+            optimizer = optimizer,
+            learning_rate = learning_rate,
+            weight_decay = weight_decay,
+        )
 
     # -------------------
     # Fit the model

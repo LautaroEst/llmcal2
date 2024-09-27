@@ -21,7 +21,7 @@ for dataset in $DATASETS; do
         for random_state in ${dataset2seed[$dataset"_"$size]}; do
             total_train_samples=$((size * dataset2numclasses[$dataset]))
             use_train_samples_as_val=-1
-            output_dir="outputs/adaptation/$model/lora/$dataset/size=$size/rs=$random_state"
+            output_dir="outputs/adaptation/$model/lora_norm/$dataset/size=$size/rs=$random_state"
             if [ ! -f $output_dir/test_logits.csv ]; then
                 mkdir -p $output_dir $output_dir/logs $output_dir/checkpoints
                 python -m llmcal2.scripts.lora \

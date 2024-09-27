@@ -82,6 +82,8 @@ def create_dataloaders(train_logits, train_labels, val_logits, val_labels, test_
             shuffle=False, 
             num_workers=4, 
         )
+    else:
+        data["val"] = None
 
     if is_test:
         df_test_logits = pd.read_csv(test_logits, index_col=0, header=None)
@@ -165,8 +167,7 @@ def main(
     # Fit the model
     # -------------------
     last_checkpoint_path = output_dir / "last.ckpt" if (output_dir / "last.ckpt").exists() else None
-    val_dataloader = data.get("val", None)
-    trainer.fit(model, train_dataloaders=data["train"], val_dataloaders=val_dataloader, ckpt_path=last_checkpoint_path)
+    trainer.fit(model, train_dataloaders=data["train"], val_dataloaders=data["val"], ckpt_path=last_checkpoint_path)
     if trainer.state.status == TrainerStatus.INTERRUPTED:
         print("Training interrupted.")
         return
@@ -182,6 +183,8 @@ def main(
     model.load_state_dict(checkpoint["state_dict"], strict=True)
         
     for split, dataloader in data.items():
+        if dataloader is None:
+            continue
         trainer.predict(model, dataloaders=dataloader)
         if trainer.state.status == TrainerStatus.INTERRUPTED:
             print("Prediction interrupted.")

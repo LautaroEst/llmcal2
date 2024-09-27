@@ -85,6 +85,8 @@ class AffineCalibration(L.LightningModule):
         
         self.super_global_step = 0
         self.best_val_loss = float("inf")
+        self.last_val_loss = float("inf")
+        self.patience_count = 0
 
     def configure_optimizers(self):
         trainable_params = [param for param in self.parameters() if param.requires_grad]
@@ -92,6 +94,11 @@ class AffineCalibration(L.LightningModule):
     
     def forward(self, logits) -> torch.Tensor:
         return self.calibrator(logits)
+    
+    def on_train_batch_start(self, batch, batch_idx):
+        if self.patience_count >= 10 and self.current_epoch > 0:
+            self.trainer.should_stop = True
+            return -1
     
     def training_step(self, batch, batch_idx):
 
@@ -124,24 +131,33 @@ class AffineCalibration(L.LightningModule):
         loss = torch.nn.functional.cross_entropy(cal_logits, labels)
         
         if self.trainer.state.stage != RunningStage.SANITY_CHECKING:
+            ce = loss.item()
+            self.last_val_loss = ce
             for logger in self.loggers:
                 logger.log_metrics({
-                    "val/cross_entropy": loss.item(),
+                    "val/cross_entropy": ce,
                 }, step=self.super_global_step)
-            if loss.item() < self.best_val_loss:
-                self.best_val_loss = loss.item()
+            if ce < self.best_val_loss:
+                self.patience_count = 0
+                self.best_val_loss = ce
                 self.trainer.save_checkpoint(
                     Path(self.trainer.default_root_dir) / "best.ckpt"
                 )
+            else:
+                self.patience_count += 1
         return {"loss": loss}
 
     def on_save_checkpoint(self, checkpoint: torch.Dict[str, Any]) -> None:
         checkpoint["super_global_step"] = self.super_global_step
         checkpoint["best_val_loss"] = self.best_val_loss
+        checkpoint["last_val_loss"] = self.last_val_loss
+        checkpoint["patience_count"] = self.patience_count
 
     def on_load_checkpoint(self, checkpoint: torch.Dict[str, Any]) -> None:
         self.super_global_step = checkpoint["super_global_step"]
         self.best_val_loss = checkpoint["best_val_loss"]
+        self.last_val_loss = checkpoint["last_val_loss"]
+        self.patience_count = checkpoint["patience_count"]
 
     def on_predict_start(self) -> None:
         self.eval()
