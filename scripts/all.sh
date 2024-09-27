@@ -1,8 +1,9 @@
 #! /bin/bash -ex
-export CUDA_VISIBLE_DEVICES=0
+export CUDA_VISIBLE_DEVICES=1
 
 model="tinyllama"
-DATASETS="sst2 agnews dbpedia 20newsgroups banking77"
+# DATASETS="sst2 agnews dbpedia 20newsgroups banking77"
+DATASETS="agnews dbpedia 20newsgroups banking77"
 
 # Supported models
 declare -A model2checkpoint=(
@@ -59,8 +60,8 @@ declare -A dataset2seed=(
 )
 
 
-source ./scripts/generative_no_adaptation.sh
-source ./scripts/affine_calibration.sh
+# source ./scripts/generative_no_adaptation.sh
+# source ./scripts/affine_calibration.sh
 source ./scripts/lora.sh
 source ./scripts/lora_no_es.sh
 # ./scripts/lora_plus_affine_cal.sh
