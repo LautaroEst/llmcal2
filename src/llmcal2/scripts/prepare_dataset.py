@@ -3,41 +3,43 @@ import numpy as np
 import datasets
 datasets.disable_caching()
 
-def load_sst2():
+def load_sst2(train_list_path, test_list_path):
     data = datasets.load_dataset("nyu-mll/glue", "sst2")
+    train_list = np.loadtxt(train_list_path, dtype=int)
+    test_list = np.loadtxt(test_list_path, dtype=int)
     datadict = {
-        "train": data["train"].to_pandas().set_index("idx").rename(columns={"sentence": "text"}),
-        "test": data["validation"].to_pandas().set_index("idx").rename(columns={"sentence": "text"}),
+        "train": data["train"].to_pandas().set_index("idx").rename(columns={"sentence": "text"}).loc[train_list],
+        "test": data["validation"].to_pandas().set_index("idx").rename(columns={"sentence": "text"}).loc[test_list]
     }
     return datadict
 
 
-def load_agnews():
+def load_agnews(train_list_path, test_list_path):
     data = datasets.load_dataset("ag_news")
-    data["train"] = data["train"].add_column("idx", np.arange(len(data["train"]))).to_pandas().set_index("idx")
-    data["test"] = data["test"].add_column("idx", np.arange(len(data["test"]))).to_pandas().set_index("idx")
+    train_list = np.loadtxt(train_list_path, dtype=int)
+    test_list = np.loadtxt(test_list_path, dtype=int)
     datadict = {
-        "train": data["train"],
-        "test": data["test"]
+        "train": data["train"].add_column("idx", np.arange(len(data["train"]))).to_pandas().set_index("idx").loc[train_list],
+        "test": data["test"].add_column("idx", np.arange(len(data["test"]))).to_pandas().set_index("idx").loc[test_list]
     }
     return datadict
 
 
-def load_dbpedia():
+def load_dbpedia(train_list_path, test_list_path):
     data = datasets.load_dataset("fancyzhx/dbpedia_14")
     data["train"] = data["train"].add_column("idx", np.arange(len(data["train"])))
     data["test"] = data["test"].add_column("idx", np.arange(len(data["test"])))
 
-    rs = np.random.RandomState(27834)
-    test_idx = rs.choice(len(data["test"]), 7000, replace=False)
+    train_list = np.loadtxt(train_list_path, dtype=int)
+    test_list = np.loadtxt(test_list_path, dtype=int)
     datadict = {
-        "train": data["train"].to_pandas().set_index("idx").loc[:,["content","label"]].rename(columns={"content": "text"}),
-        "test": data["test"].select(test_idx).to_pandas().set_index("idx").loc[:,["content","label"]].rename(columns={"content": "text"}),
+        "train": data["train"].to_pandas().set_index("idx").loc[train_list,["content","label"]].rename(columns={"content": "text"}),
+        "test": data["test"].to_pandas().set_index("idx").loc[test_list,["content","label"]].rename(columns={"content": "text"}),
     }
     return datadict
 
 
-def load_newsgroups():
+def load_newsgroups(train_list_path, test_list_path):
     data = datasets.load_dataset("SetFit/20_newsgroups")
     classes_names = data["train"].to_pandas().loc[:,["label","label_text"]].drop_duplicates().set_index("label").squeeze().sort_index().tolist()
     data["train"] = data["train"].add_column("idx", np.arange(len(data["train"])))
@@ -49,44 +51,46 @@ def load_newsgroups():
             names=classes_names)
         data[split] = data[split].cast(features)
     
+    train_list = np.loadtxt(train_list_path, dtype=int)
+    test_list = np.loadtxt(test_list_path, dtype=int)
     datadict = {
-        "train": data["train"].to_pandas().set_index("idx").drop(columns=["label_text"]),
-        "test": data["test"].to_pandas().set_index("idx").drop(columns=["label_text"]),
+        "train": data["train"].to_pandas().set_index("idx").drop(columns=["label_text"]).loc[train_list],
+        "test": data["test"].to_pandas().set_index("idx").drop(columns=["label_text"]).loc[test_list],
     }
 
     return datadict
 
 
-def load_banking():
-    data = datasets.load_dataset("PolyAI/banking77")
+def load_banking(train_list_path, test_list_path):
+    data = datasets.load_dataset("PolyAI/banking77",trust_remote_code=True)
     data["train"] = data["train"].add_column("idx", np.arange(len(data["train"])))
     data["test"] = data["test"].add_column("idx", np.arange(len(data["train"]), len(data["train"])+len(data["test"])))
     all_data = datasets.concatenate_datasets([data["train"], data["test"]])
 
-    rs = np.random.RandomState(7348)
-    idx = rs.permutation(len(all_data))
-    train_idx = idx[:len(data["train"])]
-    test_idx = idx[len(data["train"]):]
-    
+    train_list = np.loadtxt(train_list_path, dtype=int)
+    test_list = np.loadtxt(test_list_path, dtype=int)
     datadict = {
-        "train": all_data.select(train_idx).to_pandas().set_index("idx"),
-        "test": all_data.select(test_idx).to_pandas().set_index("idx"),
+        "train": all_data.to_pandas().set_index("idx").loc[train_list],
+        "test": all_data.to_pandas().set_index("idx").loc[test_list],
     }
     
     return datadict
 
 
-def main(dataset, output_dir):
+def main(dataset, lists_dir, output_dir):
+    train_list_path = f"{lists_dir}/train.txt"
+    test_list_path = f"{lists_dir}/test.txt"
+
     if dataset == "sst2":
-        datadict = load_sst2()
+        datadict = load_sst2(train_list_path, test_list_path)
     elif dataset == "agnews":
-        datadict = load_agnews()
+        datadict = load_agnews(train_list_path, test_list_path)
     elif dataset == "dbpedia":
-        datadict = load_dbpedia()
+        datadict = load_dbpedia(train_list_path, test_list_path)
     elif dataset == "20newsgroups":
-        datadict = load_newsgroups()
+        datadict = load_newsgroups(train_list_path, test_list_path)
     elif dataset == "banking77":
-        datadict = load_banking()
+        datadict = load_banking(train_list_path, test_list_path)
     else:
         raise ValueError(f"Unknown dataset: {dataset}")
     
