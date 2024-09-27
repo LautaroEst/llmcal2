@@ -103,7 +103,7 @@ def plot_and_save(data, metrics, datasets, methods, filename):
     data = data.drop(columns=["seed"]).groupby(["method", "dataset", "size"]).agg(**{
         f"{metric}-{stat}": (f"metric:{metric}", fn) for metric in metrics for stat, fn in stats
     })
-    
+
     for i, dataset in enumerate(datasets):
         dataset_sizes = data.loc[(slice(None), dataset, slice(None)), :].index.get_level_values("size").unique().values
         dataset_sizes = np.sort(dataset_sizes[dataset_sizes != "all"]).astype(int)
@@ -145,7 +145,7 @@ def plot_and_save(data, metrics, datasets, methods, filename):
         ax[-1,i].set_xlabel(f"(x{dataset2name[dataset]['num_classes']})", fontsize=12)
     
     hand, lab = ax[0,0].get_legend_handles_labels()
-    fig.legend(hand, lab, loc='upper center', bbox_to_anchor=(0.5, 1.12), ncol=len(methods)//2, fancybox=True, shadow=True, fontsize=13)
+    fig.legend(hand, lab, loc='upper center', bbox_to_anchor=(0.5, 1.12), ncol=max(1,len(methods)//2), fancybox=True, shadow=True, fontsize=13)
     fig.tight_layout()
     plt.savefig(filename, dpi=300, bbox_inches="tight")
 
@@ -159,11 +159,11 @@ def main(
     overwrite = False,
 ):
     if isinstance(metrics, str) and "," in metrics:
-        metrics = metrics.split(",")
+        metrics = [m for m in metrics.split(",") if m != ""]
     if isinstance(datasets, str) and "," in datasets:
-        datasets = datasets.split(",")
+        datasets = [d for d in datasets.split(",") if d != ""]
     if isinstance(methods, str) and "," in methods:
-        methods = methods.split(",")
+        methods = [m for m in methods.split(",") if m != ""]
         
     output_dir = Path(output_dir)
     results_dir = Path(results_dir)

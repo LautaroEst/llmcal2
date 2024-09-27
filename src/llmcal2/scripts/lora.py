@@ -13,6 +13,7 @@ from lightning.fabric.utilities.load import _lazy_load as lazy_load
 from lightning.pytorch.trainer.states import TrainerStatus
 
 from ..models.lora import GenerativeLoRA, GenerativeLMLoRA, init_lora_linear_modules
+from ..models.lora_norm import GenerativeLMLoRANorm
 from .utils import GenerativeCollator, TBLogger, CSVLogger
 
 
@@ -60,13 +61,19 @@ class LMDataset(Dataset):
             "label": torch.tensor(data["label"], dtype=torch.long),
         }
     
-def process_dataframe_for_train(df, tokenizer):
+def process_dataframe_for_train(df, tokenizer, include_answers=False):
 
-    def transform(sample):
-        prompt_with_answer = f"{sample['prompt']} {sample['answer'][sample['label']]}"
-        prompt_ids = tokenizer.encode(prompt_with_answer, bos=True).long()
-        answers_ids = [torch.tensor([],dtype=torch.long) for _ in sample["answer"]]
-        return pd.Series({"prompt_ids": prompt_ids, "answers_ids": answers_ids, "label": sample["label"]})
+    if include_answers:
+        def transform(sample):
+            prompt_ids = tokenizer.encode(sample['prompt'], bos=True).long()
+            answers_ids = [tokenizer.encode(ans, bos=True)[1:].long() for ans in sample["answer"]]
+            return pd.Series({"prompt_ids": prompt_ids, "answers_ids": answers_ids, "label": sample["label"]})
+    else:
+        def transform(sample):
+            prompt_with_answer = f"{sample['prompt']} {sample['answer'][sample['label']]}"
+            prompt_ids = tokenizer.encode(prompt_with_answer, bos=True).long()
+            answers_ids = [torch.tensor([],dtype=torch.long) for _ in sample["answer"]]
+            return pd.Series({"prompt_ids": prompt_ids, "answers_ids": answers_ids, "label": sample["label"]})
     
     df = df.apply(transform, axis=1)
     dataset = LMDataset(df)
@@ -94,6 +101,7 @@ def main(
     use_train_samples_as_val,
     random_state,
     checkpoint_dir,
+    norm = False,
     batch_size = 32,
     accelerator = "cpu",
     strategy = "auto",
@@ -154,12 +162,12 @@ def main(
             train_data[split] = None
             continue
         print(f"Processing {split}...")
-        train_data[split] = process_dataframe_for_train(data[split], tokenizer)
+        train_data[split] = process_dataframe_for_train(data[split], tokenizer, include_answers=norm)
         train_data[split] = DataLoader(
             train_data[split], 
             shuffle=split == "train",
             batch_size=batch_size, 
-            num_workers=1, 
+            num_workers=4, 
             collate_fn=GenerativeCollator(0, config.block_size)
         )
 
@@ -188,7 +196,10 @@ def main(
 
     # Init base model
     with trainer.init_module(empty_init=True):
-        gpt = GenerativeLoRA(config)
+        if norm:
+            gpt = GenerativeLMLoRANorm(config)
+        else:
+            gpt = GenerativeLoRA(config)
     mark_only_lora_as_trainable(gpt)
     
     checkpoint_path = checkpoint_dir / "lit_model.pth"
@@ -220,7 +231,7 @@ def main(
         trainer.validate(model, dataloaders=train_data["val"])
 
     # Save best checkpoint and config files
-    best_checkpoint_path = output_checkpoint_dir / "best.ckpt"
+    best_checkpoint_path = output_dir / "best.ckpt"
     if not best_checkpoint_path.exists():
         best_checkpoint_path = output_dir / "last.ckpt"
     checkpoint = lazy_load(best_checkpoint_path)
@@ -246,7 +257,7 @@ def main(
             data[split], 
             shuffle=False, 
             batch_size=batch_size, 
-            num_workers=1, 
+            num_workers=4, 
             collate_fn=GenerativeCollator(0, config.block_size)
         )
         trainer.predict(model, dataloaders=dataloader)
