@@ -1,8 +1,8 @@
 #! /bin/bash -ex
 accelerator="cpu"
 max_ls=40
-learning_rate=1e-2
-max_epochs=30
+learning_rate=5e-3
+max_epochs=-1
 methods="dp_calibration temp_scaling bias_only"
 
 checkpoint=${model2checkpoint[$model]}
@@ -21,6 +21,8 @@ for dataset in $DATASETS; do
                         --val_labels outputs/adaptation/$model/no_adaptation/$dataset/size=$size/rs=$random_state/val_label.csv \
                         --test_logits outputs/adaptation/$model/no_adaptation/$dataset/size=all/rs=all/test_logits.csv \
                         --test_labels outputs/adaptation/$model/no_adaptation/$dataset/size=all/rs=all/test_label.csv \
+                        --val_prop 0.3 \
+                        --random_state $random_state \
                         --method $method \
                         --max_ls $max_ls \
                         --learning_rate $learning_rate \

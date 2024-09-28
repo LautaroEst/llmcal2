@@ -2,8 +2,7 @@
 export CUDA_VISIBLE_DEVICES=1
 
 model="tinyllama"
-DATASETS="sst2 dbpedia 20newsgroups banking77"
-# DATASETS="sst2 "
+DATASETS="sst2 agnews dbpedia 20newsgroups banking77"
 
 # Supported models
 declare -A model2checkpoint=(
@@ -76,10 +75,10 @@ declare -A dataset2seed=(
 
 source ./scripts/prepare_datasets.sh
 source ./scripts/prepare_prompts.sh
-# source ./scripts/generative_no_adaptation.sh
-# source ./scripts/affine_calibration.sh
-source ./scripts/lora.sh
-source ./scripts/lora_norm.sh
+source ./scripts/generative_no_adaptation.sh
+source ./scripts/affine_calibration.sh
+# source ./scripts/lora.sh
+# source ./scripts/lora_norm.sh
 # source ./scripts/lora_no_es.sh
 # ./scripts/lora_plus_affine_cal.sh
 # ./scripts/lora_plus_affine_cal_no_es.sh

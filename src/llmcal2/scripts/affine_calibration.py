@@ -183,7 +183,7 @@ def main(
     model.load_state_dict(checkpoint["state_dict"], strict=True)
         
     for split, dataloader in data.items():
-        if dataloader is None:
+        if dataloader is None or (output_dir / f"{split}_logits.csv").exists():
             continue
         trainer.predict(model, dataloaders=dataloader)
         if trainer.state.status == TrainerStatus.INTERRUPTED:
