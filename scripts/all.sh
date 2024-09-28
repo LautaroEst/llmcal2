@@ -2,7 +2,7 @@
 export CUDA_VISIBLE_DEVICES=1
 
 model="tinyllama"
-DATASETS="sst2 agnews dbpedia 20newsgroups banking77"
+DATASETS="sst2 dbpedia 20newsgroups banking77"
 # DATASETS="sst2 "
 
 # Supported models
