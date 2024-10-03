@@ -33,10 +33,8 @@ class DPCalibrator(nn.Module):
             return loss
         
         last_loss = float("inf")
-        for epoch in range(100):
+        while abs(last_loss - loss) < 1e-6:
             loss = optimizer.step(closure)
-            if abs(last_loss - loss) < 1e-6:
-                break
 
         return self
 

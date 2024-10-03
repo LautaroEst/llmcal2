@@ -137,7 +137,7 @@ class AffineCalibration(L.LightningModule):
                 logger.log_metrics({
                     "val/cross_entropy": ce,
                 }, step=self.super_global_step)
-            if ce < self.best_val_loss:
+            if self.best_val_loss - ce > 1e-5:
                 self.patience_count = 0
                 self.best_val_loss = ce
                 self.trainer.save_checkpoint(
