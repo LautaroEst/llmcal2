@@ -11,10 +11,10 @@ def load_data(data_dir):
         "test": df_test
     }
 
-def create_prompt_for_generative_model(df, config, max_words=400):
+def create_prompt_for_generative_model(df, config, max_characters=1000):
     df = df.copy()
     df["answer"] = [config["answers_templates"] for _ in range(len(df))]
-    df["prompt"] = df["text"].apply(lambda x: config["prompt_template"].format(text=" ".join(x.split(" ")[:max_words])))
+    df["prompt"] = df["text"].apply(lambda x: config["prompt_template"].format(text=x[:max_characters]))
     df = df.loc[:,["prompt", "answer", "label"]]
     return df
 
@@ -23,7 +23,7 @@ def main(
     data_dir,
     prompt_template,
     output_dir,
-    max_words = 400,
+    max_characters = 400,
 ):
     # Load data
     data_dir = Path(data_dir)
@@ -34,7 +34,7 @@ def main(
     template_type = prompt_template_config.pop("template_type")
     if template_type == "generative":
         for key in data:
-            data[key] = create_prompt_for_generative_model(data[key], prompt_template_config, max_words=max_words)
+            data[key] = create_prompt_for_generative_model(data[key], prompt_template_config, max_characters=max_characters)
     else:
         raise ValueError(f"Invalid template_type: {template_type}")
 
