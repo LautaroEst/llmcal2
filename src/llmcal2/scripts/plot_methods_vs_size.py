@@ -138,7 +138,8 @@ def plot_and_save(data, metrics, datasets, methods, filename):
             ax[j,i].set_xticks([])
             ax[j,i].minorticks_off()
             ylim = ax[j,i].get_ylim()
-            sup = 1.2 * data.loc[(slice(None), dataset, slice(None)), f"{metric}-median"].max()
+            # sup = 1.2 * data.loc[(slice(None), dataset, slice(None)), f"{metric}-median"].max()
+            sup = 1.5
             ax[j,i].set_ylim(max(0,ylim[0]), min(sup, ylim[1]))
 
         ax[0,i].set_title(f"{dataset2name[dataset]['name']}",fontsize=14)
@@ -148,7 +149,7 @@ def plot_and_save(data, metrics, datasets, methods, filename):
         ax[-1,i].set_xlabel(f"(x{dataset2name[dataset]['num_classes']})", fontsize=12)
     
     hand, lab = ax[0,0].get_legend_handles_labels()
-    fig.legend(hand, lab, loc='upper center', bbox_to_anchor=(0.5, 1.12), ncol=max(1,len(methods)//2), fancybox=True, shadow=True, fontsize=13)
+    fig.legend(hand, lab, loc='upper center', bbox_to_anchor=(0.5, 1.12), ncol=max(1,len(methods)//2), fancybox=True, shadow=True, fontsize=8)
     fig.tight_layout()
     plt.savefig(filename, dpi=300, bbox_inches="tight")
 

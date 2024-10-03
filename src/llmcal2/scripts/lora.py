@@ -6,7 +6,7 @@ import torch
 from torch.utils.data import DataLoader, Dataset
 
 from litgpt import Tokenizer
-from litgpt.utils import check_valid_checkpoint_dir as check_valid_checkpoint_dir
+from litgpt.utils import check_valid_checkpoint_dir
 from litgpt.lora import Config, mark_only_lora_as_trainable, lora_filter, merge_lora_weights
 import lightning as L
 from lightning.fabric.utilities.load import _lazy_load as lazy_load
