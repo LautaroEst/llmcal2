@@ -66,7 +66,7 @@ kwargs = {
     "bias_only": {"label": "Bias only", "color": "tab:green", "ls": "--", "marker": "*"},
     "lora": {"label": "LoRA", "color": "tab:red", "ls": "--", "marker": "*"},
     "lora_norm": {"label": "LoRA CE", "color": "tab:purple", "ls": "--", "marker": "*"},
-    "lora_no_es": {"label": "LoRA (no ES)", "color": "tab:red", "ls": "--", "marker": "*"},
+    "lora_no_es": {"label": "LoRA (no ES)", "color": "tab:red", "ls": "-", "marker": "*"},
     "lora_plus_dp_calibration_no_es": {"label": "LoRA + DP calibration (no ES)", "color": "tab:blue", "ls": "-", "marker": "*"},
     "lora_plus_temp_scaling_no_es": {"label": "LoRA + Temp Scaling (no ES)", "color": "tab:orange", "ls": "-", "marker": "*"},
     "lora_norm_plus_dp_calibration_no_es": {"label": "LoRA CE + DP calibration (no ES)", "color": "tab:blue", "ls": ":", "marker": "*"},
