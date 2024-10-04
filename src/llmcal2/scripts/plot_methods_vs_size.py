@@ -77,7 +77,8 @@ metric2name = {
     "ner": "NER",
     "nce": "NCE",
     "nbrier": "NBrier",
-    "cal_loss_nce": "Calibration loss (NCE)",
+    "calloss_nce_trainontest": "CalLoss\n(NCE train on test)",
+    "calloss_nce_xval": "CalLoss\n(NCE xval)",
     "ece": "ECE",
 }
 

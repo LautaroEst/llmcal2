@@ -1,7 +1,7 @@
 
 import numpy as np
 from scipy.special import softmax, log_softmax
-from .calibration import train_cal_on_test
+from .calibration import train_cal_on_test, calibrate_xval
 
 def compute_ner(logits, labels):
     er = (logits.argmax(axis=1) != labels).mean()
@@ -23,10 +23,15 @@ def compute_nbrier(logits, labels):
     norm = ((one_hot - priors)**2).mean()
     return brier / norm
 
-def compute_cal_loss_nce(logits, labels):
-    cal_logprobs = train_cal_on_test(logits, labels)
-    nce = compute_nce(logits, labels)
-    cal_nce = compute_nce(cal_logprobs, labels)
+def compute_cal_loss(logits, labels, mode="trainontest", metric="nce"):
+    if mode == "trainontest":
+        cal_logprobs = train_cal_on_test(logits, labels)
+    elif mode == "xval":
+        cal_logprobs = calibrate_xval(logits, labels, seed=1234, condition_ids=None, stratified=True, nfolds=5) 
+    else:
+        raise ValueError(f"Unknown mode: {mode}")
+    nce = compute_metric(logits, labels, metric)
+    cal_nce = compute_metric(cal_logprobs, labels, metric)
     return (nce - cal_nce) / nce
 
 def compute_ece(logits, labels):
@@ -57,8 +62,9 @@ def compute_metric(logits, labels, metric):
         return compute_nce(logits, labels)
     elif metric == "nbrier":
         return compute_nbrier(logits, labels)
-    elif metric == "cal_loss_nce":
-        return compute_cal_loss_nce(logits, labels)
+    elif "calloss" in metric:
+        _, metric, mode = metric.split("_")
+        return compute_cal_loss(logits, labels, mode, metric)
     elif metric == "ece":
         return compute_ece(logits, labels)
     else:
