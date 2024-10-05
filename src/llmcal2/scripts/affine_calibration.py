@@ -36,36 +36,14 @@ class CalibrationDataset(Dataset):
         }
 
 
-def create_dataloaders(train_logits, train_labels, val_logits, val_labels, test_logits, test_labels, val_prop=0, random_state=42):
+def create_dataloaders(train_logits, train_labels, val_logits, val_labels, test_logits, test_labels):
     data = {}
-    is_train = train_logits is not None and train_labels is not None
-    is_val = val_logits is not None and val_labels is not None
-    is_test = test_logits is not None and test_labels is not None
-    if is_train and is_val:
-        df_train_logits = pd.read_csv(train_logits, index_col=0, header=None)
-        df_train_labels = pd.read_csv(train_labels, index_col=0, header=None)
-        df_val_logits = pd.read_csv(val_logits, index_col=0, header=None)
-        df_val_labels = pd.read_csv(val_labels, index_col=0, header=None)
-    elif is_train and not is_val:
-        df_train_logits = pd.read_csv(train_logits, index_col=0, header=None)
-        df_train_labels = pd.read_csv(train_labels, index_col=0, header=None)
-        if val_prop == 0:
-            df_val_logits = None
-            df_val_labels = None
-        else:
-            total_train_samples = len(df_train_logits)
-            train_samples = int(total_train_samples * (1 - val_prop))
-            val_samples = total_train_samples - train_samples
-            rs = np.random.RandomState(random_state+3)
-            idx = rs.permutation(len(df_train_logits))
-            train_idx = idx[:train_samples]
-            val_idx = idx[train_samples:train_samples + val_samples]
-            df_val_logits = df_train_logits.iloc[val_idx]
-            df_val_labels = df_train_labels.iloc[val_idx]
-            df_train_logits = df_train_logits.iloc[train_idx]
-            df_train_labels = df_train_labels.iloc[train_idx]
-    else:
-        raise ValueError("Invalid input data.")
+    df_train_logits = pd.read_csv(train_logits, index_col=0, header=None)
+    df_train_labels = pd.read_csv(train_labels, index_col=0, header=None)
+    df_val_logits = pd.read_csv(val_logits, index_col=0, header=None)
+    df_val_labels = pd.read_csv(val_labels, index_col=0, header=None)
+    df_test_logits = pd.read_csv(test_logits, index_col=0, header=None)
+    df_test_labels = pd.read_csv(test_labels, index_col=0, header=None)
 
     dataset = CalibrationDataset(df_train_logits, df_train_labels)
     data["train"] = DataLoader(
@@ -74,27 +52,20 @@ def create_dataloaders(train_logits, train_labels, val_logits, val_labels, test_
         shuffle=True, 
         num_workers=4, 
     )
-    if df_val_logits is not None:
-        dataset = CalibrationDataset(df_val_logits, df_val_labels)
-        data["val"] = DataLoader(
-            dataset, 
-            batch_size=len(dataset), 
-            shuffle=False, 
-            num_workers=4, 
-        )
-    else:
-        data["val"] = None
-
-    if is_test:
-        df_test_logits = pd.read_csv(test_logits, index_col=0, header=None)
-        df_test_labels = pd.read_csv(test_labels, index_col=0, header=None)
-        dataset = CalibrationDataset(df_test_logits, df_test_labels)
-        data["test"] = DataLoader(
-            dataset, 
-            batch_size=len(dataset), 
-            shuffle=False, 
-            num_workers=4, 
-        )
+    dataset = CalibrationDataset(df_val_logits, df_val_labels)
+    data["val"] = DataLoader(
+        dataset, 
+        batch_size=len(dataset), 
+        shuffle=False, 
+        num_workers=4, 
+    )
+    dataset = CalibrationDataset(df_test_logits, df_test_labels)
+    data["test"] = DataLoader(
+        dataset, 
+        batch_size=len(dataset), 
+        shuffle=False, 
+        num_workers=4, 
+    )
     return data
 
 def main(
@@ -104,7 +75,6 @@ def main(
     val_labels = None,
     test_logits = None,
     test_labels = None,
-    val_prop = 0.1,
     random_state = 42,
     method = "dp_calibration",
     max_ls = 40,
@@ -122,7 +92,7 @@ def main(
     checkpoint_dir = Path(checkpoint_dir)
 
     # Load dataset
-    data = create_dataloaders(train_logits, train_labels, val_logits, val_labels, test_logits, test_labels, val_prop, random_state)
+    data = create_dataloaders(train_logits, train_labels, val_logits, val_labels, test_logits, test_labels)
 
     # Init trainer
     trainer = L.Trainer(

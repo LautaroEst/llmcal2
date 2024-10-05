@@ -1,3 +1,4 @@
+import numpy as np
 import torch
 import os
 from lightning.pytorch.loggers import TensorBoardLogger, CSVLogger as _CSVLogger
@@ -69,3 +70,17 @@ class CSVLogger(_CSVLogger):
         if os.path.exists(os.path.join(self.log_dir, "metrics.csv")):
             self.experiment.metrics = pd.read_csv(os.path.join(self.log_dir, "metrics.csv")).to_dict(orient="records")
         
+
+def load_data(data_dir, train_list, val_list, test_list):
+
+    # Load data
+    df_train = pd.read_json(data_dir / f"train_prompt.jsonl", lines=True).set_index("idx")
+    df_test = pd.read_json(data_dir / f"test_prompt.jsonl", lines=True).set_index("idx")
+
+    data = {}
+    for split, l, df in zip(["train", "val", "test"], [train_list, val_list, test_list], [df_train, df_train, df_test]):
+        if l is not None:
+            l = np.loadtxt(l, dtype=int)
+            data[split] = df.loc[l].copy()
+    
+    return data

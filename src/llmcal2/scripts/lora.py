@@ -14,35 +14,7 @@ from lightning.pytorch.trainer.states import TrainerStatus
 
 from ..models.lora import GenerativeLoRA, GenerativeLMLoRA, init_lora_linear_modules
 from ..models.lora_norm import GenerativeLMLoRANorm
-from .utils import GenerativeCollator, TBLogger, CSVLogger
-
-
-def load_data(data_dir, total_train_samples, val_prop, use_train_samples_as_val, random_state):
-
-    # Load data
-    df_train = pd.read_json(data_dir / f"train_prompt.jsonl", lines=True).set_index("idx")
-    df_test = pd.read_json(data_dir / f"test_prompt.jsonl", lines=True).set_index("idx")
-    
-    # Split train into train and val
-    train_samples = int(total_train_samples * (1 - val_prop))
-    val_samples = total_train_samples - train_samples
-    rs = np.random.RandomState(random_state)
-    idx = rs.permutation(len(df_train))
-    train_idx = idx[:train_samples]
-    val_idx = idx[train_samples:train_samples + val_samples]
-    df_val = df_train.iloc[val_idx]
-    df_train = df_train.iloc[train_idx]
-
-    if use_train_samples_as_val != -1:
-        if val_prop != 0:
-            raise ValueError("Cannot use both val_prop and use_train_samples_as_val")
-        df_val = df_train.sample(min(use_train_samples_as_val,len(df_train)), random_state=random_state)
-
-    return {
-        "train": df_train,
-        "val": df_val,
-        "test": df_test
-    }
+from .utils import GenerativeCollator, TBLogger, CSVLogger, load_data
 
 class LMDataset(Dataset):
 
@@ -96,11 +68,12 @@ def process_dataframe_for_predict(df, tokenizer):
 
 def main(
     data_dir,
-    total_train_samples, 
-    val_prop, 
-    use_train_samples_as_val,
-    random_state,
-    checkpoint_dir,
+    train_list,
+    val_list,
+    test_list,
+    predict_on_val = False,
+    random_state = 0,
+    checkpoint_dir = None,
     norm = False,
     batch_size = 32,
     accelerator = "cpu",
@@ -137,7 +110,7 @@ def main(
     output_checkpoint_dir = Path(output_checkpoint_dir)
 
     # Load data
-    data = load_data(data_dir, total_train_samples, val_prop, use_train_samples_as_val, random_state)
+    data = load_data(data_dir, train_list, val_list, test_list)
 
     # Load tokenizer
     check_valid_checkpoint_dir(checkpoint_dir)
@@ -158,9 +131,6 @@ def main(
     # Process data
     train_data = {}
     for split in ["train", "val"]:
-        if len(data[split]) == 0:
-            train_data[split] = None
-            continue
         print(f"Processing {split}...")
         train_data[split] = process_dataframe_for_train(data[split], tokenizer, include_answers=norm)
         train_data[split] = DataLoader(
@@ -253,7 +223,9 @@ def main(
     # Evaluate the model
     # -----------------
     for split in data:
-        if len(data[split]) == 0 or (output_dir / f"{split}_logits.csv").exists():
+        if (output_dir / f"{split}_logits.csv").exists():
+            continue
+        if split == "val" and not predict_on_val:
             continue
 
         print(f"Predicting {split}...")

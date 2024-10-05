@@ -78,8 +78,8 @@ def load_banking(train_list_path, test_list_path):
 
 
 def main(dataset, lists_dir, output_dir):
-    train_list_path = f"{lists_dir}/train.txt"
-    test_list_path = f"{lists_dir}/test.txt"
+    train_list_path = f"{lists_dir}/train--all.txt"
+    test_list_path = f"{lists_dir}/test--all.txt"
 
     if dataset == "sst2":
         datadict = load_sst2(train_list_path, test_list_path)
@@ -95,7 +95,7 @@ def main(dataset, lists_dir, output_dir):
         raise ValueError(f"Unknown dataset: {dataset}")
     
     for split, df in datadict.items():
-        df.to_csv(f"{output_dir}/{split}.csv", index=True, header=True)
+        df.to_csv(f"{output_dir}/{split}--all.csv", index=True, header=True)
     
 if __name__ == "__main__":
     from fire import Fire

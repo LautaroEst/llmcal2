@@ -25,9 +25,10 @@ for size in ${dataset2samples[$dataset]}; do
             mkdir -p $output_dir $output_dir/logs $output_dir/checkpoints
             python -m llmcal2.scripts.lora \
                 --data_dir outputs/prompts/generative/$dataset \
-                --total_train_samples $total_train_samples \
-                --val_prop 0.3 \
-                --use_train_samples_as_val $use_train_samples_as_val \
+                --train_list lists/$dataset/train--total_train_samples=${total_train_samples}_val_prop=0.3_random_state=${random_state}.txt \
+                --val_list lists/$dataset/val--total_train_samples=${total_train_samples}_val_prop=0.3_random_state=${random_state}.txt \
+                --test_list lists/$dataset/test--all.txt \
+                --predict_on_val \
                 --random_state $random_state \
                 --checkpoint_dir $checkpoint \
                 --norm \

@@ -12,29 +12,8 @@ import lightning as L
 from lightning.fabric.utilities.load import _lazy_load as lazy_load
 
 from ..models.generative_no_adaptation import Generative, GenerativeLanguageModel
-from .utils import GenerativeCollator
+from .utils import GenerativeCollator, load_data
 
-
-def load_data(data_dir, total_train_samples, val_prop, random_state):
-
-    # Load data
-    df_train = pd.read_json(data_dir / f"train_prompt.jsonl", lines=True).set_index("idx")
-    df_test = pd.read_json(data_dir / f"test_prompt.jsonl", lines=True).set_index("idx")
-    
-    # Split train into train and val
-    train_samples = int(total_train_samples * (1 - val_prop))
-    val_samples = total_train_samples - train_samples
-    rs = np.random.RandomState(random_state)
-    idx = rs.permutation(len(df_train))
-    train_idx = idx[:train_samples]
-    val_idx = idx[train_samples:train_samples + val_samples]
-    df_val = df_train.iloc[val_idx]
-    df_train = df_train.iloc[train_idx]
-    return {
-        "train": df_train,
-        "val": df_val,
-        "test": df_test
-    }
 
 class PromptsDataset(Dataset):
 
@@ -68,37 +47,26 @@ def process_dataframe(df, tokenizer):
 
 def main(
     data_dir,
-    total_train_samples, 
-    val_prop, 
-    random_state,
     checkpoint_dir,
+    train_list = None,
+    val_list = None,
+    test_list = None,
     batch_size = 32,
     accelerator = "cpu",
     strategy = "auto",
     devices = 1,
     num_nodes = 1,
     precision = 32,
-    trainval_output_dir = None,
-    test_output_dir = None,
+    output_dir = None,
 ):
-    if trainval_output_dir is None and test_output_dir is None:
-        raise ValueError("At least one of trainval_output_dir or test_output_dir must be provided.")
-    elif trainval_output_dir is None:
-        output_dir = Path(test_output_dir)
-    else:
-        output_dir = Path(trainval_output_dir)
 
     torch.set_float32_matmul_precision("high")
     data_dir = Path(data_dir)
+    output_dir = Path(output_dir)
     checkpoint_dir = Path(checkpoint_dir)
 
     # Load data
-    data = load_data(data_dir, total_train_samples, val_prop, random_state)
-    if trainval_output_dir is None:
-        data.pop("train")
-        data.pop("val")
-    elif test_output_dir is None:
-        data.pop("test")
+    data = load_data(data_dir, train_list, val_list, test_list)
 
     # Load tokenizer
     check_valid_checkpoint_dir(checkpoint_dir)

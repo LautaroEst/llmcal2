@@ -16,7 +16,7 @@ if [ ! -d ${model2checkpoint[$model]} ]; then
 fi
 
 # Datasets
-declare -a DATASETS=(sst2 20newsgroups agnews dbpedia banking77)
+declare -a DATASETS=(sst2 20newsgroups agnews )
 
 # Number of classes in each dataset
 declare -A dataset2numclasses=(

@@ -4,8 +4,8 @@ from pathlib import Path
 from ..utils import load_yaml
 
 def load_data(data_dir):
-    df_train = pd.read_csv(data_dir / f"train.csv", index_col=0, header=0)
-    df_test = pd.read_csv(data_dir / f"test.csv", index_col=0, header=0)
+    df_train = pd.read_csv(data_dir / f"train--all.csv", index_col=0, header=0)
+    df_test = pd.read_csv(data_dir / f"test--all.csv", index_col=0, header=0)
     return {
         "train": df_train,
         "test": df_test
