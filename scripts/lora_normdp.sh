@@ -1,6 +1,6 @@
 #! /bin/bash -ex
 accelerator="gpu"
-precision="bf16-true"
+precision="32"
 strategy="auto"
 devices=1
 num_nodes=1
@@ -21,7 +21,7 @@ for size in ${dataset2samples[$dataset]}; do
     for random_state in ${dataset2seed[$dataset"_"$size]}; do
         total_train_samples=$((size * dataset2numclasses[$dataset]))
         use_train_samples_as_val=-1
-        output_dir="outputs/adaptation/$model/lora_norm/$dataset/size=$size/rs=$random_state"
+        output_dir="outputs/adaptation/$model/lora_normdp/$dataset/size=$size/rs=$random_state"
         if [ ! -f $output_dir/test_logits.csv ]; then
             mkdir -p $output_dir $output_dir/logs $output_dir/checkpoints
             python -m llmcal2.scripts.lora \
@@ -33,6 +33,7 @@ for size in ${dataset2samples[$dataset]}; do
                 --random_state $random_state \
                 --checkpoint_dir $checkpoint \
                 --norm \
+                --dp_params "alpha-beta" \
                 --batch_size $batch_size \
                 --accelerator $accelerator \
                 --strategy $strategy \

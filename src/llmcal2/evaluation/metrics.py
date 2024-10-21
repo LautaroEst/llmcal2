@@ -32,7 +32,8 @@ def compute_cal_loss(logits, labels, mode="trainontest", metric="nce"):
         raise ValueError(f"Unknown mode: {mode}")
     nce = compute_metric(logits, labels, metric)
     cal_nce = compute_metric(cal_logprobs, labels, metric)
-    return (nce - cal_nce) / nce
+    # return (nce - cal_nce) / nce
+    return (nce - cal_nce)
 
 def compute_ece(logits, labels):
     n_bins = 10

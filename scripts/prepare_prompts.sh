@@ -6,8 +6,9 @@ PROMPTS_TEMPLATES_DIR=prompts
 max_characters=500
 
 for dataset in ${DATASETS[@]}; do
+    test_list=${dataset2testlist[$dataset]}
     mkdir -p $OUTPUT_DIR/$dataset
-    if [ ! -f $OUTPUT_DIR/$dataset/train_prompt.jsonl ] && [ ! -f $OUTPUT_DIR/$dataset/test_prompt.jsonl ]; then
+    if [ ! -f $OUTPUT_DIR/$dataset/train_prompt.jsonl ] && [ ! -f $OUTPUT_DIR/$dataset/${test_list}_prompt.jsonl ]; then
         python -m llmcal2.scripts.prepare_prompt \
             --data_dir $DATA_DIR/$dataset \
             --prompt_template $PROMPTS_TEMPLATES_DIR/basic_$dataset.yaml \

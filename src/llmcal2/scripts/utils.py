@@ -30,6 +30,7 @@ class GenerativeCollator:
             "prompt_ids": torch.stack(prompts_ids),
             "prompt_mask": torch.stack(prompt_masks),
             "answers_ids": answers_ids,
+            "use_ids": torch.stack([sample["use_ids"] for sample in batch]),
             "label": torch.stack([sample["label"] for sample in batch])
         }
     

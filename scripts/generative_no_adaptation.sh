@@ -7,12 +7,13 @@ num_nodes=1
 
 checkpoint=${model2checkpoint[$model]}
 output_dir="outputs/adaptation/$model/no_adaptation/$dataset/size=all/rs=all"
+test_list=${dataset2testlist[$dataset]}
 if [ ! -f $output_dir/test_logits.csv ]; then
     mkdir -p $output_dir
     python -m llmcal2.scripts.no_adaptation \
         --data_dir outputs/prompts/generative/$dataset \
         --checkpoint_dir $checkpoint \
-        --test_list lists/$dataset/test--all.txt \
+        --test_list lists/$dataset/$test_list.txt \
         --batch_size 1 \
         --accelerator $accelerator \
         --strategy $strategy \

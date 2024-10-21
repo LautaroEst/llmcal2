@@ -4,6 +4,7 @@ from pathlib import Path
 from typing import List, Literal, Optional
 
 import torch
+from torch import nn
 import lightning as L
 from litgpt.lora import lora_filter
 from lightning.pytorch.trainer.states import RunningStage
@@ -18,6 +19,8 @@ class GenerativeLMLoRANorm(L.LightningModule):
         optimizer: Literal["adamw", "sgd"] = "adamw",
         learning_rate: float = 1e-4,
         weight_decay: float = 0.0,
+        dp_params = None,
+        num_classes = None,
     ):
         super().__init__()
         self.gpt = gpt
@@ -28,6 +31,11 @@ class GenerativeLMLoRANorm(L.LightningModule):
         self.best_val_loss = float("inf")
         self.last_val_loss = float("inf")
         self.patience_count = 0
+
+        self.dp_params = dp_params
+        if dp_params is not None:
+            self.alpha = nn.Parameter(torch.tensor(1.0), requires_grad=True)
+            self.beta = nn.Parameter(torch.zeros(num_classes), requires_grad=True)
 
     def configure_optimizers(self):
         trainable_params = [param for param in self.parameters() if param.requires_grad]
@@ -45,6 +53,7 @@ class GenerativeLMLoRANorm(L.LightningModule):
     def _shared_train_val_step(self, batch, batch_idx):
         prompt_ids = batch["prompt_ids"]
         answers_ids = batch["answers_ids"]
+        use_ids = batch["use_ids"]
         prompt_mask = batch["prompt_mask"]
         labels = batch["label"]
         
@@ -53,6 +62,9 @@ class GenerativeLMLoRANorm(L.LightningModule):
             input_ids = input_ids[attention_mask == 1].unsqueeze(0)
             class_logprobs = []
             for i, ans_ids in enumerate(answers):
+                if i not in use_ids:
+                    class_logprobs.append(torch.tensor(-float("inf"), device=input_ids.device))
+                    continue
                 full_input_ids = torch.cat([input_ids, ans_ids.unsqueeze(0)], dim=1)
                 logprobs = self(full_input_ids, None, False)["logits"][:,:-1,:].log_softmax(dim=2)
                 index = full_input_ids[:,1:].unsqueeze(2)
@@ -60,6 +72,8 @@ class GenerativeLMLoRANorm(L.LightningModule):
                 logprob = gather_logprobs.sum()
                 class_logprobs.append(logprob) 
             logits = torch.stack(class_logprobs, dim=0)
+            if self.dp_params is not None:
+                logits = self.alpha * logits + self.beta
             loss = loss + torch.nn.functional.cross_entropy(logits.unsqueeze(0), label.unsqueeze(0), reduction="sum")
         batch_samples = prompt_ids.shape[0]
 
@@ -179,7 +193,11 @@ class GenerativeLMLoRANorm(L.LightningModule):
             last_emb.append(output["last_embeddings"][0])
             mean_emb.append(output["mean_embeddings"][0])
             max_emb.append(output["max_embeddings"][0])
+        
         logits = torch.stack(logits, dim=0)
+        if self.dp_params is not None:
+            logits = self.alpha * logits + self.beta.unsqueeze(0)
+
         last_emb = torch.stack(last_emb, dim=0)
         mean_emb = torch.stack(mean_emb, dim=0)
         max_emb = torch.stack(max_emb, dim=0)

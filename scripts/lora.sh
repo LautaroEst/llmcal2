@@ -16,6 +16,7 @@ weight_decay=0.0
 max_steps=-1
 
 checkpoint=${model2checkpoint[$model]}
+test_list=${dataset2testlist[$dataset]}
 for size in ${dataset2samples[$dataset]}; do
     for random_state in ${dataset2seed[$dataset"_"$size]}; do
         total_train_samples=$((size * dataset2numclasses[$dataset]))
@@ -27,7 +28,7 @@ for size in ${dataset2samples[$dataset]}; do
                 --data_dir outputs/prompts/generative/$dataset \
                 --train_list lists/$dataset/train--total_train_samples=${total_train_samples}_val_prop=0.3_random_state=${random_state}.txt \
                 --val_list lists/$dataset/val--total_train_samples=${total_train_samples}_val_prop=0.3_random_state=${random_state}.txt \
-                --test_list lists/$dataset/test--all.txt \
+                --test_list lists/$dataset/$test_list.txt \
                 --predict_on_val \
                 --random_state $random_state \
                 --checkpoint_dir $checkpoint \

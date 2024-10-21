@@ -61,25 +61,29 @@ def compute_metrics(data, metrics):
 
 kwargs = {
     "no_adaptation": {"label": "No adaptation", "color": "black", "ls": "--"},
-    "dp_calibration": {"label": "DP calibration", "color": "tab:blue", "ls": "--", "marker": "*"},
-    "temp_scaling": {"label": "Temperature scaling", "color": "tab:orange", "ls": "--", "marker": "*"},
-    "bias_only": {"label": "Bias only", "color": "tab:green", "ls": "--", "marker": "*"},
-    "lora": {"label": "LoRA", "color": "tab:red", "ls": "--", "marker": "*"},
-    "lora_norm": {"label": "LoRA CE", "color": "tab:purple", "ls": "--", "marker": "*"},
-    "lora_no_es": {"label": "LoRA (no ES)", "color": "tab:red", "ls": "-", "marker": "*"},
-    "lora_plus_dp_calibration_no_es": {"label": "LoRA + DP calibration (no ES)", "color": "tab:blue", "ls": "-", "marker": "*"},
-    "lora_plus_temp_scaling_no_es": {"label": "LoRA + Temp Scaling (no ES)", "color": "tab:orange", "ls": "-", "marker": "*"},
-    "lora_norm_plus_dp_calibration_no_es": {"label": "LoRA CE + DP calibration (no ES)", "color": "tab:blue", "ls": ":", "marker": "*"},
-    "lora_norm_plus_temp_scaling_no_es": {"label": "LoRA CE + Temp Scaling (no ES)", "color": "tab:orange", "ls": ":", "marker": "*"},
+    "dp_calibration": {"label": "DP calibration", "color": "tab:blue", "ls": "--",},
+    "temp_scaling": {"label": "Temperature scaling", "color": "tab:orange", "ls": "--",},
+    "bias_only": {"label": "Bias only", "color": "tab:green", "ls": "--",},
+    "lora": {"label": "LoRA", "color": "tab:red", "ls": "--",},
+    "lora_norm": {"label": "LoRA CE", "color": "tab:purple", "ls": "--",},
+    "lora_normdp": {"label": "LoRA CEDP", "color": "tab:purple", "ls": ":", "marker": "*",},
+    "lora_norm_no_es": {"label": "LoRA CE (no ES)", "color": "tab:purple", "ls": "-",},
+    "lora_norm_approx_5": {"label": "Approx (K=5)", "color": "tab:purple", "ls": ":"},
+    "lora_norm_approx_5_no_es": {"label": "Approx (K=5) no ES", "color": "tab:green", "ls": ":"},
+    "lora_no_es": {"label": "LoRA (no ES)", "color": "tab:red", "ls": "-",},
+    "lora_plus_dp_calibration_no_es": {"label": "LoRA + DP calibration (no ES)", "color": "tab:blue", "ls": "-",},
+    "lora_plus_temp_scaling_no_es": {"label": "LoRA + Temp Scaling (no ES)", "color": "tab:orange", "ls": "-",},
+    "lora_norm_plus_dp_calibration_no_es": {"label": "LoRA CE + DP calibration (no ES)", "color": "tab:blue", "ls": ":",},
+    "lora_norm_plus_temp_scaling_no_es": {"label": "LoRA CE + Temp Scaling (no ES)", "color": "tab:orange", "ls": ":",},
 }
 
 metric2name = {
-    "ner": "NER",
-    "nce": "NCE",
-    "nbrier": "NBrier",
-    "calloss_nce_trainontest": "CalLoss\n(NCE train on test)",
-    "calloss_nce_xval": "CalLoss\n(NCE xval)",
-    "ece": "ECE",
+    "ner": {"name": "NER", "ylim": (0, 1.2)},
+    "nce": {"name": "NCE", "ylim": (0, 1.2)},
+    "nbrier": {"name": "NBrier", "ylim": (0, 1.2)},
+    "calloss_nce_trainontest": {"name": "CalLoss\n(NCE train on test)", "ylim": (0, 1.2)},
+    "calloss_nce_xval": {"name": "CalLoss\n(NCE xval)", "ylim": (0, 1.2)},
+    "ece": {"name": "ECE", "ylim": (0, 1.2)},
 }
 
 dataset2name = {
@@ -103,20 +107,22 @@ def plot_and_save(data, metrics, datasets, methods, filename):
 
     # Compute statistics
     data = data.copy()
-    stats = [("median", np.median), ("q1", lambda x: np.quantile(x, 0.25)), ("q3", lambda x: np.quantile(x, 0.75))]
+    stats = [("median", lambda x: np.median(x)), ("q1", lambda x: np.quantile(x, 0.25)), ("q3", lambda x: np.quantile(x, 0.75))]
     data = data.drop(columns=["seed"]).groupby(["method", "dataset", "size"]).agg(**{
         f"{metric}-{stat}": (f"metric:{metric}", fn) for metric in metrics for stat, fn in stats
     })
 
     for i, dataset in enumerate(datasets):
         dataset_sizes = data.loc[(slice(None), dataset, slice(None)), :].index.get_level_values("size").unique().values
-        dataset_sizes = np.sort(dataset_sizes[dataset_sizes != "all"]).astype(int)
+        dataset_sizes = np.sort(dataset_sizes[dataset_sizes != "all"].astype(int))
+        if dataset_sizes.size == 0:
+            continue
         min_size = np.min(dataset_sizes)
         max_size = np.max(dataset_sizes)
 
         for j, metric in enumerate(metrics):
             if i == 0:
-                ax[j,0].set_ylabel(metric2name[metric],fontsize=16)
+                ax[j,0].set_ylabel(metric2name[metric]["name"],fontsize=16)
             for m, method in enumerate(methods):
                 try:
                     portion = data.loc[(method, dataset, slice(None)), [f"{metric}-{stat[0]}" for stat in stats]].copy().reset_index()
@@ -132,19 +138,26 @@ def plot_and_save(data, metrics, datasets, methods, filename):
                 else:
                     portion.index = portion.index.astype(int)
                     portion = portion.sort_index()
-                    ax[j,i].plot(portion.index, portion[f"{metric}-median"], **kwargs[method])
+                    ax[j,i].errorbar(
+                        portion.index, 
+                        portion[f"{metric}-median"], 
+                        yerr=[
+                            portion[f"{metric}-median"] - portion[f"{metric}-q1"], 
+                            portion[f"{metric}-q3"] - portion[f"{metric}-median"]
+                        ],
+                        **kwargs[method]
+                    )
                 
             ax[j,i].yaxis.grid(True)
             ax[j,i].set_xscale("log")
             ax[j,i].set_xticks([])
             ax[j,i].minorticks_off()
-            ylim = ax[j,i].get_ylim()
-            # sup = 1.2 * data.loc[(slice(None), dataset, slice(None)), f"{metric}-median"].max()
-            sup = 1.5
-            ax[j,i].set_ylim(max(0,ylim[0]), min(sup, ylim[1]))
+            y_min, y_max = metric2name[metric]["ylim"]
+            y_max = min(y_max, data.loc[("no_adaptation", dataset, "all"), f"{metric}-median"].max() * 1.3)
+            ax[j,i].set_ylim(y_min, y_max)
 
         ax[0,i].set_title(f"{dataset2name[dataset]['name']}",fontsize=14)
-        # ax[-1,i].set_xlim(0.8 * min(dataset_sizes), 1.2 * max(dataset_sizes))
+        ax[-1,i].set_xlim(0.8 * min_size, 1.2 * max_size)
         ax[-1,i].set_xticks(dataset_sizes)
         ax[-1,i].set_xticklabels(dataset_sizes, fontsize=10)
         ax[-1,i].set_xlabel(f"(x{dataset2name[dataset]['num_classes']})", fontsize=12)

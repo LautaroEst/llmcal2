@@ -1,5 +1,5 @@
 #! /bin/bash -ex
-export CUDA_VISIBLE_DEVICES=0
+export CUDA_VISIBLE_DEVICES=1
 
 CHECKPOINTS_DIR=$LIT_CHECKPOINTS
 HF_TOKEN=$(cat hf_token.txt)
@@ -16,7 +16,16 @@ if [ ! -d ${model2checkpoint[$model]} ]; then
 fi
 
 # Datasets
-declare -a DATASETS=(sst2 20newsgroups agnews )
+# declare -a DATASETS=(dbpedia banking77)
+declare -a DATASETS=(sst2 dbpedia)
+
+declare -A dataset2testlist=(
+    ["sst2"]="test--all"
+    ["agnews"]="test--200"
+    ["dbpedia"]="test--700"
+    ["20newsgroups"]="test--200"
+    ["banking77"]="test--700"
+)
 
 # Number of classes in each dataset
 declare -A dataset2numclasses=(
@@ -63,21 +72,21 @@ declare -A dataset2seed=(
     # ["banking77_1"]="322 444 848 858 868"
     # ["banking77_4"]="295 926 962 2951 9622"
     # ["banking77_64"]="131 888 893 912 933"
-    ["sst2_8"]="639 923"
-    ["sst2_32"]="1564 1738"
-    ["sst2_512"]="111 121"
-    ["agnews_4"]="295 926"
-    ["agnews_16"]="738 564"
-    ["agnews_256"]="493 821"
-    ["dbpedia_2"]="435 927"
-    ["dbpedia_8"]="338 364"
-    ["dbpedia_128"]="129 131"
-    ["20newsgroups_2"]="435 927"
-    ["20newsgroups_8"]="338 364"
-    ["20newsgroups_128"]="129 131"
-    ["banking77_1"]="322 444"
-    ["banking77_4"]="295 926"
-    ["banking77_64"]="131 888"
+    ["sst2_8"]="639 923 932"
+    ["sst2_32"]="1564 1738 1783"
+    ["sst2_512"]="111 121 767"
+    ["agnews_4"]="295 926 962"
+    ["agnews_16"]="738 564 783"
+    ["agnews_256"]="493 821 812"
+    ["dbpedia_2"]="435 927 972"
+    ["dbpedia_8"]="338 364 383"
+    ["dbpedia_128"]="129 131 543"
+    ["20newsgroups_2"]="435 927 972"
+    ["20newsgroups_8"]="338 364 383"
+    ["20newsgroups_128"]="129 131 543"
+    ["banking77_1"]="322 444 848"
+    ["banking77_4"]="295 926 962"
+    ["banking77_64"]="131 888 893"
 )
 
 source ./scripts/prepare_datasets.sh
@@ -86,8 +95,12 @@ for dataset in ${DATASETS[@]}; do
     source ./scripts/generative_no_adaptation.sh
     source ./scripts/affine_calibration.sh
     source ./scripts/lora.sh
-    source ./scripts/lora_no_es.sh
     source ./scripts/lora_norm.sh
-    source ./scripts/lora_plus_affine_cal_no_es.sh
-    source ./scripts/lora_norm_plus_affine_cal_no_es.sh
+    source ./scripts/lora_normdp.sh
+    # source ./scripts/lora_norm_approx.sh
+    # source ./scripts/lora_no_es.sh
+    # source ./scripts/lora_norm_no_es.sh
+    # source ./scripts/lora_norm_approx_no_es.sh
+    # source ./scripts/lora_plus_affine_cal_no_es.sh
+    # source ./scripts/lora_norm_plus_affine_cal_no_es.sh
 done

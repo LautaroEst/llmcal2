@@ -30,22 +30,28 @@ class LMDataset(Dataset):
             "idx": torch.tensor(data.name, dtype=torch.long),
             "prompt_ids": data["prompt_ids"],
             "answers_ids": data["answers_ids"],
+            "use_ids": data["use_ids"],
             "label": torch.tensor(data["label"], dtype=torch.long),
         }
     
-def process_dataframe_for_train(df, tokenizer, include_answers=False):
+def process_dataframe_for_train(df, tokenizer, include_answers=False, num_answers=None, priors=None, random_state=0):
 
     if include_answers:
+        if num_answers is not None:
+            rs = np.random.RandomState(random_state)
         def transform(sample):
             prompt_ids = tokenizer.encode(sample['prompt'], bos=True).long()
             answers_ids = [tokenizer.encode(ans, bos=True)[1:].long() for ans in sample["answer"]]
-            return pd.Series({"prompt_ids": prompt_ids, "answers_ids": answers_ids, "label": sample["label"]})
+            use_ids = np.hstack((rs.choice([i for i in range(len(answers_ids)) if i != sample["label"]], num_answers, replace=False, p=priors),[sample["label"]])) if num_answers is not None and num_answers < len(answers_ids) - 1 else np.arange(len(answers_ids))
+            use_ids = torch.from_numpy(use_ids).long()
+            return pd.Series({"prompt_ids": prompt_ids, "answers_ids": answers_ids, "use_ids": use_ids, "label": sample["label"]})
     else:
         def transform(sample):
             prompt_with_answer = f"{sample['prompt']} {sample['answer'][sample['label']]}"
             prompt_ids = tokenizer.encode(prompt_with_answer, bos=True).long()
             answers_ids = [torch.tensor([],dtype=torch.long) for _ in sample["answer"]]
-            return pd.Series({"prompt_ids": prompt_ids, "answers_ids": answers_ids, "label": sample["label"]})
+            use_ids = torch.tensor([],dtype=torch.long)
+            return pd.Series({"prompt_ids": prompt_ids, "answers_ids": answers_ids, "use_ids": use_ids, "label": sample["label"]})
     
     df = df.apply(transform, axis=1)
     dataset = LMDataset(df)
@@ -57,7 +63,8 @@ def process_dataframe_for_predict(df, tokenizer):
     def transform(sample):
         prompt_ids = tokenizer.encode(sample['prompt'], bos=True).long()
         answers_ids = [tokenizer.encode(ans, bos=True)[1:].long() for ans in sample["answer"]]
-        return pd.Series({"prompt_ids": prompt_ids, "answers_ids": answers_ids, "label": sample["label"]})
+        use_ids = torch.tensor([],dtype=torch.long)
+        return pd.Series({"prompt_ids": prompt_ids, "answers_ids": answers_ids, "use_ids": use_ids, "label": sample["label"]})
     
     df = df.apply(transform, axis=1)
     dataset = LMDataset(df)
@@ -75,6 +82,8 @@ def main(
     random_state = 0,
     checkpoint_dir = None,
     norm = False,
+    approx = None,
+    dp_params = None,
     batch_size = 32,
     accelerator = "cpu",
     strategy = "auto",
@@ -130,9 +139,17 @@ def main(
 
     # Process data
     train_data = {}
+    train_priors = data["train"]["label"].value_counts(normalize=True).sort_index().values
     for split in ["train", "val"]:
         print(f"Processing {split}...")
-        train_data[split] = process_dataframe_for_train(data[split], tokenizer, include_answers=norm)
+        train_data[split] = process_dataframe_for_train(
+            data[split], 
+            tokenizer, 
+            include_answers=norm, 
+            num_answers=approx,
+            priors=train_priors,
+            random_state=random_state,
+        )
         train_data[split] = DataLoader(
             train_data[split], 
             shuffle=split == "train",
@@ -185,6 +202,8 @@ def main(
             optimizer = optimizer,
             learning_rate = learning_rate,
             weight_decay = weight_decay,
+            dp_params = dp_params, 
+            num_classes = len(data["train"].iloc[0]["answer"]),
         )
     else:
         model = GenerativeLMLoRA(

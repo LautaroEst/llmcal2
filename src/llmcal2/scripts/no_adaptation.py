@@ -29,6 +29,7 @@ class PromptsDataset(Dataset):
             "idx": torch.tensor(data.name, dtype=torch.long),
             "prompt_ids": data["prompt_ids"],
             "answers_ids": data["answers_ids"],
+            "use_ids": data["use_ids"],
             "label": torch.tensor(data["label"], dtype=torch.long),
         }
     
@@ -38,7 +39,8 @@ def process_dataframe(df, tokenizer):
     def transform(sample):
         prompt_ids = tokenizer.encode(sample["prompt"], bos=True).long()
         answers_ids = [tokenizer.encode(ans, bos=True)[1:].long() for ans in sample["answer"]]
-        return pd.Series({"prompt_ids": prompt_ids, "answers_ids": answers_ids, "label": sample["label"]})
+        use_ids = torch.arange(len(answers_ids)).long()
+        return pd.Series({"prompt_ids": prompt_ids, "use_ids": use_ids, "answers_ids": answers_ids, "label": sample["label"]})
     
     df = df.apply(transform, axis=1)
     dataset = PromptsDataset(df)
