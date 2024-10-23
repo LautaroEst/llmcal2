@@ -1,0 +1,45 @@
+export CUDA_VISIBLE_DEVICES=1
+
+CHECKPOINTS_DIR=outputs/checkpoints
+HF_TOKEN=$(cat hf_token.txt)
+model="llama3.2-1b"
+# model="pythia-14m"
+# model=tinyllama
+
+# Reproducibility
+base_seed=2834
+num_seeds=2
+
+# Supported models
+declare -A model2checkpoint=(
+    ["pythia-14m"]="EleutherAI/pythia-14m"
+    ["llama3.2-1b"]="meta-llama/Llama-3.2-1B"
+    ["tinyllama"]="TinyLlama/TinyLlama-1.1B-intermediate-step-1431k-3T"
+)
+mkdir -p $CHECKPOINTS_DIR
+if [ ! -d $CHECKPOINTS_DIR/${model2checkpoint[$model]} ]; then
+    litgpt download ${model2checkpoint[$model]} --checkpoint_dir $CHECKPOINTS_DIR --access_token $HF_TOKEN
+    rm -rf $CHECKPOINTS_DIR/${model2checkpoint[$model]}/*.bin
+fi
+
+# Datasets
+# declare -a DATASETS=(sst2 agnews dbpedia 20newsgroups banking77)
+declare -a DATASETS=(agnews sst2)
+
+
+declare -A dataset2trainsize=(
+    ["sst2"]=1024
+    ["agnews"]=1024
+    ["dbpedia"]=1792
+    ["20newsgroups"]=2560
+    ["banking77"]=4928
+)
+declare -A dataset2testsize=(
+    ["sst2"]=400
+    ["agnews"]=400
+    ["dbpedia"]=700
+    ["20newsgroups"]=800
+    ["banking77"]=1000
+)
+
+max_seq_length=2048

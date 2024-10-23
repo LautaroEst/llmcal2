@@ -1,31 +1,126 @@
 
 import pandas as pd
 import numpy as np
+import datasets
+datasets.disable_caching()
 
+def create_lists_sst2(seed):
+    rs = np.random.RandomState(seed)
+    data = datasets.load_dataset("nyu-mll/glue", "sst2")
 
-def main(data_dir, total_train_samples, val_prop, use_train_samples_as_val, random_state, output_dir):
-
-    # Load data
-    df_train = pd.read_json(f"{data_dir}/train_prompt.jsonl", lines=True).set_index("idx")
+    df_train = data["train"].to_pandas().set_index("idx").rename(columns={"sentence": "text"})
+    df_train = df_train[df_train["text"].str.len() > 0]
+    df_test = data["validation"].to_pandas().set_index("idx").rename(columns={"sentence": "text"})
+    df_test = df_test[df_test["text"].str.len() > 0]
     
-    # Split train into train and val
-    train_samples = int(total_train_samples * (1 - val_prop))
-    val_samples = total_train_samples - train_samples
-    rs = np.random.RandomState(random_state)
-    idx = rs.permutation(len(df_train))
-    train_idx = idx[:train_samples]
-    val_idx = idx[train_samples:train_samples + val_samples]
-    df_val = df_train.iloc[val_idx]
-    df_train = df_train.iloc[train_idx]
+    df_all = pd.concat([df_train, df_test], axis=0).reset_index(drop=True)
+    train_list = rs.permutation(df_all.iloc[:len(df_train)].index.to_numpy())
+    test_list = rs.permutation(df_all.iloc[len(df_train):].index.to_numpy())
 
-    if use_train_samples_as_val != -1:
-        if val_prop != 0:
-            raise ValueError("Cannot use both val_prop and use_train_samples_as_val")
-        df_val = df_train.sample(min(use_train_samples_as_val,len(df_train)), random_state=random_state)
+    return df_all, train_list, test_list
 
-    np.savetxt(f"{output_dir}/train--total_train_samples={total_train_samples}_val_prop={val_prop:.1f}_random_state={random_state}.txt", df_train.index.to_numpy().astype(int), fmt='%d')
-    np.savetxt(f"{output_dir}/val--total_train_samples={total_train_samples}_val_prop={val_prop:.1f}_random_state={random_state}.txt", df_val.index.to_numpy().astype(int), fmt='%d')
+def create_lists_agnews(seed):
+    rs = np.random.RandomState(seed)
+    data = datasets.load_dataset("ag_news")
 
+    df_train = data["train"].add_column("idx", np.arange(len(data["train"]))).to_pandas().set_index("idx")
+    df_train = df_train[df_train["text"].str.len() > 0]
+    df_test = data["test"].add_column("idx", np.arange(len(data["test"]))).to_pandas().set_index("idx")
+    df_test = df_test[df_test["text"].str.len() > 0]
+    
+    df_all = pd.concat([df_train, df_test], axis=0).reset_index(drop=True)
+    train_list = rs.permutation(df_all.iloc[:len(df_train)].index.to_numpy())
+    test_list = rs.permutation(df_all.iloc[len(df_train):].index.to_numpy())
+
+    return df_all, train_list, test_list
+
+def create_lists_dbpedia(seed):
+    rs = np.random.RandomState(seed)
+    data = datasets.load_dataset("fancyzhx/dbpedia_14")
+    data["train"] = data["train"].add_column("idx", np.arange(len(data["train"])))
+    data["test"] = data["test"].add_column("idx", np.arange(len(data["test"])))
+
+    df_train = data["train"].to_pandas().set_index("idx").loc[:,["content","label"]].rename(columns={"content": "text"})
+    df_train = df_train[df_train["text"].str.len() > 0]
+    df_test = data["test"].to_pandas().set_index("idx").loc[:,["content","label"]].rename(columns={"content": "text"})
+    df_test = df_test[df_test["text"].str.len() > 0]
+    
+    df_all = pd.concat([df_train, df_test], axis=0).reset_index(drop=True)
+    train_list = rs.permutation(df_all.iloc[:len(df_train)].index.to_numpy())
+    test_list = rs.permutation(df_all.iloc[len(df_train):].index.to_numpy())[:7000]
+
+    return df_all, train_list, test_list
+
+
+def create_lists_20newsgroups(seed):
+    rs = np.random.RandomState(seed)
+    data = datasets.load_dataset("SetFit/20_newsgroups")
+    classes_names = data["train"].to_pandas().loc[:,["label","label_text"]].drop_duplicates().set_index("label").squeeze().sort_index().tolist()
+    data["train"] = data["train"].add_column("idx", np.arange(len(data["train"])))
+    data["test"] = data["test"].add_column("idx", np.arange(len(data["test"])))
+    for split in data:
+        features = data[split].features
+        features["label"] = datasets.ClassLabel(
+            num_classes=20, 
+            names=classes_names)
+        data[split] = data[split].cast(features)
+
+    df_train = data["train"].to_pandas().set_index("idx").drop(columns=["label_text"])
+    df_train = df_train[df_train["text"].str.len() > 0]
+    df_test = data["test"].to_pandas().set_index("idx").drop(columns=["label_text"])
+    df_test = df_test[df_test["text"].str.len() > 0]
+
+    df_all = pd.concat([df_train, df_test], axis=0).reset_index(drop=True)
+    train_list = rs.permutation(df_all.iloc[:len(df_train)].index.to_numpy())
+    test_list = rs.permutation(df_all.iloc[len(df_train):].index.to_numpy())
+
+    return df_all, train_list, test_list
+
+def create_lists_banking77(seed):
+    rs = np.random.RandomState(seed)
+    data = datasets.load_dataset("PolyAI/banking77",trust_remote_code=True)
+    data["train"] = data["train"].add_column("idx", np.arange(len(data["train"])))
+    data["test"] = data["test"].add_column("idx", np.arange(len(data["train"]), len(data["train"])+len(data["test"])))
+    all_data = datasets.concatenate_datasets([data["train"], data["test"]])
+
+    df_all = all_data.to_pandas().set_index("idx")
+    df_all = df_all[df_all["text"].str.len() > 0].reset_index(drop=True)
+    train_list = rs.permutation(df_all.iloc[len(data["test"]):].index.to_numpy())
+    test_list = rs.permutation(df_all.iloc[:len(data["test"])].index.to_numpy())
+
+    return df_all, train_list, test_list
+
+
+def main(dataset, lists_dir, data_dir, train_size, val_size, test_size, repetitions, seed):
+
+    if dataset == "sst2":
+        df_all, train_list, test_list = create_lists_sst2(16237)
+    elif dataset == "agnews":
+        df_all, train_list, test_list = create_lists_agnews(782348)
+    elif dataset == "dbpedia":
+        df_all, train_list, test_list = create_lists_dbpedia(3399)
+    elif dataset == "20newsgroups":
+        df_all, train_list, test_list = create_lists_20newsgroups(8495)
+    elif dataset == "banking77":
+        df_all, train_list, test_list = create_lists_banking77(81234)
+    else:
+        raise ValueError("Invalid dataset")
+    
+    np.savetxt(f"{lists_dir}/train.txt", train_list, fmt="%s")
+    np.savetxt(f"{lists_dir}/test.txt", test_list, fmt="%s")
+    df_all.to_csv(f"{data_dir}/all.csv", index=True, header=True)
+
+    for i in range(repetitions):
+        rs = np.random.RandomState(seed+i)
+        idx = rs.permutation(train_list)
+        train_idx = idx[:train_size]
+        val_idx = idx[train_size:train_size+val_size]
+        np.savetxt(f"{lists_dir}/train_{train_size}_{i}.txt", train_idx, fmt="%s")
+        np.savetxt(f"{lists_dir}/val_{val_size}_{i}.txt", val_idx, fmt="%s")
+    
+    rs = np.random.RandomState(seed+repetitions)
+    test_idx = rs.permutation(test_list)[:test_size]
+    np.savetxt(f"{lists_dir}/test_{test_size}.txt", test_idx, fmt="%s")
 
 
 
