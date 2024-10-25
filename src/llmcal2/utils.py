@@ -25,11 +25,15 @@ def save_yaml(data: dict, path) -> None:
 
 class JSONDataset(Dataset):
 
-    def __init__(self, path, prediction_list, tokenizer):
-        self.prediction_list = np.loadtxt(prediction_list, dtype=int)
+    def __init__(self, paths, lsts, tokenizer):
+        self.lsts = lsts
+        self.paths = paths
         self.tokenizer = tokenizer
-        data = pd.read_json(path, lines=True).set_index("idx").loc[self.prediction_list].reset_index(drop=False)
-        self.data = data.apply(self._transform, axis=1)
+        data = []
+        for path, lst in zip(paths, lsts):
+            d = pd.read_json(path, lines=True).set_index("idx").loc[lst].reset_index(drop=False)
+            data.append(d.apply(self._transform, axis=1))
+        self.data = pd.concat(data, ignore_index=False)
 
     def _transform(self, sample):
         idx = torch.tensor(sample["idx"], dtype=torch.long)
@@ -72,8 +76,8 @@ class Collator:
         }
 
 
-def get_dataloader(data_path, prediction_list, tokenizer, batch_size = 1, pad_token_id = 0, max_seq_length = 2048, shuffle = False, seed = 42):
-    dataset = JSONDataset(data_path, prediction_list, tokenizer)
+def get_dataloader(data_paths, lsts, tokenizer, batch_size = 1, pad_token_id = 0, max_seq_length = 2048, shuffle = False, seed = 42):
+    dataset = JSONDataset(data_paths, lsts, tokenizer)
     collate_fn = Collator(pad_token_id=pad_token_id, max_seq_len=max_seq_length)
     dataloader = DataLoader(
         dataset, 

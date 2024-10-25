@@ -29,9 +29,9 @@ warnings.filterwarnings("ignore", category=UserWarning, message=".*Experiment lo
 def setup(
     base_checkpoint_dir: str,
     lora_checkpoint_dir: Optional[str] = None,
-    data_path: str = None,
-    train_list: str = None,
-    val_list: str = None,
+    data_paths: str = None,
+    train_lists: str = None,
+    val_lists: str = None,
     output_dir: str = None,
     output_checkpoint_dir: str = None,
     log_dir: str = None,
@@ -54,13 +54,13 @@ def setup(
     
     # Basic setup
     torch.set_float32_matmul_precision("high")
-    data_path = Path(data_path)
+    data_paths = [Path(data_path) for data_path in data_paths.split(",")]
     output_dir = Path(output_dir)
     output_checkpoint_dir = Path(output_checkpoint_dir)
     base_checkpoint_dir = Path(base_checkpoint_dir)
     lora_checkpoint_dir = Path(lora_checkpoint_dir) if lora_checkpoint_dir is not None else None
-    train_list = Path(train_list)
-    val_list = Path(val_list)
+    train_lists = [np.loadtxt(train_list, dtype=int) for train_list in train_lists.split(",")]
+    val_lists = [np.loadtxt(val_list, dtype=int) for val_list in val_lists.split(",")]
 
     # Load config file
     check_valid_checkpoint_dir(base_checkpoint_dir)
@@ -124,7 +124,7 @@ def setup(
         "weight_decay": weight_decay,
         "patience": patience,
     }
-    fabric.launch(main, config, base_checkpoint_dir, lora_checkpoint_dir, data_path, output_dir, output_checkpoint_dir, train_list, val_list, train_args, devices, seed, max_seq_length)
+    fabric.launch(main, config, base_checkpoint_dir, lora_checkpoint_dir, data_paths, output_dir, output_checkpoint_dir, train_lists, val_lists, train_args, devices, seed, max_seq_length)
 
 
 def main(
@@ -132,11 +132,11 @@ def main(
     config: Config,
     base_checkpoint_dir: Path,
     lora_checkpoint_dir: Optional[Path],
-    data_path: Path,
+    data_paths: Path,
     output_dir: Path,
     output_checkpoint_dir: Path,
-    train_list: Path,
-    val_list: Path,
+    train_lists: np.ndarray,
+    val_lists: np.ndarray,
     train_args: dict,
     devices: int,
     seed: int,
@@ -146,8 +146,8 @@ def main(
 
     # Init dataloaders
     tokenizer = Tokenizer(base_checkpoint_dir)
-    train_dataloader = get_dataloader(data_path, train_list, tokenizer, train_args["micro_batch_size"], 0, max_seq_length, shuffle = True, seed = seed)
-    val_dataloader = get_dataloader(data_path, val_list, tokenizer, train_args["micro_batch_size"], 0, max_seq_length, shuffle = False, seed = seed)
+    train_dataloader = get_dataloader(data_paths, train_lists, tokenizer, train_args["micro_batch_size"], 0, max_seq_length, shuffle = True, seed = seed)
+    val_dataloader = get_dataloader(data_paths, val_lists, tokenizer, train_args["micro_batch_size"], 0, max_seq_length, shuffle = False, seed = seed)
     train_dataloader, val_dataloader = fabric.setup_dataloaders(train_dataloader, val_dataloader)
 
     # Init Base model

@@ -1,4 +1,5 @@
 
+from pathlib import Path
 import pandas as pd
 import numpy as np
 import datasets
@@ -91,36 +92,44 @@ def create_lists_banking77(seed):
     return df_all, train_list, test_list
 
 
-def main(dataset, lists_dir, data_dir, train_size, val_size, test_size, repetitions, seed):
+def main(dataset, lists_dir, data_dir, total_train_size=None, val_prop=None, repetitions=5, test_size=None, seed=0):
 
-    if dataset == "sst2":
-        df_all, train_list, test_list = create_lists_sst2(16237)
-    elif dataset == "agnews":
-        df_all, train_list, test_list = create_lists_agnews(782348)
-    elif dataset == "dbpedia":
-        df_all, train_list, test_list = create_lists_dbpedia(3399)
-    elif dataset == "20newsgroups":
-        df_all, train_list, test_list = create_lists_20newsgroups(8495)
-    elif dataset == "banking77":
-        df_all, train_list, test_list = create_lists_banking77(81234)
-    else:
-        raise ValueError("Invalid dataset")
-    
-    np.savetxt(f"{lists_dir}/train.txt", train_list, fmt="%s")
-    np.savetxt(f"{lists_dir}/test.txt", test_list, fmt="%s")
-    df_all.to_csv(f"{data_dir}/all.csv", index=True, header=True)
+    if not Path(f"{data_dir}/all.csv").exists():
 
-    for i in range(repetitions):
-        rs = np.random.RandomState(seed+i)
-        idx = rs.permutation(train_list)
-        train_idx = idx[:train_size]
-        val_idx = idx[train_size:train_size+val_size]
-        np.savetxt(f"{lists_dir}/train_{train_size}_{i}.txt", train_idx, fmt="%s")
-        np.savetxt(f"{lists_dir}/val_{val_size}_{i}.txt", val_idx, fmt="%s")
+        if dataset == "sst2":
+            df_all, train_list, test_list = create_lists_sst2(16237)
+        elif dataset == "agnews":
+            df_all, train_list, test_list = create_lists_agnews(782348)
+        elif dataset == "dbpedia":
+            df_all, train_list, test_list = create_lists_dbpedia(3399)
+        elif dataset == "20newsgroups":
+            df_all, train_list, test_list = create_lists_20newsgroups(8495)
+        elif dataset == "banking77":
+            df_all, train_list, test_list = create_lists_banking77(81234)
+        else:
+            raise ValueError("Invalid dataset")
+        
+        np.savetxt(f"{lists_dir}/train.txt", train_list, fmt="%d")
+        np.savetxt(f"{lists_dir}/test.txt", test_list, fmt="%d")
+        df_all.to_csv(f"{data_dir}/all.csv", index=True, header=True)
     
-    rs = np.random.RandomState(seed+repetitions)
-    test_idx = rs.permutation(test_list)[:test_size]
-    np.savetxt(f"{lists_dir}/test_{test_size}.txt", test_idx, fmt="%s")
+    if total_train_size is not None and val_prop is not None:
+        train_list = np.loadtxt(f"{lists_dir}/train.txt", dtype=int)
+        for i in range(repetitions):
+            rs = np.random.RandomState(seed+i)
+            idx = rs.permutation(train_list)
+            val_size = int(total_train_size*val_prop)
+            train_size = total_train_size - val_size
+            train_idx = idx[:train_size]
+            val_idx = idx[train_size:train_size+val_size]
+            np.savetxt(f"{lists_dir}/train_{total_train_size}_{val_prop}_{i}.txt", train_idx, fmt="%s")
+            np.savetxt(f"{lists_dir}/val_{total_train_size}_{val_prop}_{i}.txt", val_idx, fmt="%s")
+    
+    if test_size is not None:
+        test_list = np.loadtxt(f"{lists_dir}/test.txt", dtype=int)
+        rs = np.random.RandomState(seed)
+        test_idx = rs.permutation(test_list)[:test_size]
+        np.savetxt(f"{lists_dir}/test_{test_size}.txt", test_idx, fmt="%s")
 
 
 

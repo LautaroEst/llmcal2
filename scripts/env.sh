@@ -23,9 +23,7 @@ if [ ! -d $CHECKPOINTS_DIR/${model2checkpoint[$model]} ]; then
 fi
 
 # Datasets
-# declare -a DATASETS=(sst2 agnews dbpedia 20newsgroups banking77)
-declare -a DATASETS=(agnews sst2)
-
+declare -a DATASETS=(sst2 agnews dbpedia 20newsgroups banking77)
 
 declare -A dataset2trainsize=(
     ["sst2"]=1024
