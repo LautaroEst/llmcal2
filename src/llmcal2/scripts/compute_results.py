@@ -4,104 +4,65 @@ from pathlib import Path
 import pandas as pd
 from tqdm import tqdm
 
-from ..evaluation.metrics import compute_psr_with_mincal
+from ..evaluation.metrics import compute_metric
 
 
-def read_results(root_results_dir: Path, datasets: list, methods: list):
+def read_results(root_results_dir: Path):
     data = []
     for method_dir in root_results_dir.iterdir():
         method = method_dir.name
-        if method not in methods:
-            continue
-        if method == "no_adaptation":
-            for train_dataset_dir in method_dir.iterdir():
-                train_dataset = train_dataset_dir.name
-                test_dataset = train_dataset_dir.name
-                for test_lst_dir in train_dataset_dir.iterdir():
-                    test_lst = test_lst_dir.name
-                    if not (labels_path := test_lst_dir / "labels.csv").exists():
+        for train_list_dir in method_dir.iterdir():
+            train_list_id = train_list_dir.name
+            train_lists = train_list_id.split("__")
+            if len(set([lst.split("_")[-1] for lst in train_lists])) != 1:
+                raise ValueError(f"seed is not unique across training lists")
+            seed = int(train_lists[0].split("_")[-1]) if not train_lists[0] == "all" else "all"
+            for test_dir in train_list_dir.iterdir():
+                test_dataset = test_dir.name
+                if not test_dataset.startswith("test="):
+                    continue
+                test_dataset = test_dataset.split("=")[1]
+                for test_list_dir in test_dir.iterdir():
+                    test_list = test_list_dir.name.split("=")[1]
+                    if not (labels_path := test_list_dir / "labels.csv").exists():
                         continue
-                    if not (logits_path := test_lst_dir / "logits.csv").exists():
+                    if not (logits_path := test_list_dir / "logits.csv").exists():
                         continue
                     data.append({
                         "method": method,
-                        "train_dataset": train_dataset,
-                        "num_train_samples": "all",
+                        "train_lists": train_lists,
+                        "seed": seed,
                         "test_dataset": test_dataset,
-                        "test_lst": test_lst,
-                        "seed": "all",
+                        "test_lst": test_list,
                         "logits": logits_path,
                         "labels": labels_path,
                     })
-        else:
-            for train_dataset_dir in method_dir.iterdir():
-                train_dataset = train_dataset_dir.name.split("=")[1]
-                if train_dataset not in datasets:
-                    continue
-                for train_lst_dir in train_dataset_dir.iterdir():
-                    train_lst = train_lst_dir.name.split("=")[1]
-                    _, size, num_seed = train_lst.split("_")
-                    for test_dataset_dir in train_lst_dir.iterdir():
-                        if not test_dataset_dir.name.startswith("test="):
-                            continue
-                        test_dataset = test_dataset_dir.name.split("=")[1]
-                        if test_dataset not in datasets:
-                            continue
-                        for test_lst_dir in test_dataset_dir.iterdir():
-                            test_lst = test_lst_dir.name.split("=")[1]
-
-                            if not (labels_path := test_lst_dir / "labels.csv").exists():
-                                continue
-                            if not (logits_path := test_lst_dir / "logits.csv").exists():
-                                continue
-                            
-                            data.append({
-                                "method": method,
-                                "train_dataset": train_dataset,
-                                "num_train_samples": size,
-                                "test_dataset": test_dataset,
-                                "test_lst": test_lst,
-                                "seed": num_seed,
-                                "logits": logits_path,
-                                "labels": labels_path,
-                            })
     return pd.DataFrame(data)
                         
 
-def compute_metrics(data, psr):
+def compute_metrics(data, metric):
     data_with_metrics = data.copy()
-    psr, mode = psr.split("_")
     for i, row in tqdm(data.iterrows(), total=len(data)):
         logits = pd.read_csv(row["logits"], index_col=0, header=None).values.astype(float)
         labels = pd.read_csv(row["labels"], index_col=0, header=None).values.flatten().astype(int)
-        loss, cal_loss = compute_psr_with_mincal(logits, labels, psr, mode)
-        data_with_metrics.loc[i, "loss"] = loss
-        data_with_metrics.loc[i, "cal_loss"] = cal_loss
+        value = compute_metric(logits, labels, metric)
+        data_with_metrics.loc[i, "result"] = value
     data_with_metrics = data_with_metrics.drop(columns=["logits", "labels"])
     return data_with_metrics
 
 
 def main(
-    psr: str,
-    datasets: str,
-    methods: str,
+    metric: str,
     root_results_dir: str,
     output_path: str,
 ):
+    # Read results
     root_results_dir = Path(root_results_dir)
-    output_dir = Path(output_path)
-
-    if isinstance(datasets, str) and "," in datasets:
-        datasets = [d for d in datasets.split(",") if d != ""]
-    if isinstance(methods, str) and "," in methods:
-        methods = [m for m in methods.split(",") if m != ""]
-    
-    # Load data
-    data = read_results(root_results_dir, datasets, methods)
+    data = read_results(root_results_dir)
     
     # Compute metrics
-    data_with_metrics = compute_metrics(data, psr)
-    data_with_metrics.to_csv(output_path, index=False)
+    data_with_metrics = compute_metrics(data, metric)
+    data_with_metrics.to_json(output_path, orient="records", lines=True)
     
 
 if __name__ == "__main__":
