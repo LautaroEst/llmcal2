@@ -156,7 +156,7 @@ for dataset in ${DATASETS[@]}; do
                     --num_nodes 1 \
                     --global_batch_size 8 \
                     --micro_batch_size 1 \
-                    --val_check_interval 4 \
+                    --val_check_interval 16 \
                     --learning_rate 0.0001 \
                     --optimizer "adamw" \
                     --weight_decay 0.0 \
@@ -275,7 +275,7 @@ for num_seed in $(seq 0 $((num_seeds-1))); do
                 --num_nodes 1 \
                 --global_batch_size 8 \
                 --micro_batch_size 1 \
-                --val_check_interval 4 \
+                --val_check_interval 16 \
                 --learning_rate 0.0001 \
                 --optimizer "adamw" \
                 --weight_decay 0.0 \
