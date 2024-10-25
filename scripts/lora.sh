@@ -3,7 +3,6 @@
 source ./scripts/env.sh
 
 lora_args="--lora_r=8 --lora_alpha=16 --lora_dropout=0.05 --lora_query --lora_key --lora_value --lora_projection --lora_mlp --lora_head"
-losses_options=(fs ans)
 val_prop=0.3
 for dataset in ${DATASETS[@]}; do
     test_data_path=outputs/prompts/$model/$dataset/all.jsonl
