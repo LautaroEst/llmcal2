@@ -2,6 +2,7 @@
 *__pycache__*
 /.vscode/
 
+/.old/
 /outputs/
 /src/llmcal2/scripts.old/
 /logs/

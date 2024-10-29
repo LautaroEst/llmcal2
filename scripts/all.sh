@@ -87,7 +87,7 @@ for dataset in ${DATASETS[@]}; do
     source ./scripts/affine_calibration.sh
     source ./scripts/lora.sh
     source ./scripts/lora_no_es.sh
-    source ./scripts/lora_norm.sh
+    # source ./scripts/lora_norm.sh
     source ./scripts/lora_plus_affine_cal_no_es.sh
-    source ./scripts/lora_norm_plus_affine_cal_no_es.sh
+    # source ./scripts/lora_norm_plus_affine_cal_no_es.sh
 done
