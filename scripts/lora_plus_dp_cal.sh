@@ -18,7 +18,7 @@ for dataset in ${DATASETS[@]}; do
         val_list="lists/$dataset/val_${total_size}_${val_prop}_$num_seed.txt"
         list_identifier="${dataset}_${total_size}_${val_prop}_$num_seed"
         # Do for each loss
-        for loss in $losses_options; do
+        for loss in ${losses_options[@]}; do
             train_output_dir="outputs/adaptation/$model/lora_${loss}/$list_identifier"
             log_dir=$train_output_dir/logs
             output_checkpoint_dir=$train_output_dir/checkpoint
@@ -128,7 +128,7 @@ for dataset in ${DATASETS[@]}; do
         val_lists=$(echo "$val_lists" | sed 's/,$//')
         list_identifier=$(echo "$list_identifier" | sed 's/__$//')
         # Do for each loss
-        for loss in $losses_options; do
+        for loss in ${losses_options[@]}; do
             train_output_dir="outputs/adaptation/$model/lora_${loss}/$list_identifier"
             log_dir=$train_output_dir/logs
             output_checkpoint_dir=$train_output_dir/checkpoint
@@ -233,7 +233,7 @@ for num_seed in $(seq 0 $((num_seeds-1))); do
     seed=$((base_seed+num_seed))
 
     # Do for each loss
-    for loss in $losses_options; do
+    for loss in ${losses_options[@]}; do
 
         train_data_paths=""
         train_lists=""

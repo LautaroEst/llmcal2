@@ -60,7 +60,12 @@ def setup(
     base_checkpoint_dir = Path(base_checkpoint_dir)
     lora_checkpoint_dir = Path(lora_checkpoint_dir) if lora_checkpoint_dir is not None else None
     train_lists = [np.loadtxt(train_list, dtype=int) for train_list in train_lists.split(",")]
-    val_lists = [np.loadtxt(val_list, dtype=int) for val_list in val_lists.split(",")]
+    
+    if val_lists is None:
+        rs = np.random.RandomState(seed)
+        val_lists = [rs.choice(train_list, min(len(train_list) // 10, 10), replace=False) for train_list in train_lists]
+    else:
+        val_lists = [np.loadtxt(val_list, dtype=int) for val_list in val_lists.split(",")]
 
     # Load config file
     check_valid_checkpoint_dir(base_checkpoint_dir)

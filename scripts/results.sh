@@ -3,6 +3,7 @@
 source ./scripts/env.sh
 
 metric=nce
+mode="median"
 
 overwrite=true
 results_path=outputs/results/$model/$metric.jsonl
@@ -21,7 +22,8 @@ mkdir -p $plots_dir
 python -m llmcal2.scripts.plot_results \
     --metric $metric \
     --results_path $results_path \
-    --output_dir $plots_dir
+    --output_dir $plots_dir \
+    --mode $mode
 # # python -m llmcal2.scripts.plot_train_on_same_dataset \
 # #     --psr $psr \
 # #     --datasets $datasets \
