@@ -1,175 +1,127 @@
 
-
+import warnings
 from pathlib import Path
 import pandas as pd
-import numpy as np
-
 import torch
-from torch.utils.data import DataLoader, Dataset
-from .utils import TBLogger, CSVLogger
-from ..models.affine_calibration import AffineCalibration
+from torch.utils.data import DataLoader, TensorDataset
+from torch.optim.lbfgs import LBFGS
+import torch.nn.functional as F
+from typing import Literal
 
-from litgpt.utils import check_valid_checkpoint_dir as check_valid_checkpoint_dir
-from torch.utils.data import DataLoader
-import lightning as L
-from lightning.fabric.utilities.load import _lazy_load as lazy_load
-from lightning.pytorch.trainer.states import TrainerStatus
+from ..loggers import TBLogger, CSVLogger
 
-AFFINE_METHODS = ["dp_calibration", "temp_scaling", "bias_only"]
+warnings.filterwarnings("ignore", category=UserWarning, message=".*Experiment logs directory outputs*")
 
 
-class CalibrationDataset(Dataset):
 
-    def __init__(self, df_logits, df_labels):
-        self.logits = torch.from_numpy(df_logits.values).float()
-        self.labels = torch.from_numpy(df_labels.values).long().squeeze()
-        self.index = torch.from_numpy(df_logits.index.values).long()
+class AffineCalibrator(torch.nn.Module):
 
-    def __len__(self):
-        return self.logits.shape[0]
-    
-    def __getitem__(self, idx):
-        return {
-            "idx": self.index[idx],
-            "logits": self.logits[idx],
-            "label": self.labels[idx],
-        }
+    def __init__(self, method: str, num_classes: int):
+        super().__init__()
+        self.method = method
+        self.num_classes = num_classes
+        self._init_params(method)
+
+    def _init_params(self, method):
+        if method == "dp_calibration":
+            self.alpha = torch.nn.Parameter(torch.ones(1), requires_grad=True)
+            self.beta = torch.nn.Parameter(torch.zeros(self.num_classes), requires_grad=True)
+        elif method == "temp_scaling":
+            self.alpha = torch.nn.Parameter(torch.ones(1), requires_grad=True)
+            self.beta = torch.nn.Parameter(torch.zeros(self.num_classes), requires_grad=False)
+        elif method == "bias_only":
+            self.alpha = torch.nn.Parameter(torch.ones(1), requires_grad=False)
+            self.beta = torch.nn.Parameter(torch.zeros(self.num_classes), requires_grad=True)
+        else:
+            raise ValueError(f"Invalid method: {method}")
+        
+    def forward(self, logits):
+        return logits * self.alpha + self.beta
 
 
-def create_dataloaders(train_logits, train_labels, val_logits, val_labels, test_logits, test_labels):
-    data = {}
-    df_train_logits = pd.read_csv(train_logits, index_col=0, header=None)
-    df_train_labels = pd.read_csv(train_labels, index_col=0, header=None)
-    df_val_logits = pd.read_csv(val_logits, index_col=0, header=None)
-    df_val_labels = pd.read_csv(val_labels, index_col=0, header=None)
-    df_test_logits = pd.read_csv(test_logits, index_col=0, header=None)
-    df_test_labels = pd.read_csv(test_labels, index_col=0, header=None)
-
-    dataset = CalibrationDataset(df_train_logits, df_train_labels)
-    data["train"] = DataLoader(
-        dataset, 
-        batch_size=len(dataset), 
-        shuffle=True, 
-        num_workers=4, 
-    )
-    dataset = CalibrationDataset(df_val_logits, df_val_labels)
-    data["val"] = DataLoader(
-        dataset, 
-        batch_size=len(dataset), 
-        shuffle=False, 
-        num_workers=4, 
-    )
-    dataset = CalibrationDataset(df_test_logits, df_test_labels)
-    data["test"] = DataLoader(
-        dataset, 
-        batch_size=len(dataset), 
-        shuffle=False, 
-        num_workers=4, 
-    )
-    return data
 
 def main(
-    train_logits = None,
-    train_labels = None,
-    val_logits = None,
-    val_labels = None,
-    test_logits = None,
-    test_labels = None,
-    random_state = 42,
-    method = "dp_calibration",
-    max_ls = 40,
-    learning_rate = 0.001,
-    accelerator = "cpu",
-    max_epochs = 1000,
-    output_dir = "output",
-    checkpoint_dir = "output/checkpoint",
-    log_dir = "output/logs",
+    output_dir: str = 'output',
+    log_dir: str = 'output/logs',
+    train_logits: str = 'logits.csv',
+    train_labels: str = 'labels.csv',
+    predict_logits: str = 'logits.csv',
+    predict_labels: str = 'labels.csv',
+    method: Literal["dp_calibration", "temp_scaling", "bias_only"] = "dp_calibration",
+    learning_rate: float = 1e-3,
+    tolerance: float = 1e-4,
+    max_ls: int = 100,
 ):
-
-    L.seed_everything(random_state)
     torch.set_float32_matmul_precision("high")
     output_dir = Path(output_dir)
-    checkpoint_dir = Path(checkpoint_dir)
 
-    # Load dataset
-    data = create_dataloaders(train_logits, train_labels, val_logits, val_labels, test_logits, test_labels)
-
-    # Init trainer
-    trainer = L.Trainer(
-        accelerator = accelerator,
-        strategy = "auto",
-        devices = 1,
-        num_nodes = 1,
-        precision = 32,
-        logger = [
-            TBLogger(save_dir=log_dir),
-            CSVLogger(save_dir=log_dir),
-        ],
-        max_epochs = max_epochs,
-        check_val_every_n_epoch = 1,
-        enable_checkpointing = False,
-        enable_progress_bar = True,
-        enable_model_summary = True,
-        deterministic = True,
-        profiler = None,
-        default_root_dir = output_dir,
+    # Load train data
+    train_logits = torch.log_softmax(torch.from_numpy(pd.read_csv(train_logits, index_col=0, header=None).values).float(), dim=1)
+    train_labels = torch.from_numpy(pd.read_csv(train_labels, index_col=0, header=None).values.flatten()).long()
+    train_dataset = TensorDataset(train_logits, train_labels)
+    train_loader = DataLoader(
+        train_dataset, 
+        batch_size=len(train_dataset), 
+        shuffle=False,
     )
+    
+    # Load predict data
+    df_predict_logits = pd.read_csv(predict_logits, index_col=0, header=None)
+    predict_logits = torch.log_softmax(torch.from_numpy(df_predict_logits.values).float(), dim=1)
+    df_predict_labels = pd.read_csv(predict_labels, index_col=0, header=None)
+    predict_labels = torch.from_numpy(df_predict_labels.values.flatten()).long()
 
-    # Init base model
-    if method == "dp_calibration":
-        alpha, beta = "scalar", True
-    elif method == "temp_scaling":
-        alpha, beta = "scalar", False
-    elif method == "bias_only":
-        alpha, beta = "none", True
-    else:
-        raise ValueError(f"Invalid method: {method}")
-    with trainer.init_module():
-        model = AffineCalibration(
-            num_classes = data["train"].dataset[0]["logits"].shape[0],
-            alpha = alpha,
-            beta = beta,
-            max_ls = max_ls,
-            learning_rate = learning_rate,
-        )
-            
-    # -------------------
-    # Fit the model
-    # -------------------
-    last_checkpoint_path = output_dir / "last.ckpt" if (output_dir / "last.ckpt").exists() else None
-    trainer.fit(model, train_dataloaders=data["train"], val_dataloaders=data["val"], ckpt_path=last_checkpoint_path)
-    if trainer.state.status == TrainerStatus.INTERRUPTED:
-        print("Training interrupted.")
-        return
-    torch.save(model.state_dict(), checkpoint_dir / "model.pth")
+    # Train model
+    model = AffineCalibrator(method=method, num_classes=train_logits.shape[1])
+    optimizer = LBFGS(
+        params=(param for param in model.parameters() if param.requires_grad),
+        lr=learning_rate,
+        max_iter=max_ls,
+        tolerance_change=tolerance,
+    )
+    fit(model, optimizer, train_loader, log_dir, tolerance)
 
-    # -------------------
-    # Evaluate the model
-    # -------------------
-    best_ckpt_path = output_dir / "best.ckpt"
-    if not best_ckpt_path.exists():
-        best_ckpt_path = output_dir / "last.ckpt"
-    checkpoint = lazy_load(best_ckpt_path)
-    model.load_state_dict(checkpoint["state_dict"], strict=True)
-        
-    for split, dataloader in data.items():
-        if dataloader is None or (output_dir / f"{split}_logits.csv").exists():
-            continue
-        trainer.predict(model, dataloaders=dataloader)
-        if trainer.state.status == TrainerStatus.INTERRUPTED:
-            print("Prediction interrupted.")
-            return
-        for k, v in model.predict_outputs.items():
-            if k == "idx":
-                continue
-            if k == "label":
-                v = v.numpy().astype(int)
-            else:
-                v = v.numpy()
-            d = pd.DataFrame(v, index=model.predict_outputs["idx"].numpy().astype(int))
-            d.to_csv(output_dir / f"{split}_{k}.csv", index=True, header=False)
+    # Predict
+    cal_logits = predict(model, predict_logits)
+
+    # Save results
+    pd.DataFrame(cal_logits, index=df_predict_logits.index).to_csv(output_dir / 'logits.csv')
+    df_predict_labels.to_csv(output_dir / 'labels.csv')
 
 
-if __name__ == "__main__":
+
+def fit(model, optimizer, train_loader, log_dir, tolerance=1e-4):
+    model.train()
+    loggers = [
+        TBLogger(log_dir),
+        CSVLogger(log_dir),
+    ]
+
+    last_loss = float('inf')
+    while True:
+        logits, labels = next(iter(train_loader))
+        def closure():
+            optimizer.zero_grad()
+            cal_logits = model(logits)
+            loss = F.cross_entropy(cal_logits, labels)
+            for logger in loggers:
+                logger.log_metrics({"train/cross_entropy": loss.item()})
+            loss.backward()
+            return loss
+        loss = optimizer.step(closure)
+        if abs(loss.item() - last_loss) < tolerance:
+            break
+        last_loss = loss.item()
+
+
+@torch.no_grad()
+def predict(model, logits):
+    model.eval()
+    cal_logits = model(logits)
+    cal_logits = torch.log_softmax(cal_logits, dim=1).numpy()
+    return cal_logits
+    
+
+if __name__ == '__main__':
     from fire import Fire
     Fire(main)

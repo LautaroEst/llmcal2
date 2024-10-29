@@ -1,5 +1,4 @@
-template_type: "generative"
-prompt_template: "Post document: \"{text}\"\nCategory:"
+prompt_template: "Determine the category of the posted document given by the user."
 answers_templates: 
     - "Atheism"
     - "Graphics"

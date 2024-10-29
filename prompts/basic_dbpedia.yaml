@@ -1,5 +1,4 @@
-template_type: "generative"
-prompt_template: "Article: \"{text}\"\nCategory:"
+prompt_template: "Determine the category of the article given by the user."
 answers_templates: 
   - "Company"
   - "Educational Institution"

@@ -2,8 +2,8 @@
 *__pycache__*
 /.vscode/
 
+/data/
 /.old/
-/outputs/
-/src/llmcal2/scripts.old/
+/outputs*/
 /logs/
 hf_token.txt
