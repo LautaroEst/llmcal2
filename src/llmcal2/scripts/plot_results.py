@@ -1,5 +1,4 @@
 
-from itertools import product
 from typing import OrderedDict
 import numpy as np
 import pandas as pd
@@ -39,18 +38,22 @@ def parse_train_scenario(ds):
         "result": ds["result"],
     })
 
+individuals = OrderedDict([
+    ("zero_shot", {"label": "Zero-shot", "color": "black", "hatch": None, "alpha": 1.0,}),
+    ("dp_calibration", {"label": "DP Calibration", "color": "black", "hatch": None, "alpha": 0.5,}),
+])
 
 kwargs = OrderedDict([
-    ("zero_shot", {"label": "Zero-shot", "color": "black", "hatch": None,}),
+    ("instruct", {"label": "Instructions", "color": "tab:pink", "hatch": None,}),
     ("lora_fs-matched", {"label": "LoRA-FS (Matched)", "color": "tab:blue", "hatch": None,}),
     ("lora_fs-mismatched", {"label": "LoRA-FS (Unmatched)", "color": "tab:blue", "hatch": "/",}),
     ("lora_fs-all", {"label": "LoRA-FS (All)", "color": "tab:blue", "hatch": "x",}),
     ("lora_ans-matched", {"label": "LoRA-ANS (Matched)", "color": "tab:orange", "hatch": None,}),
     ("lora_ans-mismatched", {"label": "LoRA-ANS (Unmatched)", "color": "tab:orange", "hatch": "/",}),
     ("lora_ans-all", {"label": "LoRA-ANS (All)", "color": "tab:orange", "hatch": "x",}),
-    ("lora_norm-5-matched", {"label": "LoRA-Norm K=5 (Matched)", "color": "tab:red", "hatch": None,}),
-    ("lora_norm-5-mismatched", {"label": "LoRA-Norm K=5 (Unmatched)", "color": "tab:red", "hatch": "/",}),
-    ("lora_norm-5-all", {"label": "LoRA-Norm K=5 (All)", "color": "tab:red", "hatch": "x",}),
+    ("lora_norm-5-matched", {"label": "LoRA-Norm K=5 (Matched)", "color": "tab:green", "hatch": None,}),
+    ("lora_norm-5-mismatched", {"label": "LoRA-Norm K=5 (Unmatched)", "color": "tab:green", "hatch": "/",}),
+    ("lora_norm-5-all", {"label": "LoRA-Norm K=5 (All)", "color": "tab:green", "hatch": "x",}),
 ])
 
 dataset2name = OrderedDict([
@@ -61,7 +64,7 @@ dataset2name = OrderedDict([
     ("banking77", {"name": "Banking77", "num_classes": 77}),
 ])
 
-def plot_results(data, metric, filename, mode="mean"):
+def plot_results(data, dataset_name, metric, filename, mode="mean"):
     if mode == "mean":
         agg = data.groupby(["test_dataset", "base_method", "is_calibrated"]).agg(
             mean=("result", "mean"),
@@ -74,32 +77,45 @@ def plot_results(data, metric, filename, mode="mean"):
         ).reset_index()
     
     fig, ax = plt.subplots(1, 1, figsize=(12, 8))
-    index = np.arange(len(dataset2name))
     bar_width = 0.05
 
+    for i, method in enumerate(individuals.keys()):
+        x = i * bar_width
+        y = agg.loc[(agg["base_method"] == method) & (~agg["is_calibrated"]), "mean"]
+        y = 0 if len(y) == 0 else y.item()
+        yerr = agg.loc[(agg["base_method"] == method) & (~agg["is_calibrated"]), "std"]
+        yerr = 0 if len(yerr) == 0 else yerr.item()
+        ax.bar(
+            x, y, bar_width, 
+            yerr=yerr,
+            label=individuals[method]["label"], 
+            color=individuals[method]["color"], 
+            hatch=individuals[method]["hatch"], 
+            alpha=individuals[method]["alpha"],
+        )
+
     for i, method in enumerate(kwargs.keys()):
-        x = index + i * bar_width * 2
-        y = [agg.loc[(agg["test_dataset"] == dataset) & (agg["base_method"] == method) & (~agg["is_calibrated"]), "mean"] for dataset in dataset2name]
-        y = [0 if len(yy) == 0 else yy.item() for yy in y]
-        yerr = [agg.loc[(agg["test_dataset"] == dataset) & (agg["base_method"] == method) & (~agg["is_calibrated"]), "std"] for dataset in dataset2name]
-        yerr = [0 if len(yy) == 0 else yy.item() for yy in yerr]
+        x = i * bar_width * 2 + len(individuals) * bar_width
+        y = agg.loc[(agg["base_method"] == method) & (~agg["is_calibrated"]), "mean"]
+        y = 0 if len(y) == 0 else y.item()
+        yerr = agg.loc[(agg["base_method"] == method) & (~agg["is_calibrated"]), "std"]
+        yerr = 0 if len(yerr) == 0 else yerr.item()
         ax.bar(x, y, bar_width, label=kwargs[method]["label"], color=kwargs[method]["color"], hatch=kwargs[method]["hatch"], yerr=yerr)
 
-        x = index + i * bar_width * 2 + bar_width
-        y = [agg.loc[(agg["test_dataset"] == dataset) & (agg["base_method"] == method) & (agg["is_calibrated"]), "mean"] for dataset in dataset2name]
-        y = [0 if len(yy) == 0 else yy.item() for yy in y]
-        yerr = [agg.loc[(agg["test_dataset"] == dataset) & (agg["base_method"] == method) & (agg["is_calibrated"]), "std"] for dataset in dataset2name]
-        yerr = [0 if len(yy) == 0 else yy.item() for yy in yerr]
+        x = i * bar_width * 2 + bar_width + len(individuals) * bar_width
+        y = agg.loc[(agg["base_method"] == method) & (agg["is_calibrated"]), "mean"]
+        y = 0 if len(y) == 0 else y.item()
+        yerr = agg.loc[(agg["base_method"] == method) & (agg["is_calibrated"]), "std"]
+        yerr = 0 if len(yerr) == 0 else yerr.item()
         ax.bar(x, y, bar_width, color=kwargs[method]["color"], hatch=kwargs[method]["hatch"], yerr=yerr, alpha=0.5)
         
 
-    ax.set_xlabel("Test Dataset")
+    ax.set_title(f"{metric} on {dataset2name[dataset_name]['name']}")
     ax.set_ylabel(metric)
-    ax.set_title(f"{metric} by Test Dataset")
-    ax.set_xticks(index)
-    ax.set_xticklabels([dataset2name[dataset]["name"] for dataset in dataset2name], fontsize=14)
+    ax.set_xticks([])
+    ax.set_xticklabels([])
     ax.grid(True)
-    # ax.set_ylim(0, 1.2)
+    ax.set_ylim(0, 1.2)
     ax.legend()
     fig.tight_layout()
     fig.savefig(filename)
@@ -107,6 +123,7 @@ def plot_results(data, metric, filename, mode="mean"):
 
 
 def main(
+    dataset: str,
     metric: str,
     results_path: str,
     output_dir: str,
@@ -115,11 +132,12 @@ def main(
     # Read results
     results_path = Path(results_path)
     data = pd.read_json(results_path, lines=True)
+    data = data[data["test_dataset"] == dataset]
     data = data.apply(parse_train_scenario, axis=1)
 
     # Plot results
     output_dir = Path(output_dir)
-    plot_results(data, metric, output_dir / f"{metric}.png", mode = mode)
+    plot_results(data, dataset, metric, output_dir / f"{dataset}_{metric}.png", mode = mode)
 
     
 

@@ -45,12 +45,6 @@ def compute_metrics(data, metric):
     for i, row in tqdm(data.iterrows(), total=len(data)):
         logits = pd.read_csv(row["logits"], index_col=0, header=None).values.astype(float)
         labels = pd.read_csv(row["labels"], index_col=0, header=None).values.flatten().astype(int)
-        if row["method"] == "lora_fs" and (row["train_lists"] == ["agnews_1024_0.3_0"] or row["train_lists"] == ["agnews_1024_0.3_1"]):
-            from scipy.special import log_softmax
-            import numpy as np
-            scores = -log_softmax(logits, axis=1)[np.arange(len(labels)), labels]
-            print(scores)
-            
         value = compute_metric(logits, labels, metric)
         data_with_metrics.loc[i, "result"] = value
     data_with_metrics = data_with_metrics.drop(columns=["logits", "labels"])

@@ -14,12 +14,19 @@ num_seeds=2
 declare -A model2checkpoint=(
     ["pythia-14m"]="EleutherAI/pythia-14m"
     ["llama3.2-1b"]="meta-llama/Llama-3.2-1B"
+    ["llama3.2-1b-instruct"]="meta-llama/Llama-3.2-1B-Instruct"
     ["tinyllama"]="TinyLlama/TinyLlama-1.1B-intermediate-step-1431k-3T"
 )
 mkdir -p $CHECKPOINTS_DIR
 if [ ! -d $CHECKPOINTS_DIR/${model2checkpoint[$model]} ]; then
     litgpt download ${model2checkpoint[$model]} --checkpoint_dir $CHECKPOINTS_DIR --access_token $HF_TOKEN
     rm -rf $CHECKPOINTS_DIR/${model2checkpoint[$model]}/*.bin
+fi
+if [ ! -z ${model2checkpoint[${model}-instruct]} ]; then
+    if [ ! -d $CHECKPOINTS_DIR/${model2checkpoint[${model}-instruct]} ]; then
+        litgpt download ${model2checkpoint[${model}-instruct]} --checkpoint_dir $CHECKPOINTS_DIR --access_token $HF_TOKEN
+        rm -rf $CHECKPOINTS_DIR/${model2checkpoint[${model}-instruct]}/*.bin
+    fi
 fi
 
 # Datasets

@@ -19,11 +19,14 @@ fi
 
 plots_dir=outputs/results/$model
 mkdir -p $plots_dir
-python -m llmcal2.scripts.plot_results \
-    --metric $metric \
-    --results_path $results_path \
-    --output_dir $plots_dir \
-    --mode $mode
+for dataset in ${DATASETS[@]}; do
+    python -m llmcal2.scripts.plot_results \
+        --dataset $dataset \
+        --metric $metric \
+        --results_path $results_path \
+        --output_dir $plots_dir \
+        --mode $mode
+done
 # # python -m llmcal2.scripts.plot_train_on_same_dataset \
 # #     --psr $psr \
 # #     --datasets $datasets \
