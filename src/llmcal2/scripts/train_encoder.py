@@ -183,7 +183,7 @@ def main(
     train_loader, val_loader, test_loader = fabric.setup_dataloaders(train_loader, val_loader, test_loader)
 
     # Load model
-    model = AutoModelForSequenceClassification.from_pretrained(base_checkpoint_dir, num_labels=train_dataset.num_classes)
+    model = AutoModelForSequenceClassification.from_pretrained(base_checkpoint_dir, num_labels=train_dataset.num_classes, ignore_mismatched_sizes=True)
     model = fabric.setup_module(model, move_to_device=True)
 
     # Setup optimizer

@@ -12,8 +12,9 @@ weight_decay=0.0
 patience=10
 
 declare -A model_dirs=(
-    ["bert-base-uncased"]=$CHECKPOINTS_DIR/google-bert/bert-base-uncased
-    ["roberta-base"]=$CHECKPOINTS_DIR/FacebookAI/roberta-base
+    ["distilbert-base-uncased"]=$CHECKPOINTS_DIR/distilbert/distilbert-base-uncased
+    ["deberta-v2-xlarge"]=$CHECKPOINTS_DIR/microsoft/deberta-v2-xlarge
+    ["roberta-large-mnli"]=$CHECKPOINTS_DIR/FacebookAI/roberta-large-mnli
 )
 
 for model in "${!model_dirs[@]}"; do
