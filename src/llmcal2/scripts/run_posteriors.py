@@ -159,7 +159,7 @@ def predict(fabric, model, dataloader):
     predict_outputs = {"idx": [], "logits": [], "label": []}
     model.eval()
     for i, batch in enumerate(dataloader):
-        if i % (len(dataloader) // 50) == 0:
+        if i % max(len(dataloader) // 50,1) == 0:
             fabric.print(f"Predicting batch {i+1}/{len(dataloader)}")
         outputs = predict_step(fabric, model, batch["idx"], batch["prompt_ids"], batch["prompt_mask"], batch["answers_ids"], batch["label"])
         fabric.barrier()

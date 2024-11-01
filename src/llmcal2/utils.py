@@ -30,9 +30,11 @@ class JSONDataset(Dataset):
         self.paths = paths
         self.tokenizer = tokenizer
         data = []
-        for path, lst in zip(paths, lsts):
+        for i, (path, lst) in enumerate(zip(paths, lsts)):
             d = pd.read_json(path, lines=True).set_index("idx").loc[lst].reset_index(drop=False)
-            data.append(d.apply(self._transform, axis=1))
+            d["task_id"] = i
+            d = d.apply(self._transform, axis=1)
+            data.append(d)
         self.data = pd.concat(data, ignore_index=False)
 
     def _transform(self, sample):
@@ -40,7 +42,8 @@ class JSONDataset(Dataset):
         prompt_ids = self.tokenizer.encode(sample["prompt"], bos=True).long()
         answers_ids = [self.tokenizer.encode(ans, bos=True)[1:].long() for ans in sample["answer"]]
         label = torch.tensor(sample["label"], dtype=torch.long)
-        return pd.Series({"idx": idx, "prompt_ids": prompt_ids, "answers_ids": answers_ids, "label": label})
+        task_id = torch.tensor(sample["task_id"], dtype=torch.long)
+        return pd.Series({"idx": idx, "prompt_ids": prompt_ids, "answers_ids": answers_ids, "label": label, "task_id": task_id})
     
     def __len__(self):
         return len(self.data)
@@ -72,6 +75,7 @@ class Collator:
             "prompt_ids": torch.stack(prompts_ids),
             "prompt_mask": torch.stack(prompt_masks),
             "answers_ids": answers_ids,
+            "task_id": torch.stack([sample["task_id"] for sample in batch]),
             "label": torch.stack([sample["label"] for sample in batch])
         }
 

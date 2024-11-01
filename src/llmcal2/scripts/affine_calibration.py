@@ -43,6 +43,7 @@ class AffineCalibrator(torch.nn.Module):
 def main(
     output_dir: str = 'output',
     log_dir: str = 'output/logs',
+    checkpoint_dir: str = 'output/checkpoints',
     train_logits: str = 'logits.csv',
     train_labels: str = 'labels.csv',
     predict_logits: str = 'logits.csv',
@@ -54,6 +55,7 @@ def main(
 ):
     torch.set_float32_matmul_precision("high")
     output_dir = Path(output_dir)
+    checkpoint_dir = Path(checkpoint_dir)
 
     # Load train data
     train_logits = torch.log_softmax(torch.from_numpy(pd.read_csv(train_logits, index_col=0, header=None).values).float(), dim=1)
@@ -79,14 +81,15 @@ def main(
         max_iter=max_ls,
         tolerance_change=tolerance,
     )
-    fit(model, optimizer, train_loader, log_dir, tolerance)
+    state = fit(model, optimizer, train_loader, log_dir, tolerance)
 
     # Predict
     cal_logits = predict(model, predict_logits)
 
     # Save results
-    pd.DataFrame(cal_logits, index=df_predict_logits.index).to_csv(output_dir / 'logits.csv')
-    df_predict_labels.to_csv(output_dir / 'labels.csv')
+    pd.DataFrame(cal_logits, index=df_predict_logits.index).to_csv(output_dir / 'logits.csv', index=True, header=False)
+    df_predict_labels.to_csv(output_dir / 'labels.csv', index=True, header=False)
+    torch.save(state, checkpoint_dir / 'last.ckpt')
 
 
 
@@ -96,23 +99,40 @@ def fit(model, optimizer, train_loader, log_dir, tolerance=1e-4):
         TBLogger(log_dir),
         CSVLogger(log_dir),
     ]
+    logits, labels = next(iter(train_loader))
+    priors = torch.bincount(labels, minlength=logits.shape[1]).float() / len(labels)
+    priors_ce = -torch.log(priors[labels]).mean().item()
+    priors_er = (priors.argmax() != labels).float().mean().item()
 
-    last_loss = float('inf')
+    state = {
+        'model': model.state_dict(),
+        'loss': float('inf'),
+        'step_count': 0,
+    }
     while True:
+        last_loss = state['loss']
         logits, labels = next(iter(train_loader))
         def closure():
             optimizer.zero_grad()
             cal_logits = model(logits)
             loss = F.cross_entropy(cal_logits, labels)
+            er = (cal_logits.argmax(dim=1) != labels).float().mean().item()
             for logger in loggers:
-                logger.log_metrics({"train/cross_entropy": loss.item()})
+                logger.log_metrics({
+                    "train/NCE": loss.item() / priors_ce,
+                    "train/CE": loss.item(),
+                    "train/NER": er / priors_er,
+                    "train/ER": er,
+                }, step=state['step_count'])
             loss.backward()
+            state['step_count'] += 1
             return loss
         loss = optimizer.step(closure)
-        if abs(loss.item() - last_loss) < tolerance:
+        state['model'] = model.state_dict()
+        state['loss'] = loss.item()
+        if abs(state['loss'] - last_loss) < tolerance:
             break
-        last_loss = loss.item()
-
+    return state
 
 @torch.no_grad()
 def predict(model, logits):

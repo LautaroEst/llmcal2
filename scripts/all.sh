@@ -2,5 +2,10 @@
 
 ./scripts/prepare_data.sh
 ./scripts/no_adaptation.sh
-./scripts/lora.sh
-./scripts/lora_plus_dp_cal.sh
+./scripts/dp_calibration.sh
+./scripts/lora_matched.sh
+./scripts/lora_matched_plus_dp_cal.sh
+./scripts/lora_mismatched.sh
+./scripts/lora_mismatched_plus_dp_cal.sh
+./scripts/lora_all.sh
+./scripts/lora_all_plus_dp_cal.sh

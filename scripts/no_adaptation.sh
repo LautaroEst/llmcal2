@@ -2,41 +2,37 @@
 
 source ./scripts/env.sh
 
-export CUDA_VISIBLE_DEVICES=0,1
+precision="bf16-true"
+
+declare -A model_dirs=(
+    ["no_adaptation"]=$CHECKPOINTS_DIR/${model2checkpoint[$model]}
+    ["instruct"]=$CHECKPOINTS_DIR/${model2checkpoint[${model}-instruct]}
+)
 
 for dataset in "${DATASETS[@]}"; do
-    # predict on base version
-    prediction_list="test_${dataset2testsize[$dataset]}"
-    data_path=outputs/prompts/$model/$dataset/all.jsonl
-    output_dir="outputs/adaptation/$model/no_adaptation/all/test=$dataset/list=$prediction_list"
-    mkdir -p $output_dir
-    if [ ! -f $output_dir/logits.csv ]; then
-        python -m llmcal2.scripts.run_posteriors \
-            --checkpoint_dir $CHECKPOINTS_DIR/${model2checkpoint[$model]} \
-            --data_path $data_path \
-            --output_dir $output_dir \
-            --prediction_lists lists/$dataset/$prediction_list.txt \
-            --precision "bf16-true" \
-            --devices 2 \
-            --num_nodes 1 \
-            --batch_size 1 \
-            --max_seq_length $max_seq_length
-    fi
-    # predict on instruct version if exists
-    if [ ! -z ${model2checkpoint[${model}-instruct]} ]; then
-        output_dir="outputs/adaptation/$model/instruct/all/test=$dataset/list=$prediction_list"
-        mkdir -p $output_dir
-        if [ ! -f $output_dir/logits.csv ]; then
+    for model_type in no_adaptation instruct; do
+        model_dir=${model_dirs[$model_type]}
+        if [ -z $model_dir ]; then
+            continue
+        fi
+    
+        # Predictions directories and lists
+        data_path=outputs/prompts/$model/$dataset/all.jsonl
+        test_list="test_${dataset2testsize[$dataset]}"
+        base_output_dir="outputs/adaptation/$model/$model_type/all"
+        test_dir="$base_output_dir/test=$dataset/list=$test_list"
+        if [ ! -f $test_dir/logits.csv ]; then
+            mkdir -p $test_dir
             python -m llmcal2.scripts.run_posteriors \
-                --checkpoint_dir $CHECKPOINTS_DIR/${model2checkpoint[${model}-instruct]} \
+                --checkpoint_dir $model_dir \
                 --data_path $data_path \
-                --output_dir $output_dir \
-                --prediction_lists lists/$dataset/$prediction_list.txt \
-                --precision "bf16-true" \
-                --devices 2 \
+                --output_dir $test_dir \
+                --prediction_lists lists/$dataset/$test_list.txt \
+                --precision $precision \
+                --devices 1 \
                 --num_nodes 1 \
                 --batch_size 1 \
                 --max_seq_length $max_seq_length
         fi
-
+    done
 done

@@ -10,6 +10,15 @@ def parse_train_scenario(ds):
     if ds["method"] == "no_adaptation" and ds["train_lists"] == ["all"]:
         base_method = "zero_shot"
         is_calibrated = False
+    elif ds["method"] == "instruct" and ds["train_lists"] == ["all"]:
+        base_method = "instruct"
+        is_calibrated = False
+    elif ds["method"] == "no_adaptation_plus_dp_cal":
+        base_method = "dp_calibration"
+        is_calibrated = True
+    elif ds["method"] == "instruct_plus_dp_cal":
+        base_method = "instruct"
+        is_calibrated = True
     elif not ds["method"].endswith("_plus_dp_cal"):
         if len(ds["train_lists"]) == 1 and ds["train_lists"][0].split("_")[0] == ds["test_dataset"]:
             base_method = ds["method"] + "-matched"
@@ -81,9 +90,9 @@ def plot_results(data, dataset_name, metric, filename, mode="mean"):
 
     for i, method in enumerate(individuals.keys()):
         x = i * bar_width
-        y = agg.loc[(agg["base_method"] == method) & (~agg["is_calibrated"]), "mean"]
+        y = agg.loc[(agg["base_method"] == method), "mean"]
         y = 0 if len(y) == 0 else y.item()
-        yerr = agg.loc[(agg["base_method"] == method) & (~agg["is_calibrated"]), "std"]
+        yerr = agg.loc[(agg["base_method"] == method), "std"]
         yerr = 0 if len(yerr) == 0 else yerr.item()
         ax.bar(
             x, y, bar_width, 
@@ -133,6 +142,9 @@ def main(
     results_path = Path(results_path)
     data = pd.read_json(results_path, lines=True)
     data = data[data["test_dataset"] == dataset]
+    data = data[data["test_lst"].str.startswith("test_")]
+    if len(data) == 0:
+        return
     data = data.apply(parse_train_scenario, axis=1)
 
     # Plot results

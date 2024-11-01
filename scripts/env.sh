@@ -50,3 +50,5 @@ declare -A dataset2testsize=(
 max_seq_length=2048
 
 losses_options=(ans fs norm-5)
+
+export CUDA_VISIBLE_DEVICES=1
