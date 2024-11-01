@@ -14,7 +14,8 @@ else
     python -m llmcal2.scripts.compute_results \
         --metric $metric \
         --root_results_dir outputs/adaptation/$model \
-        --output_path $results_path
+        --output_path $results_path \
+        --encoder_results_dir outputs/adaptation/encoder_models
 fi
 
 plots_dir=outputs/results/$model

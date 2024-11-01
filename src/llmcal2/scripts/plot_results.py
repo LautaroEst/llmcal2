@@ -6,8 +6,17 @@ from pathlib import Path
 
 import matplotlib.pyplot as plt
 
+ENCODER_MODELS = [
+    "distilbert-base-uncased",
+    "deberta-v2-xlarge",
+    "roberta-large-mnli",
+]
+
 def parse_train_scenario(ds):
-    if ds["method"] == "no_adaptation" and ds["train_lists"] == ["all"]:
+    if ds["method"] in ENCODER_MODELS:
+        base_method = ds["method"]
+        is_calibrated = False
+    elif ds["method"] == "no_adaptation" and ds["train_lists"] == ["all"]:
         base_method = "zero_shot"
         is_calibrated = False
     elif ds["method"] == "instruct" and ds["train_lists"] == ["all"]:
@@ -50,6 +59,9 @@ def parse_train_scenario(ds):
 individuals = OrderedDict([
     ("zero_shot", {"label": "Zero-shot", "color": "black", "hatch": None, "alpha": 1.0,}),
     ("dp_calibration", {"label": "DP Calibration", "color": "black", "hatch": None, "alpha": 0.5,}),
+    ("roberta-large-mnli", {"label": "RoBERTa-Large-MNLI", "color": "tab:red", "hatch": None, "alpha": 0.5,}),
+    ("distilbert-base-uncased", {"label": "DistilBERT", "color": "tab:cyan", "hatch": None, "alpha": 0.5,}),
+    ("deberta-v2-xlarge", {"label": "DeBERTa-v2-XLarge", "color": "tab:purple", "hatch": None, "alpha": 0.5,}),
 ])
 
 kwargs = OrderedDict([
