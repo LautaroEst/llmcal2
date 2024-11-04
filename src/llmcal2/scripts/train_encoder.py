@@ -91,7 +91,8 @@ def setup(
     precision,
     devices,
     num_nodes,
-    batch_size,
+    global_batch_size,
+    micro_batch_size,
     train_save_interval,
     val_check_interval,
     learning_rate,
@@ -123,7 +124,8 @@ def setup(
     )
 
     train_args = {
-        "batch_size": batch_size,
+        "global_batch_size": global_batch_size,
+        "micro_batch_size": micro_batch_size,
         "val_check_interval": val_check_interval,
         "train_save_interval": train_save_interval,
         "learning_rate": learning_rate,
@@ -157,7 +159,7 @@ def main(
     train_dataset = JSONDataset(data_path, train_list, tokenizer)
     train_loader = DataLoader(
         train_dataset, 
-        batch_size=train_args["batch_size"], 
+        batch_size=train_args["micro_batch_size"], 
         shuffle=True, 
         collate_fn=Collator(tokenizer, max_length=512),
         generator=torch.Generator().manual_seed(seed)
@@ -167,7 +169,7 @@ def main(
     val_dataset = JSONDataset(data_path, val_list, tokenizer)
     val_loader = DataLoader(
         val_dataset,
-        batch_size=train_args["batch_size"],
+        batch_size=train_args["micro_batch_size"],
         shuffle=False,
         collate_fn=Collator(tokenizer, max_length=512),
     )
@@ -176,7 +178,7 @@ def main(
     test_dataset = JSONDataset(data_path, test_list, tokenizer)
     test_loader = DataLoader(
         test_dataset,
-        batch_size=train_args["batch_size"],
+        batch_size=train_args["micro_batch_size"],
         shuffle=False,
         collate_fn=Collator(tokenizer, max_length=512),
     )
@@ -252,7 +254,7 @@ def fit(
 
     train_iterator = CycleIterator(train_loader)
     rs = np.random.RandomState(seed)
-    gradient_accumulation_iters = 1
+    gradient_accumulation_iters = train_args["global_batch_size"] // train_args["micro_batch_size"]
 
     # Define the loss
     loss_fn = torch.nn.CrossEntropyLoss(reduction="mean")
@@ -279,7 +281,7 @@ def fit(
         with fabric.no_backward_sync(model, enabled=is_accumulating):
             output = model(batch["input_ids"], batch["attention_mask"])
             loss = loss_fn(output.logits, batch["label"])
-            fabric.backward(loss)
+            fabric.backward(loss / gradient_accumulation_iters)
         state["train_loss"] = loss.item() / train_prior_loss
         
         # Perform optimizer step

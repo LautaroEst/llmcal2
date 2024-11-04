@@ -13,7 +13,7 @@ patience=10
 
 declare -A model_dirs=(
     ["distilbert-base-uncased"]=$CHECKPOINTS_DIR/distilbert/distilbert-base-uncased
-    # ["deberta-v2-xlarge"]=$CHECKPOINTS_DIR/microsoft/deberta-v2-xlarge
+    ["deberta-v2-xlarge"]=$CHECKPOINTS_DIR/microsoft/deberta-v2-xlarge
     ["roberta-large-mnli"]=$CHECKPOINTS_DIR/FacebookAI/roberta-large-mnli
 )
 
@@ -22,7 +22,7 @@ for model in "${!model_dirs[@]}"; do
         mkdir -p ${model_dirs[$model]}
         full_path=${model_dirs[$model]}
         model_url="${full_path#"$CHECKPOINTS_DIR/"}"
-        huggingface-cli download $model_url --local-dir ${model_dirs[$model]} --include "*.json" "*.bin" --token $HF_TOKEN
+        huggingface-cli download $model_url --local-dir ${model_dirs[$model]} --include "*.json" "*.bin" "spm.model" --token $HF_TOKEN
     fi
     for dataset in ${DATASETS[@]}; do
         for num_seed in $(seq 0 $((num_seeds-1))); do
@@ -69,9 +69,10 @@ for model in "${!model_dirs[@]}"; do
                     --precision $precision \
                     --devices 1 \
                     --num_nodes 1 \
-                    --batch_size $batch_size \
-                    --train_save_interval 2 \
-                    --val_check_interval 4 \
+                    --global_batch_size $batch_size \
+                    --micro_batch_size 4 \
+                    --train_save_interval 8 \
+                    --val_check_interval 16 \
                     --learning_rate $learning_rate \
                     --optimizer $optimizer \
                     --weight_decay $weight_decay \

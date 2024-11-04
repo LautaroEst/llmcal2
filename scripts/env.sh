@@ -8,7 +8,7 @@ model="llama3.2-1b"
 
 # Reproducibility
 base_seed=2834
-num_seeds=2
+num_seeds=3
 
 # Supported models
 declare -A model2checkpoint=(
