@@ -49,7 +49,8 @@ for dataset in ${DATASETS[@]}; do
                     --method $method \
                     --learning_rate $learning_rate \
                     --tolerance $tolerance \
-                    --max_ls $max_ls
+                    --max_ls $max_ls \
+                    --seed $seed
             fi
         done
     done

@@ -64,7 +64,7 @@ for num_seed in $(seq 0 $((num_seeds-1))); do
                 --num_nodes 1 \
                 --global_batch_size $global_batch_size \
                 --micro_batch_size $micro_batch_size \
-                --val_check_interval 4 \
+                --val_check_interval 16 \
                 --learning_rate $learning_rate \
                 --optimizer $optimizer \
                 --weight_decay $weight_decay \

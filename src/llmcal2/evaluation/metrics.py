@@ -72,21 +72,13 @@ def compute_metric(logits, labels, metric):
     
 
 def compute_psr_with_mincal(logits, labels, psr, mode):
-    if psr == "ner":
-        loss = compute_ner(logits, labels)
-    elif psr == "nce":
-        loss = compute_nce(logits, labels)
-    elif psr == "nbrier":
-        loss = compute_nbrier(logits, labels)
-    else:
-        raise ValueError(f"Unknown psr: {psr}")
-    
     if mode == "trainontest":
         cal_logprobs = train_cal_on_test(logits, labels)
     elif mode == "xval":
         cal_logprobs = calibrate_xval(logits, labels, seed=1234, condition_ids=None, stratified=True, nfolds=5) 
     else:
         raise ValueError(f"Unknown mode: {mode}")
+    loss = compute_metric(logits, labels, psr)
     cal_loss = compute_metric(cal_logprobs, labels, psr)
 
     return loss, cal_loss

@@ -2,7 +2,9 @@ import numpy as np
 import pandas as pd
 import torch
 from torch import nn
+import torch.nn.functional as F
 from sklearn.model_selection import StratifiedKFold, StratifiedGroupKFold, GroupKFold, KFold
+
 
 class DPCalibrator(nn.Module):
     
@@ -23,20 +25,27 @@ class DPCalibrator(nn.Module):
     
     def fit(self, logprobs, labels):
         self.train()
-        criterion = nn.CrossEntropyLoss()
-        optimizer = torch.optim.LBFGS(self.parameters(), lr=1e-2, max_iter=100)
+        optimizer = torch.optim.LBFGS(self.parameters(), lr=1e-2, max_iter=40)
 
-        def closure():
-            optimizer.zero_grad()
-            cal_logprobs = self(logprobs)
-            loss = criterion(cal_logprobs, labels)
-            loss.backward()
-            return loss
-        
-        last_loss = float("inf")
-        loss = optimizer.step(closure)
-        while abs(last_loss - loss) < 1e-6:
+        priors = torch.bincount(labels, minlength=logprobs.shape[1]).float() / len(labels)
+        priors_ce = -torch.log(priors[labels]).mean().item()
+
+        last_nce = float("inf")
+        while True:
+
+            def closure():
+                optimizer.zero_grad()
+                cal_logits = self(logprobs)
+                loss = F.cross_entropy(cal_logits, labels)
+                loss.backward()
+                return loss
+            
             loss = optimizer.step(closure)
+
+            nce = loss.item() / priors_ce
+            if abs(last_nce - nce) < 1e-5:
+                break
+            last_nce = nce
 
         return self
 

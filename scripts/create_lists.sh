@@ -15,5 +15,9 @@ for dataset in "${DATASETS[@]}"; do
         --total_train_size $total_train_size --val_prop $val_prop --repetitions $num_seeds --seed $base_seed
     python -m llmcal2.scripts.create_lists --dataset $dataset --lists_dir $list_dir --data_dir $data_dir \
         --test_size $test_size --seed $base_seed
+
+    for num_seed in $(seq 0 $((num_seeds-1))); do
+        cat $list_dir/train_${dataset2trainsize[$dataset]}_0.3_$seed.txt $list_dir/val_${dataset2trainsize[$dataset]}_0.3_$seed.txt > $list_dir/train_${dataset2trainsize[$dataset]}_0.0_$seed.txt
+    done
 done
 

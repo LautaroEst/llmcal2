@@ -8,7 +8,7 @@ model="llama3.2-1b"
 
 # Reproducibility
 base_seed=2834
-num_seeds=3
+num_seeds=2
 
 # Supported models
 declare -A model2checkpoint=(
@@ -49,6 +49,7 @@ declare -A dataset2testsize=(
 
 max_seq_length=2048
 
-losses_options=(ans fs norm-5)
+# losses_options=(ans fs norm-5 norm-15)
+losses_options=(ans fs)
 
 export CUDA_VISIBLE_DEVICES=1

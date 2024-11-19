@@ -237,8 +237,9 @@ def fit(
 ):
     
     if (state_dict_path := output_dir / "last.ckpt").exists():
-        state = torch.load(state_dict_path, weights_only=False)
-        model.load_state_dict(state["model"], strict=False) # only lora params are saved
+        raise ValueError(f"Output directory {output_dir} already contains a last checkpoint.")
+        # state = torch.load(state_dict_path, weights_only=False)
+        # model.load_state_dict(state["model"], strict=False) # only lora params are saved
     else:
         state = {
             "model": model.state_dict(),
@@ -330,7 +331,8 @@ def fit(
 
         # Save last checkpoint
         if not is_accumulating and state["step_count"] % train_args["train_save_interval"] == 0:
-            state["model"] = model.state_dict()
+            # state["model"] = model.state_dict()
+            state["model"] = {}
             state["end_time"] = time.perf_counter()
             fabric.save(output_dir / "last.ckpt", state)
 

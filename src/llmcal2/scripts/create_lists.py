@@ -15,8 +15,9 @@ def create_lists_sst2(seed):
     df_test = df_test[df_test["text"].str.len() > 0]
     
     df_all = pd.concat([df_train, df_test], axis=0).reset_index(drop=True)
-    train_list = rs.permutation(df_all.iloc[:len(df_train)].index.to_numpy())
-    test_list = rs.permutation(df_all.iloc[len(df_train):].index.to_numpy())
+    all_idx = rs.permutation(df_all.index.to_numpy())
+    train_list = all_idx[:len(df_train)]
+    test_list = all_idx[len(df_train):]
 
     return df_all, train_list, test_list
 
@@ -30,8 +31,9 @@ def create_lists_agnews(seed):
     df_test = df_test[df_test["text"].str.len() > 0]
     
     df_all = pd.concat([df_train, df_test], axis=0).reset_index(drop=True)
-    train_list = rs.permutation(df_all.iloc[:len(df_train)].index.to_numpy())
-    test_list = rs.permutation(df_all.iloc[len(df_train):].index.to_numpy())
+    all_idx = rs.permutation(df_all.index.to_numpy())
+    train_list = all_idx[:len(df_train)]
+    test_list = all_idx[len(df_train):]
 
     return df_all, train_list, test_list
 
@@ -47,8 +49,9 @@ def create_lists_dbpedia(seed):
     df_test = df_test[df_test["text"].str.len() > 0]
     
     df_all = pd.concat([df_train, df_test], axis=0).reset_index(drop=True)
-    train_list = rs.permutation(df_all.iloc[:len(df_train)].index.to_numpy())
-    test_list = rs.permutation(df_all.iloc[len(df_train):].index.to_numpy())[:7000]
+    all_idx = rs.permutation(df_all.index.to_numpy())
+    train_list = all_idx[:len(df_train)]
+    test_list = all_idx[len(df_train):]
 
     return df_all, train_list, test_list
 
@@ -72,8 +75,9 @@ def create_lists_20newsgroups(seed):
     df_test = df_test[df_test["text"].str.len() > 0]
 
     df_all = pd.concat([df_train, df_test], axis=0).reset_index(drop=True)
-    train_list = rs.permutation(df_all.iloc[:len(df_train)].index.to_numpy())
-    test_list = rs.permutation(df_all.iloc[len(df_train):].index.to_numpy())
+    all_idx = rs.permutation(df_all.index.to_numpy())
+    train_list = all_idx[:len(df_train)]
+    test_list = all_idx[len(df_train):]
 
     return df_all, train_list, test_list
 
@@ -86,8 +90,9 @@ def create_lists_banking77(seed):
 
     df_all = all_data.to_pandas().set_index("idx")
     df_all = df_all[df_all["text"].str.len() > 0].reset_index(drop=True)
-    train_list = rs.permutation(df_all.iloc[len(data["test"]):].index.to_numpy())
-    test_list = rs.permutation(df_all.iloc[:len(data["test"])].index.to_numpy())
+    all_idx = rs.permutation(df_all.index.to_numpy())
+    train_list = all_idx[:len(data["train"])]
+    test_list = all_idx[len(data["train"]):]
 
     return df_all, train_list, test_list
 

@@ -13,7 +13,7 @@ patience=10
 
 declare -A model_dirs=(
     ["distilbert-base-uncased"]=$CHECKPOINTS_DIR/distilbert/distilbert-base-uncased
-    ["deberta-v2-xlarge"]=$CHECKPOINTS_DIR/microsoft/deberta-v2-xlarge
+    # ["deberta-v2-xlarge"]=$CHECKPOINTS_DIR/microsoft/deberta-v2-xlarge
     ["roberta-large-mnli"]=$CHECKPOINTS_DIR/FacebookAI/roberta-large-mnli
 )
 

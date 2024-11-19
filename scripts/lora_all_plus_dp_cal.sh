@@ -44,7 +44,8 @@ for num_seed in $(seq 0 $((num_seeds-1))); do
                     --method $method \
                     --learning_rate $learning_rate \
                     --tolerance $tolerance \
-                    --max_ls $max_ls
+                    --max_ls $max_ls \
+                    --seed $seed
             fi
         done
     done

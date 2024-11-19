@@ -4,7 +4,7 @@ from pathlib import Path
 import pandas as pd
 from tqdm import tqdm
 
-from ..evaluation.metrics import compute_metric
+from ..evaluation.metrics import compute_metric, compute_psr_with_mincal
 
 
 def read_results(root_results_dir: Path, encoder_results_dir: Path = None):
@@ -75,8 +75,12 @@ def compute_metrics(data, metric):
     for i, row in tqdm(data.iterrows(), total=len(data)):
         logits = pd.read_csv(row["logits"], index_col=0, header=None).values.astype(float)
         labels = pd.read_csv(row["labels"], index_col=0, header=None).values.flatten().astype(int)
-        value = compute_metric(logits, labels, metric)
+        if row["test_lst"].startswith("test_"):
+            value, min_value = compute_psr_with_mincal(logits, labels, metric, "trainontest")
+        else:
+            value, min_value = 0., 0.
         data_with_metrics.loc[i, "result"] = value
+        data_with_metrics.loc[i, "min_result"] = min_value
     data_with_metrics = data_with_metrics.drop(columns=["logits", "labels"])
     return data_with_metrics
 
