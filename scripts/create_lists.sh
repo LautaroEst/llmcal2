@@ -18,6 +18,10 @@ for dataset in "${DATASETS[@]}"; do
 
     for num_seed in $(seq 0 $((num_seeds-1))); do
         cat $list_dir/train_${dataset2trainsize[$dataset]}_0.3_$seed.txt $list_dir/val_${dataset2trainsize[$dataset]}_0.3_$seed.txt > $list_dir/train_${dataset2trainsize[$dataset]}_0.0_$seed.txt
+        for n_shots in 2 4 8 16 32; do
+            shots_list=${n_shots}shots_${num_seed}
+            head -n $n_shots $list_dir/val_${dataset2trainsize[$dataset]}_${val_prop}_${num_seed}.txt > $list_dir/$shots_list.txt
+        done
     done
 done
 

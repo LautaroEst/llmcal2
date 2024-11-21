@@ -37,7 +37,7 @@ def read_results(root_results_dir: Path, encoder_results_dir: Path = None):
                         "logits": logits_path,
                         "labels": labels_path,
                     })
-    if encoder_results_dir is not None:
+    if encoder_results_dir is not None and encoder_results_dir.exists():
         for method_dir in encoder_results_dir.iterdir():
             method = method_dir.name
             for train_list_dir in method_dir.iterdir():

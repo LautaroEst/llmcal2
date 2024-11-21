@@ -48,8 +48,11 @@ declare -A dataset2testsize=(
 )
 
 max_seq_length=2048
+inference_max_seq_len=20000
 
 # losses_options=(ans fs norm-5 norm-15)
 losses_options=(ans fs)
+
+declare -a N_SHOTS=(4 16)
 
 export CUDA_VISIBLE_DEVICES=1
