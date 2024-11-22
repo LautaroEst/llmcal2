@@ -32,7 +32,7 @@ for dataset in "${DATASETS[@]}"; do
 
                 # Predictions directories and lists
                 base_output_dir="outputs/adaptation/$model/${model_type}_few_shot/$shots_list"
-                cal_dir="outputs/adaptation/$model/${model_type}_few_shot_plus_dp_cal/${dataset}_${dataset2trainsize[$dataset]}_${val_prop}_$num_seed"
+                cal_dir="outputs/adaptation/$model/${model_type}_few_shot_plus_dp_cal/${dataset}_${dataset2trainsize[$dataset]}_${val_prop}_${num_seed}__$shots_list"
                 prediction_dir="$base_output_dir/test=$dataset/list=$val_list"
                 prediction_list="$val_list"
                 if [ ! -f $prediction_dir/logits.csv ]; then

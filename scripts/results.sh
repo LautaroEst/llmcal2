@@ -5,7 +5,7 @@ source ./scripts/env.sh
 metric=nce
 mode="median"
 
-overwrite=true
+overwrite=false
 results_path=outputs/results/$model/$metric.jsonl
 if [ -f $results_path ] && [ $overwrite = false ]; then
     echo "Results already computed. Skipping."
@@ -27,7 +27,7 @@ for dataset in ${DATASETS[@]}; do
         --results_path $results_path \
         --output_dir $bar_plots_dir \
         --mode $mode \
-        # --set_lim
+        --set_lim
 done
 
 # scatter_plots_dir=outputs/results/$model/scatters

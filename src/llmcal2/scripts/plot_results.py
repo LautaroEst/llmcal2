@@ -28,18 +28,6 @@ def parse_train_scenario(ds):
     elif ds["method"] == "instruct_few_shot":
         base_method = "instruct-" + ds["train_lists"][0].split("_")[0]
         is_calibrated = False
-    elif ds["method"] == "no_adaptation_plus_dp_cal":
-        base_method = "dp_calibration"
-        is_calibrated = True
-    elif ds["method"] == "no_adaptation_few_shot_plus_dp_cal":
-        base_method = ds["train_lists"][0].split("_")[0]
-        is_calibrated = True
-    elif ds["method"] == "instruct_plus_dp_cal":
-        base_method = "instruct"
-        is_calibrated = True
-    elif ds["method"] == "instruct_few_shot_plus_dp_cal":
-        base_method = "instruct-" + ds["train_lists"][0].split("_")[0]
-        is_calibrated = True
     elif "lora_" in ds["method"] and "_few_shot" in ds["method"] and "_plus_dp_cal" not in ds["method"]:
         if len(ds["train_lists"]) == 2 and ds["train_lists"][0].split("_")[0] == ds["test_dataset"]:
             base_method = ds["method"].split("_few_shot")[0] + "-matched-" + ds["train_lists"][-1].split("_")[0]
@@ -61,6 +49,18 @@ def parse_train_scenario(ds):
             base_method = ds["method"].split("_few_shot")[0] + "-all-" + ds["train_lists"][-1].split("_")[0]
             is_calibrated = True
     elif ds["method"].endswith("_plus_dp_cal"):
+        if ds["method"].startswith("no_adaptation_few_shot"):
+            base_method = ds["train_lists"][-1].split("_")[0]
+            is_calibrated = True
+        elif ds["method"].startswith("instruct_few_shot"):
+            base_method = "instruct-" + ds["train_lists"][-1].split("_")[0]
+            is_calibrated = True
+        elif ds["method"].startswith("no_adaptation"):
+            base_method = "zero_shot"
+            is_calibrated = True
+        elif ds["method"].startswith("instruct"):
+            base_method = "instruct"
+            is_calibrated = True
         if len(ds["train_lists"]) == 1 and ds["train_lists"][0].split("_")[0] == ds["test_dataset"]:
             base_method = ds["method"].split("_plus_dp_cal")[0] + "-matched"
             is_calibrated = True
