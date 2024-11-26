@@ -5,7 +5,7 @@ source ./scripts/env.sh
 metric=nce
 mode="median"
 
-overwrite=false
+overwrite=true
 results_path=outputs/results/$model/$metric.jsonl
 if [ -f $results_path ] && [ $overwrite = false ]; then
     echo "Results already computed. Skipping."

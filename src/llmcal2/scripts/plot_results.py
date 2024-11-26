@@ -17,7 +17,7 @@ def parse_train_scenario(ds):
         base_method = ds["method"]
         is_calibrated = False
     elif ds["method"] == "no_adaptation" and ds["train_lists"] == ["all"]:
-        base_method = "zero_shot"
+        base_method = "no_adaptation"
         is_calibrated = False
     elif ds["method"] == "no_adaptation_few_shot":
         base_method = ds["train_lists"][0].split("_")[0]
@@ -56,12 +56,12 @@ def parse_train_scenario(ds):
             base_method = "instruct-" + ds["train_lists"][-1].split("_")[0]
             is_calibrated = True
         elif ds["method"].startswith("no_adaptation"):
-            base_method = "zero_shot"
+            base_method = "no_adaptation"
             is_calibrated = True
         elif ds["method"].startswith("instruct"):
             base_method = "instruct"
             is_calibrated = True
-        if len(ds["train_lists"]) == 1 and ds["train_lists"][0].split("_")[0] == ds["test_dataset"]:
+        elif len(ds["train_lists"]) == 1 and ds["train_lists"][0].split("_")[0] == ds["test_dataset"]:
             base_method = ds["method"].split("_plus_dp_cal")[0] + "-matched"
             is_calibrated = True
         elif len(ds["train_lists"]) == 4 and ds["test_dataset"] not in [lst.split("_")[0] for lst in ds["train_lists"]]:
@@ -90,6 +90,7 @@ def parse_train_scenario(ds):
         elif len(ds["train_lists"]) == 5:
             base_method = ds["method"] + "-all"
             is_calibrated = False
+
     return pd.Series({
         "base_method": base_method,
         "is_calibrated": is_calibrated,
@@ -105,7 +106,7 @@ all_methods = OrderedDict([
     ("lora_fs-mismatched", {"label": "LoRA-FS (Mismatched)", "color": "tab:blue", "hatch": "/",}),
     ("lora_ans-mismatched", {"label": "LoRA-ANS (Mismatched)", "color": "tab:orange", "hatch": "/",}),
     # ("lora_norm-5-mismatched", {"label": "LoRA-Norm K=5 (Mismatched)", "color": "tab:green", "hatch": "/",}),
-    ("zero_shot", {"label": "Zero-shot", "color": "darkred", "hatch": None,}),
+    ("no_adaptation", {"label": "Zero-shot", "color": "darkred", "hatch": None,}),
     ("instruct", {"label": "Instructions", "color": "darkgreen", "hatch": None,}),
     
     # Using in-domain data

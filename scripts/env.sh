@@ -1,5 +1,3 @@
-export CUDA_VISIBLE_DEVICES=1
-
 CHECKPOINTS_DIR=outputs/checkpoints
 HF_TOKEN=$(cat hf_token.txt)
 model="llama3.2-1b"
@@ -8,7 +6,7 @@ model="llama3.2-1b"
 
 # Reproducibility
 base_seed=2834
-num_seeds=2
+num_seeds=5
 
 # Supported models
 declare -A model2checkpoint=(
@@ -55,4 +53,4 @@ losses_options=(ans fs)
 
 declare -a N_SHOTS=(4 16)
 
-export CUDA_VISIBLE_DEVICES=1
+export CUDA_VISIBLE_DEVICES=0
