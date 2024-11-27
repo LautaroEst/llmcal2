@@ -161,7 +161,7 @@ def plot_bar(x, df, df_min, ax, bar_width, **kwargs):
     else:
         color = "k"
     ax.hlines(y, x - bar_width / 2, x + bar_width / 2, color=color, linestyle="-", linewidth=3)
-    ax.errorbar(x, y, yerr=yerr, fmt="", color=color)
+    ax.errorbar(x+0.01, y, yerr=yerr, fmt="", color=color)
 
 
 
@@ -223,6 +223,7 @@ def plot_results(data, dataset_name, metric, filename, mode="mean", set_lim=Fals
 def main(
     dataset: str,
     metric: str,
+    num_samples: str,
     results_path: str,
     output_dir: str,
     mode: str = "mean",
@@ -233,6 +234,8 @@ def main(
     data = pd.read_json(results_path, lines=True)
     data = data[data["test_dataset"] == dataset]
     data = data[data["test_lst"].str.startswith("test_")]
+    data = data[data["train_lists"].apply(lambda x: x == ["all"] or int(x[0].split("_")[1]) == num_samples or x[0].split("_")[0].endswith("shots"))]
+    
     if len(data) == 0:
         return
     data = data.apply(parse_train_scenario, axis=1)

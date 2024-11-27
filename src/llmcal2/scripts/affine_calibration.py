@@ -153,7 +153,11 @@ def _fit_to_fold(model, optimizer, train_loader, val_loader, log_dir, max_step_c
     logits, labels = next(iter(train_loader))
     priors = torch.bincount(labels, minlength=logits.shape[1]).float() / len(labels)
     priors_ce = -torch.log(priors[labels]).mean().item()
+    if priors_ce == 0:
+        priors_ce = 1.
     priors_er = (priors.argmax() != labels).float().mean().item()
+    if priors_er == 0:
+        priors_er = 1.
 
     state = {
         'model': model.state_dict(),

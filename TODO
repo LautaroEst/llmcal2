@@ -1,2 +1,11 @@
 - Terminar de correr todo hasta ahora
 - Para DBPedia, comparar DPCal con LoRA en función de la cantidad de muestras entrenando con un conjunto limitado de datos. Repetir para cuando el modelo fue previamente fine-tuneado con datos out-of-domain. Graficar Zero-shot. Ver plot dbpedia_nce. Debería verse que en algún momento LoRA supera a DPCal pero para pocas muestras, debería funcionar bien DPCal.
+
+DPCal helps on non-finetuned and fine-tuned-on-matched-data models:
+Zero-shot/Few-shot/LoraMatchedAns/LoraMatchedFS/BERT + DPCal/HistBinning/VectorScaling/etc
+
+You can choose DPCal if you have limited budget of data:
+Zero-shot/LoramatchedAns/LoraMatchedFS/DPCal vs number of samples
+
+If you have other data, calibrate after train:
+LoraMismatchedAns/LoraMismatchedFS/Instruct/InstructFewShot + DPCal (use zero-shot/zero-shot+dpcal as baseline)

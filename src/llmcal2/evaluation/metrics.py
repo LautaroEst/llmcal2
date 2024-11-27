@@ -76,6 +76,8 @@ def compute_psr_with_mincal(logits, labels, psr, mode):
         cal_logprobs = train_cal_on_test(logits, labels)
     elif mode == "xval":
         cal_logprobs = calibrate_xval(logits, labels, seed=1234, condition_ids=None, stratified=True, nfolds=5) 
+    elif mode == "none":
+        cal_logprobs = logits
     else:
         raise ValueError(f"Unknown mode: {mode}")
     loss = compute_metric(logits, labels, psr)

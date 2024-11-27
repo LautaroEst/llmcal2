@@ -1,6 +1,7 @@
 #!/bin/bash -ex
 
 source ./scripts/env.sh
+export CUDA_VISIBLE_DEVICES=1
 
 val_prop=0.3
 
