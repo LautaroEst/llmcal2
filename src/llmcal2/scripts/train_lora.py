@@ -47,6 +47,7 @@ def setup(
     weight_decay = 0.0,
     loss: Literal["fs", "ans", "norm"] = "fs",
     patience: int = 10,
+    max_steps: int = -1,
     seed = 0,
     max_seq_length: int = 1024,
     **lora_kwargs,
@@ -128,6 +129,7 @@ def setup(
         "optimizer_name": optimizer,
         "weight_decay": weight_decay,
         "patience": patience,
+        "max_steps": max_steps,
     }
     fabric.launch(main, config, base_checkpoint_dir, lora_checkpoint_dir, data_paths, output_dir, output_checkpoint_dir, train_lists, val_lists, train_args, devices, seed, max_seq_length)
 
@@ -239,7 +241,8 @@ def fit(fabric, model, optimizer, train_dataloader, val_dataloader, devices, out
 
     # Continue training
     model.train()
-    while state["patience_count"] < train_args["patience"]:
+    stop_training = False
+    while not stop_training:
         state["iter_num"] += 1
         batch = next(train_iterator)
         iter_t0 = time.perf_counter()
@@ -306,6 +309,12 @@ def fit(fabric, model, optimizer, train_dataloader, val_dataloader, devices, out
             fabric.save(output_dir / "last.ckpt", state)
             state["cum_train_loss"] = 0
             state["cum_train_num_tokens"] = 0
+
+        # Check if training should stop
+        if train_args["max_steps"] > 0:
+            stop_training = state["step_count"] >= train_args["max_steps"]
+        else:
+            stop_training = state["patience_count"] >= train_args["patience"]
 
 
 @torch.no_grad()

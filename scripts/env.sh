@@ -53,4 +53,4 @@ losses_options=(ans fs)
 
 declare -a N_SHOTS=(4 16)
 
-export CUDA_VISIBLE_DEVICES=0
+export CUDA_VISIBLE_DEVICES=1

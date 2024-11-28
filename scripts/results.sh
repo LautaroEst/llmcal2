@@ -5,7 +5,7 @@ source ./scripts/env.sh
 metric=nce
 mode="median"
 
-overwrite=true
+overwrite=false
 results_path=outputs/results/$model/$metric.jsonl
 if [ -f $results_path ] && [ $overwrite = false ]; then
     echo "Results already computed. Skipping."
@@ -25,7 +25,6 @@ for dataset in ${DATASETS[@]}; do
     python -m llmcal2.scripts.plot_results \
         --dataset $dataset \
         --metric $metric \
-        --num_samples ${dataset2trainsize[$dataset]} \
         --results_path $results_path \
         --output_dir $bar_plots_dir \
         --mode $mode \
@@ -44,15 +43,28 @@ python -m llmcal2.scripts.results_matched \
     --outputs_dir $matched_plots_dir
 # pdflatex -output-directory $matched_plots_dir $matched_plots_dir/matched.tex
 
-# Training samples:
-samples_plots_dir=outputs/results/$model/samples
-mkdir -p $samples_plots_dir
-python -m llmcal2.scripts.plot_metric_vs_samples \
+# # Training samples:
+# samples_plots_dir=outputs/results/$model/samples
+# mkdir -p $samples_plots_dir
+# python -m llmcal2.scripts.plot_metric_vs_samples \
+#     --datasets "${DATASETS[*]}" \
+#     --metric $metric \
+#     --methods "no_adaptation no_adaptation_plus_dp_cal" \
+#     --results_path $results_path \
+#     --output_dir $samples_plots_dir
+
+# Results mismatched:
+mismatched_plots_dir=outputs/results/$model/mismatched
+mkdir -p $mismatched_plots_dir
+python -m llmcal2.scripts.results_mismatched \
+    --baseline no_adaptation \
+    --models "instruct instruct_few_shot4 lora_ans lora_ans_few_shot4" \
+    --cal_method "_plus_dp_cal " \
     --datasets "${DATASETS[*]}" \
     --metric $metric \
-    --methods "no_adaptation no_adaptation_plus_dp_cal" \
     --results_path $results_path \
-    --output_dir $samples_plots_dir
+    --outputs_dir $mismatched_plots_dir
+# pdflatex -output-directory $mismatched_plots_dir $mismatched_plots_dir/mismatched.tex
 
 
 # scatter_plots_dir=outputs/results/$model/scatters

@@ -1,7 +1,6 @@
 #!/bin/bash -ex
 
 source ./scripts/env.sh
-export CUDA_VISIBLE_DEVICES=1
 
 lora_args="--lora_r=8 --lora_alpha=16 --lora_dropout=0.05 --lora_query --lora_key --lora_value --lora_projection --lora_mlp --lora_head"
 val_prop=0.3

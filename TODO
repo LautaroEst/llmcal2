@@ -9,3 +9,26 @@ Zero-shot/LoramatchedAns/LoraMatchedFS/DPCal vs number of samples
 
 If you have other data, calibrate after train:
 LoraMismatchedAns/LoraMismatchedFS/Instruct/InstructFewShot + DPCal (use zero-shot/zero-shot+dpcal as baseline)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+instruct base
+instruc + dpcal en todos
+instruct + 70-30 lora
+instruct + 70-30 lora + dpcal
+instruc + 100 lora (no es)
+instruct + 100 lora (con steps de lora70-30)
+
