@@ -1,15 +1,13 @@
 #!/bin/bash -ex
 
 source ./scripts/env.sh
+export CUDA_VISIBLE_DEVICES=0
 
 precision="bf16-true"
 
 declare -A dataset2trainsizes=(
-    ["sst2"]="16 64 128 256 512"
-    ["agnews"]="16 64 128 256 512"
-    ["dbpedia"]="28 112 224 448 896"
-    ["20newsgroups"]="40 160 320 640 1280"
-    ["banking77"]="77 308 616 1232 2464"
+    ["agnews"]="64 128 256"
+    ["dbpedia"]="112 224 448"
 )
 
 
@@ -254,42 +252,6 @@ run_calibration_in_lora_model() {
     fi
 }
 
-run_tempscaling_in_lora_model() {
-    local data_path="outputs/prompts/$model/$1/all.jsonl"
-    local val_list="val_${2}_0.3_${3}"
-    local test_list="test_${dataset2testsize[$1]}"
-    local seed=$((base_seed+$3))
-    
-    local output_dir="outputs/adaptation/$model/lora_ans_instruct_plus_tempscaling/${1}_${2}_0.3_${3}/test=$1/list=$test_list"
-    if [ ! -f $output_dir/logits.csv ]; then
-        mkdir -p $output_dir
-        python -m llmcal2.scripts.affine_calibration \
-            --output_dir $output_dir \
-            --log_dir "outputs/adaptation/$model/lora_ans_instruct_plus_tempscaling/${1}_${2}_0.3_${3}/logs" \
-            --checkpoint_dir "outputs/adaptation/$model/lora_ans_instruct_plus_tempscaling/${1}_${2}_0.3_${3}" \
-            --train_logits "outputs/adaptation/$model/lora_ans_instruct/${1}_${2}_0.3_${3}/test=$1/list=$val_list/logits.csv" \
-            --train_labels "outputs/adaptation/$model/lora_ans_instruct/${1}_${2}_0.3_${3}/test=$1/list=$val_list/labels.csv" \
-            --predict_logits "outputs/adaptation/$model/lora_ans_instruct/${1}_${2}_0.3_${3}/test=$1/list=$test_list/logits.csv" \
-            --predict_labels "outputs/adaptation/$model/lora_ans_instruct/${1}_${2}_0.3_${3}/test=$1/list=$test_list/labels.csv" \
-            --method "temp_scaling" \
-            --learning_rate 1e-3 \
-            --tolerance 1e-5 \
-            --max_ls 40 \
-            --seed $seed
-    fi
-
-    local output_dir="outputs/adaptation/$model/lora_ans_instruct_plus_tempscaling/${1}_${2}_0.3_${3}/test=$1/list=$val_list"
-    if [ ! -f $output_dir/logits.csv ]; then
-        mkdir -p $output_dir
-        python -m llmcal2.scripts.affine_prediction \
-            --checkpoint_path "outputs/adaptation/$model/lora_ans_instruct_plus_tempscaling/${1}_${2}_0.3_${3}/last.ckpt" \
-            --method "temp_scaling" \
-            --predict_logits outputs/adaptation/$model/lora_ans_instruct/${1}_${2}_0.3_${3}/test=$1/list=$val_list/logits.csv \
-            --predict_labels outputs/adaptation/$model/lora_ans_instruct/${1}_${2}_0.3_${3}/test=$1/list=$val_list/labels.csv \
-            --output_dir $output_dir
-    fi
-}
-
 run_alltrainsamplescalibration_in_lora_model() {
     local data_path="outputs/prompts/$model/$1/all.jsonl"
     local train_list="train_${2}_0.0_${3}"
@@ -326,7 +288,6 @@ run_iterativecalibration_in_lora_model() {
     if [ ! -f $output_dir/logits.csv ]; then
         mkdir -p $output_dir
         python -m llmcal2.scripts.iterative_calibration \
-            --checkpoint_dir "outputs/adaptation/$model/lora_ans_instruct_plus_iterativecal/${1}_${2}_0.3_${3}" \
             --output_dir $output_dir \
             --train_alpha_logits "outputs/adaptation/$model/lora_ans_instruct/${1}_${2}_0.3_${3}/test=$1/list=$val_list/logits.csv" \
             --train_alpha_labels "outputs/adaptation/$model/lora_ans_instruct/${1}_${2}_0.3_${3}/test=$1/list=$val_list/labels.csv" \
@@ -409,29 +370,6 @@ run_calibration() {
     fi
 }
 
-run_tempscaling_in_lora_no_es_model() {
-    local test_list="test_${dataset2testsize[$1]}"
-    local seed=$((base_seed+$3))
-
-    local base_output_dir="outputs/adaptation/$model/lora_ans_instruct_no_es_plus_tempscaling/${1}_${2}_0.0_${3}"
-    if [ ! -f "$base_output_dir/test=$1/list=$test_list/logits.csv" ]; then
-        mkdir -p $base_output_dir/test=$1/list=$test_list $base_output_dir/logs
-        python -m llmcal2.scripts.affine_calibration \
-            --output_dir "$base_output_dir/test=$1/list=$test_list" \
-            --log_dir "$base_output_dir/logs" \
-            --checkpoint_dir $base_output_dir \
-            --train_logits "outputs/adaptation/$model/lora_ans_instruct_plus_tempscaling/${1}_${2}_0.3_${3}/test=$1/list=val_${2}_0.3_${3}/logits.csv" \
-            --train_labels "outputs/adaptation/$model/lora_ans_instruct_plus_tempscaling/${1}_${2}_0.3_${3}/test=$1/list=val_${2}_0.3_${3}/labels.csv" \
-            --predict_logits "outputs/adaptation/$model/lora_ans_instruct_no_es/${1}_${2}_0.0_${3}/test=$1/list=$test_list/logits.csv" \
-            --predict_labels "outputs/adaptation/$model/lora_ans_instruct_no_es/${1}_${2}_0.0_${3}/test=$1/list=$test_list/labels.csv" \
-            --method "temp_scaling" \
-            --learning_rate 1e-3 \
-            --tolerance 1e-5 \
-            --max_ls 40 \
-            --seed $seed
-    fi
-}
-
 for dataset in "${!dataset2trainsizes[@]}"; do
     for size in ${dataset2trainsizes[$dataset]}; do
         for num_seed in $(seq 0 $((num_seeds-1))); do
@@ -444,10 +382,6 @@ for dataset in "${!dataset2trainsizes[@]}"; do
             # Lora Ans + DP calibration
             run_lora $dataset $size $num_seed "lora_ans_instruct"
             run_calibration_in_lora_model $dataset $size $num_seed
-
-            # Lora Ans + Temp Scaling
-            run_lora $dataset $size $num_seed "lora_ans_instruct"
-            run_tempscaling_in_lora_model $dataset $size $num_seed
 
             # Lora Ans + DP calibration (train on test)
             run_lora $dataset $size $num_seed "lora_ans_instruct"
@@ -463,10 +397,6 @@ for dataset in "${!dataset2trainsizes[@]}"; do
             
             # Lora No Early Stopping
             run_lora $dataset $size $num_seed "lora_ans_instruct_no_es"
-
-            # Lora No Early Stopping + Temp scaling
-            run_lora $dataset $size $num_seed "lora_ans_instruct_no_es"
-            run_tempscaling_in_lora_no_es_model $dataset $size $num_seed
             
             # Lora Stopped with max steps of lora_ans_instruct
             run_lora $dataset $size $num_seed "lora_ans_instruct_all_train"

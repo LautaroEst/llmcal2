@@ -75,8 +75,10 @@ def compute_metrics(data, metric):
     for i, row in tqdm(data.iterrows(), total=len(data)):
         logits = pd.read_csv(row["logits"], index_col=0, header=None).values.astype(float)
         labels = pd.read_csv(row["labels"], index_col=0, header=None).values.flatten().astype(int)
+        # if row["method"] == "lora_ans_instruct_plus_iterativecal" and row["test_dataset"] == "banking77" and row["train_lists"][0].startswith("banking77_308"):
+        #     import pdb; pdb.set_trace()
         if row["test_lst"].startswith("test_"):
-            value, min_value = compute_psr_with_mincal(logits, labels, metric, "trainontest")
+            value, min_value = compute_psr_with_mincal(logits, labels, metric, "none")
         else:
             value, min_value = 0., 0.
         data_with_metrics.loc[i, "result"] = value

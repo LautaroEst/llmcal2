@@ -25,7 +25,7 @@ class DPCalibrator(nn.Module):
     
     def fit(self, logprobs, labels):
         self.train()
-        optimizer = torch.optim.LBFGS(self.parameters(), lr=1e-2, max_iter=40)
+        optimizer = torch.optim.LBFGS(self.parameters(), lr=1e-1, max_iter=40)
 
         priors = torch.bincount(labels, minlength=logprobs.shape[1]).float() / len(labels)
         priors_ce = -torch.log(priors[labels]).mean().item()

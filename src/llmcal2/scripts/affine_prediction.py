@@ -18,16 +18,15 @@ def main(
 
     # Load model
     model = AffineCalibrator(method=method, num_classes=predict_logits.shape[1])
-    state = torch.load(checkpoint_path)
+    state = torch.load(checkpoint_path, weights_only=False)
     model.load_state_dict(state['model'])
 
     # Predict
     cal_logits = predict(model, predict_logits)
-    df_predict_logits = pd.read_csv(cal_logits, index_col=0, header=None)
 
     # Save
     output_dir = Path(output_dir)
-    pd.DataFrame(cal_logits, index=df_predict_logits.index).to_csv(output_dir / 'logits.csv', index=True, header=False)
+    pd.DataFrame(cal_logits, index=df_predict_labels.index).to_csv(output_dir / 'logits.csv', index=True, header=False)
     df_predict_labels.to_csv(output_dir / 'labels.csv', index=True, header=False)
 
     

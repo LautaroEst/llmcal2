@@ -31,27 +31,27 @@ for dataset in ${DATASETS[@]}; do
         --set_lim
 done
 
-# Results matched:
-matched_plots_dir=outputs/results/$model/matched
-mkdir -p $matched_plots_dir
-python -m llmcal2.scripts.results_matched \
-    --methods "no_adaptation lora_fs lora_ans" \
-    --cal_methods "_plus_dp_cal " \
-    --datasets "${DATASETS[*]}" \
-    --metric $metric \
-    --results_path $results_path \
-    --outputs_dir $matched_plots_dir
+# # Results matched:
+# matched_plots_dir=outputs/results/$model/matched
+# mkdir -p $matched_plots_dir
+# python -m llmcal2.scripts.results_matched \
+#     --methods "no_adaptation lora_fs lora_ans" \
+#     --cal_methods "_plus_dp_cal " \
+#     --datasets "${DATASETS[*]}" \
+#     --metric $metric \
+#     --results_path $results_path \
+#     --outputs_dir $matched_plots_dir
 # pdflatex -output-directory $matched_plots_dir $matched_plots_dir/matched.tex
 
 # # Training samples:
-# samples_plots_dir=outputs/results/$model/samples
-# mkdir -p $samples_plots_dir
-# python -m llmcal2.scripts.plot_metric_vs_samples \
-#     --datasets "${DATASETS[*]}" \
-#     --metric $metric \
-#     --methods "no_adaptation no_adaptation_plus_dp_cal" \
-#     --results_path $results_path \
-#     --output_dir $samples_plots_dir
+samples_plots_dir=outputs/results/$model/samples
+mkdir -p $samples_plots_dir
+python -m llmcal2.scripts.plot_metric_vs_samples \
+    --datasets "${DATASETS[*]}" \
+    --metric $metric \
+    --methods "instruct instruct_plus_dp_cal lora_ans_instruct lora_ans_instruct_plus_dp_cal lora_ans_instruct_no_es lora_ans_instruct_all_train lora_ans_instruct_plus_dp_cal_trainontest lora_ans_instruct_plus_dp_cal_alltrainsamples lora_ans_instruct_plus_iterativecal lora_ans_instruct_plus_tempscaling lora_ans_instruct_no_es_plus_tempscaling" \
+    --results_path $results_path \
+    --output_dir $samples_plots_dir
 
 # Results mismatched:
 mismatched_plots_dir=outputs/results/$model/mismatched
@@ -65,6 +65,18 @@ python -m llmcal2.scripts.results_mismatched \
     --results_path $results_path \
     --outputs_dir $mismatched_plots_dir
 # pdflatex -output-directory $mismatched_plots_dir $mismatched_plots_dir/mismatched.tex
+
+# # Results all:
+# all_plots_dir=outputs/results/$model/all
+# mkdir -p $mismatched_plots_dir
+# python -m llmcal2.scripts.results_all \
+#     --baseline no_adaptation \
+#     --models "instruct" \
+#     --cal_method "_plus_iterativecal " \
+#     --datasets "${DATASETS[*]}" \
+#     --metric $metric \
+#     --results_path $results_path \
+#     --outputs_dir $mismatched_plots_dir
 
 
 # scatter_plots_dir=outputs/results/$model/scatters
